@@ -80,15 +80,15 @@ case "$1" in
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
-"sp8810ea_qvgabase")
+"sp8810eabase_qvga")
 	echo DEVICE=sp8810ea_qvga >> .tmp-config &&
-	echo LUNCH=sp8810ea_qvgabase-eng >> .tmp-config &&
+	echo LUNCH=sp8810eabase_qvga-eng >> .tmp-config &&
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
-"sp8810ea_qvgaplus")
+"sp8810eaplus_qvga")
 	echo DEVICE=sp8810ea >> .tmp-config &&
-	echo LUNCH=sp8810ea_qvgaplus-eng >> .tmp-config &&
+	echo LUNCH=sp8810eaplus_qvga-eng >> .tmp-config &&
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
@@ -159,8 +159,8 @@ case "$1" in
 	echo - sp8810eaplus
 	echo - sp8810lebase
 	echo - sp8810leplus
-	echo - sp8810ea_qvgabase
-	echo - sp8810ea_qvgaplus
+	echo - sp8810eabase_qvga
+	echo - sp8810eaplus_qvga
 	echo - sp8810ebbase
 	echo - sp8810ebplus
 	echo - galaxy-s2
