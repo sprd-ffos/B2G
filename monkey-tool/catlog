@@ -1,0 +1,8 @@
+#!/bin/sh
+
+adb logcat>>log.txt&
+while :; do
+adb shell gsnap snapshot.png /dev/graphics/fb0 1>NUL 2>NUL
+adb pull /snapshot.png snapshot.png
+sleep 1800
+done
