@@ -1,7 +1,0 @@
-#!/bin/sh
-
-chmod 777 orng
-chmod 777 catlog
-adb push  orng /data
-adb push  script /data  
-adb shell "/data/orng /dev/input/event2 /data/script 5"  

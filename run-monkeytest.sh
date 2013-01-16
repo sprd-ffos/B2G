@@ -7,7 +7,7 @@ ADB=adb
 B2G_BIN=/system/b2g/b2g
 ORNG_BIN=/data/orng
 SCRIPT_SRC=/data/script
-ORNG_BIN_NATIVE=./monkey-tool/orng
+ORNG_BIN_NATIVE=./orangutan/orng
 
 
 EXIST_ORNG_BIN=`$ADB shell toolbox ls $ORNG_BIN | awk '{ print \$2; }'`
@@ -18,9 +18,9 @@ if [ -n "$EXIST_ORNG_BIN" ]; then
         exit 1;
     fi
     echo "The orng is not exist, push it in the phone..."
-    $ADB push ./monkey-tool/orng /data
+    $ADB push ./orangutan/orng /data
     $ADB shell chmod 777 $ORNG_BIN
-    $ADB push ./monkey-tool/script /data
+    $ADB push ./orangutan/script /data
     $ADB shell chmod 777 $SCRIPT_SRC
 fi
 

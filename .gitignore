@@ -34,4 +34,5 @@ rilproxy/
 sdk/
 system/
 vendor/
-u-boot
+u-boot/
+orangutan/
