@@ -68,6 +68,12 @@ case "$1" in
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
+"sp8810eabase_512x512_wvga")
+	echo DEVICE=sp8810ea_512x512_wvga>> .tmp-config &&
+	echo LUNCH=sp8810eabase_512x512_wvga-eng >> .tmp-config &&
+	repo_sync sprdroid4.0.3_vlx_3.0_b2g
+	;;
+
 "sp8810lebase")
 	echo DEVICE=sp8810le >> .tmp-config &&
 	echo LUNCH=sp8810lebase-eng >> .tmp-config &&
@@ -77,18 +83,6 @@ case "$1" in
 "sp8810leplus")
 	echo DEVICE=sp8810le >> .tmp-config &&
 	echo LUNCH=sp8810leplus-eng >> .tmp-config &&
-	repo_sync sprdroid4.0.3_vlx_3.0_b2g
-	;;
-
-"sp8810eabase_qvga")
-	echo DEVICE=sp8810ea_qvga >> .tmp-config &&
-	echo LUNCH=sp8810eabase_qvga-eng >> .tmp-config &&
-	repo_sync sprdroid4.0.3_vlx_3.0_b2g
-	;;
-
-"sp8810eaplus_qvga")
-	echo DEVICE=sp8810ea_qvga >> .tmp-config &&
-	echo LUNCH=sp8810eaplus_qvga-eng >> .tmp-config &&
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
@@ -157,10 +151,9 @@ case "$1" in
 	echo Valid devices to configure are:
 	echo - sp8810eabase
 	echo - sp8810eaplus
+	echo - sp8810eabase_512x512_wvga
 	echo - sp8810lebase
 	echo - sp8810leplus
-	echo - sp8810eabase_qvga
-	echo - sp8810eaplus_qvga
 	echo - sp8810ebbase
 	echo - sp8810ebplus
 	echo - galaxy-s2

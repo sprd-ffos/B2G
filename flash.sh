@@ -191,13 +191,10 @@ case "$PROJECT" in
 esac
 
 case "$DEVICE" in
-"sp8810ea")
+"sp8810ea*")
 	flash_fastboot nounlock $PROJECT
 	;;
 "sp8810le")
-	flash_fastboot nounlock $PROJECT
-	;;
-"sp8810ea_qvga")
 	flash_fastboot nounlock $PROJECT
 	;;
 "sp8810eb")
