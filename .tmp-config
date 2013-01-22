@@ -1,5 +1,0 @@
-MAKE_FLAGS=-j6
-GECKO_OBJDIR=/home/zlx/b2gw/B2G/objdir-gecko
-DEVICE_NAME=sp8810eabase_512x512_wvga
-DEVICE=sp8810ea_512x512_wvga
-LUNCH=sp8810eabase_512x512_wvga-eng

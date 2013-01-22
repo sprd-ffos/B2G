@@ -74,6 +74,24 @@ case "$1" in
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
+"sp8810eabase_512x256_wvga")
+	echo DEVICE=sp8810ea_512x256_wvga>> .tmp-config &&
+	echo LUNCH=sp8810eabase_512x256_wvga-eng >> .tmp-config &&
+	repo_sync sprdroid4.0.3_vlx_3.0_b2g
+	;;
+
+"sp8810eabase_512x256_hvga")
+	echo DEVICE=sp8810ea_512x256_hvga>> .tmp-config &&
+	echo LUNCH=sp8810eabase_512x256_hvga-eng >> .tmp-config &&
+	repo_sync sprdroid4.0.3_vlx_3.0_b2g
+	;;
+
+"sp8810eabase_512x128_hvga")
+	echo DEVICE=sp8810ea_512x128_hvga>> .tmp-config &&
+	echo LUNCH=sp8810eabase_512x128_hvga-eng >> .tmp-config &&
+	repo_sync sprdroid4.0.3_vlx_3.0_b2g
+	;;
+
 "sp8810lebase")
 	echo DEVICE=sp8810le >> .tmp-config &&
 	echo LUNCH=sp8810lebase-eng >> .tmp-config &&
@@ -152,6 +170,9 @@ case "$1" in
 	echo - sp8810eabase
 	echo - sp8810eaplus
 	echo - sp8810eabase_512x512_wvga
+	echo - sp8810eabase_512x256_wvga
+	echo - sp8810eabase_512x256_hvga
+	echo - sp8810eabase_512x128_hvga
 	echo - sp8810lebase
 	echo - sp8810leplus
 	echo - sp8810ebbase
