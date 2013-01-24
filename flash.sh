@@ -86,6 +86,10 @@ flash_fastboot()
 		fastboot_flash_image userdata &&
 		([ ! -e out/target/product/$DEVICE/boot.img ] ||
 		fastboot_flash_image boot) &&
+		([ ! -e out/target/product/$DEVICE/2ndbl.img ] ||
+		fastboot_flash_image 2ndbl) &&
+		([ ! -e out/target/product/$DEVICE/vmjaluna.img ] ||
+		fastboot_flash_image vmjaluna) &&
 		fastboot_flash_image system &&
 		run_fastboot reboot &&
 		update_time
