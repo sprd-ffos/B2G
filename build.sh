@@ -53,6 +53,9 @@ function configure_device() {
 }
 
 . setup.sh &&
+if [ -f patches/patch.sh ] ; then
+    . patches/patch.sh
+fi &&
 configure_device &&
 time nice -n19 make $MAKE_FLAGS $@
 

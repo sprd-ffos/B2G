@@ -51,11 +51,21 @@ else
    fi
    [ -n "$MOZ_PROFILER_STARTUP" ] && GDBSERVER_ENV="$GDBSERVER_ENV MOZ_PROFILER_STARTUP=$MOZ_PROFILER_STARTUP "
    [ -n "$MOZ_DEBUG_CHILD_PROCESS" ] && GDBSERVER_ENV="$GDBSERVER_ENV MOZ_DEBUG_CHILD_PROCESS=$MOZ_DEBUG_CHILD_PROCESS "
+   [ -n "$MOZ_DEBUG_APP_PROCESS" ] && GDBSERVER_ENV="$GDBSERVER_ENV MOZ_DEBUG_APP_PROCESS='$MOZ_DEBUG_APP_PROCESS' "
    [ -n "$MOZ_IPC_MESSAGE_LOG" ]     && GDBSERVER_ENV="$GDBSERVER_ENV MOZ_IPC_MESSAGE_LOG=$MOZ_IPC_MESSAGE_LOG "
 
    [ -n "$B2G_PID" ] && $ADB shell kill $B2G_PID
    [ "$B2G_BIN" = "/system/b2g/b2g" ] && $ADB shell stop b2g
-   $ADB shell LD_LIBRARY_PATH=/system/b2g LD_PRELOAD=/system/b2g/libmozglue.so TMPDIR=/data/local/tmp $GDBSERVER_ENV gdbserver --multi :$GDB_PORT $B2G_BIN $@ &
+
+   if [ "$($ADB shell "if [ -f /system/b2g/libdmd.so ]; then echo 1; fi")" != "" ]; then
+     echo ""
+     echo "Using DMD."
+     echo ""
+     dmd="1"
+     ld_preload_extra="/system/b2g/libdmd.so"
+  fi
+
+   $ADB shell DMD=$dmd LD_LIBRARY_PATH=/system/b2g LD_PRELOAD=\"$ld_preload_extra /system/b2g/libmozglue.so\" TMPDIR=/data/local/tmp $GDBSERVER_ENV gdbserver --multi :$GDB_PORT $B2G_BIN $@ &
 fi
 
 sleep 1
