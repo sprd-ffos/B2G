@@ -56,6 +56,18 @@ echo GECKO_OBJDIR=$PWD/objdir-gecko >> .tmp-config
 echo DEVICE_NAME=$1 >> .tmp-config
 
 case "$1" in
+"sp8825eabase")
+       echo DEVICE=sp8825ea >> .tmp-config &&
+       echo LUNCH=sp8825eabase-eng >> .tmp-config &&
+       repo_sync sprdroid4.0.3_vlx_3.0_gonkupdate_temp
+       ;;
+
+"sp8825eaplus")
+       echo DEVICE=sp8825ea >> .tmp-config &&
+       echo LUNCH=sp8825eaplus-eng >> .tmp-config &&
+       repo_sync sprdroid4.0.3_vlx_3.0_gonkupdate_temp
+       ;;
+
 "sp8810eabase")
 	echo DEVICE=sp8810ea >> .tmp-config &&
 	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
