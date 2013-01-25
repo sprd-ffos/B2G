@@ -167,6 +167,8 @@ case "$1" in
 	echo Usage: $0 \(device name\)
 	echo
 	echo Valid devices to configure are:
+	echo - sp8825eabase
+	echo - sp8825eaplus
 	echo - sp8810eabase
 	echo - sp8810eaplus
 	echo - sp8810eabase_512x512_wvga
