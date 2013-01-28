@@ -68,6 +68,18 @@ case "$1" in
        repo_sync sprdroid4.0.3_vlx_3.0_gonkupdate_temp
        ;;
 
+"sp8810eabase_gonk_update")
+	echo DEVICE=sp8810ea >> .tmp-config &&
+	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
+	repo_sync sprdroid4.0.3_vlx_3.0_gonkupdate_temp
+	;;
+
+"sp8810eabase_mozilla_update")
+	echo DEVICE=sp8810ea >> .tmp-config &&
+	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
+	repo_sync mozilla_update_temp
+	;;
+
 "sp8810eabase")
 	echo DEVICE=sp8810ea >> .tmp-config &&
 	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
@@ -169,6 +181,8 @@ case "$1" in
 	echo Valid devices to configure are:
 	echo - sp8825eabase
 	echo - sp8825eaplus
+	echo - sp8810eabase_gonk_update
+	echo - sp8810eabase_mozilla_update
 	echo - sp8810eabase
 	echo - sp8810eaplus
 	echo - sp8810eabase_512x512_wvga
