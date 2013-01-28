@@ -81,8 +81,9 @@ flash_fastboot()
 		;;
 
 	*)
-		run_fastboot erase cache &&
-		run_fastboot erase userdata &&
+                ([[ "$DEVICE" == "sp8825"* ]] ||
+                        (run_fastboot erase cache &&
+                        run_fastboot erase userdata)) &&
 		fastboot_flash_image userdata &&
 		([ ! -e out/target/product/$DEVICE/boot.img ] ||
 		fastboot_flash_image boot) &&
