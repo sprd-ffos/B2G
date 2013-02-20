@@ -1,55 +1,72 @@
 #!/bin/bash
 #run monkey test
 
-. load-config.sh
-
 #ADB=./out/host/linux-x86/bin/adb
 ADB=adb
-PCDIR=./orangutan
+PCDIR=./monkey-tool
 DVCDIR=/data
 MTFILE=(orng script)
+SYMBDIR=./objdir-gecko/dist/crashreporter-symbols
 DMPDIR=/data/b2g/mozilla/*.default/minidumps
 DMPPRE=cr
-ORNG_BIN=/data/orng
-SCRIPT_SRC=/data/script
-ORNG_BIN_NATIVE=./monkey-tool/orng
-SYMBOL_FILE=objdir-gecko/dist/crashreporter-symbols/
-DUMPTOOL=$PWD/monkey-tool/minidump_stackwalk
+DUMPTOOL=./monkey-tool/minidump_stackwalk
 
-echo $DUMPTOOL
+#options
+no_symb=no
 
-. setup.sh && make buildsymbols
+usage()
+{
+    echo "Usage: $(basename $0) [--no-symbols] [--help]"
+    exit $1
+}
+
+while [ $# -gt 0 ]
+do
+    case $1 in
+    --no-symbols | --no-symb | -s)
+        no_symb=yes
+        ;;
+    --help | -h)
+        usage 0
+        ;;
+    -*)
+        echo "Unrecognized option $1"
+        usage 1
+        ;;
+    *)
+        break
+        ;;
+    esac
+
+    shift
+done
+
+#build symbols
+[ $no_symb = "no" ] && (. load-config.sh && . setup.sh && make buildsymbols)
 
 #push monkey test file
-#for file in $MTFILE ; do
+for file in ${MTFILE[@]} ; do
     #maybe need some check...
-#    [ -f ${PCDIR}/${file} ] || { echo $file does not exist; exit 1; }
+    [ -z $($ADB shell find ${DVCDIR} -name ${file}) ] || continue
+    [ -f ${PCDIR}/${file} ] || { echo ${PCDIR}/${file} does not exist; exit 1; }
         
-#    $ADB push ${PCDIR}/${file} ${DVCDIR}
-#    $ADB shell chmod 777 ${DVCDIR}/${file}
-#done
-EXIST_ORNG_BIN=`$ADB shell toolbox ls $ORNG_BIN | awk '{ print \$2; }'`
+    $ADB push ${PCDIR}/${file} ${DVCDIR}
+    $ADB shell chmod 777 ${DVCDIR}/${file}
+done
 
-if [ -n "$EXIST_ORNG_BIN" ]; then
-    if [ ! -f "$ORNG_BIN_NATIVE" ]; then
-        echo "The orng is not exist in your computer, please download it from sprd b2g wiki"
-        exit 1;
-    fi
-    echo "The orng is not exist, push it in the phone..."
-    $ADB push ./monkey-tool/orng /data
-    $ADB shell chmod 777 $ORNG_BIN
-    $ADB push ./monkey-tool/script /data
-    $ADB shell chmod 777 $SCRIPT_SRC
-fi
-
-
+#run test
 while true
 do
+    #reboot
+    $ADB shell reboot
+    sleep 35
+
     #need log?
+    $ADB logcat > adb_log &
     $ADB shell /data/orng /dev/input/event2 /data/script > /dev/zero &
 
     #check - is creashed
-    while sleep 1
+    while sleep 10
     do
         files=($($ADB shell find $DMPDIR -name "*.dmp" -o -name "*.extra" | sed 's/\r//'))
         
@@ -61,6 +78,7 @@ do
             
             mkdir $tag
 
+            #dump files
             for file in ${files[@]}
             do
                 #pull file
@@ -69,19 +87,19 @@ do
                 $ADB shell rm $file
             done
 
-            cd $tag
-            $DUMPTOOL *.dmp ../objdir-gecko/dist/crashreporter-symbols > result.txt
-            cd ..
+            $DUMPTOOL ${tag}/*.dmp $SYMBDIR > ${tag}/dump_parse
+
+            #more info
+            cp adb_log ${tag}/
+            $ADB shell b2g-ps > ${tag}/b2g-ps
+            $ADB shell b2g-procrank > ${tag}/b2g-procrank
+            repo manifest -o ${tag}/manifest.xml -r
 
             #tar files
             tar -caf ${tag}.tar.bz2 ${tag}/*
 
             rm -rf $tag
 
-            #delete monkey test files... need?
-            #reboot
-            $ADB shell reboot
-            sleep 35
             #goto next monkey test
             continue 2
         fi
