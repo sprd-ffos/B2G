@@ -89,7 +89,7 @@ case "$1" in
 "sp8810eaplus")
 	echo DEVICE=sp8810ea >> .tmp-config &&
 	echo LUNCH=sp8810eaplus-eng >> .tmp-config &&
-	repo_sync sprdroid4.0.3_vlx_3.0_b2g
+	repo_sync mozilla_mutisim4.0.3_vlx_3.0_b2g
 	;;
 
 "sp8810eabase_512x512_wvga")
