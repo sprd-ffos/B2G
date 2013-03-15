@@ -81,7 +81,7 @@ flash_fastboot()
 		;;
 
 	*)
-                ([[ "$DEVICE" == "sp8825"* ]] ||
+                ([[ "$DEVICE" == "sp88"* ]] ||
                         (run_fastboot erase cache &&
                         run_fastboot erase userdata)) &&
 		fastboot_flash_image userdata &&
@@ -228,7 +228,7 @@ case "$PROJECT" in
 esac
 
 case "$DEVICE" in
-"sp88"*)
+"sp88"*|"tara")
 	flash_fastboot nounlock $PROJECT
 	;;
 	
