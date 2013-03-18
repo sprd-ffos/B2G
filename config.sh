@@ -62,9 +62,21 @@ case "$1" in
 	repo_sync tara4.0.3_vlx_3.0_b2g
 	;;
 
-"sp8810eabase_mozilla_weekly_build")
+"tara_512x256_hvga")
+	echo DEVICE=sp8810ea_512x256_hvga>> .tmp-config &&
+	echo LUNCH=sp8810eabase_512x256_hvga-eng >> .tmp-config &&
+	repo_sync tara4.0.3_vlx_3.0_b2g
+	;;
+
+"mozilla_weekly_build")
 	echo DEVICE=sp8810ea >> .tmp-config &&
 	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
+	repo_sync nightly4.0.3_vlx_3.0_b2g
+	;;
+
+"mozilla_weekly_build_512x256_hvga")
+	echo DEVICE=sp8810ea_512x256_hvga>> .tmp-config &&
+	echo LUNCH=sp8810eabase_512x256_hvga-eng >> .tmp-config &&
 	repo_sync nightly4.0.3_vlx_3.0_b2g
 	;;
 
@@ -192,7 +204,9 @@ case "$1" in
 	echo
 	echo Valid devices to configure are:
 	echo - tara
-	echo - sp8810eabase_mozilla_weekly_build
+	echo - tara_512x256_hvga
+	echo - mozilla_weekly_build
+	echo - mozilla_weekly_build_512x256_hvga
 	echo - sp8825eabase
 	echo - sp8825eaplus
 	echo - sp8810eabase_gonk_update
