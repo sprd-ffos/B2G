@@ -1,0 +1,4 @@
+** Put the folder "patch.sprd" in the root if B2G, such as "B2G/".
+
+run script patch.sh
+patch.sh branch-name

@@ -1,0 +1,17 @@
+diff --git a/widget/gonk/libui/InputReader.cpp b/widget/gonk/libui/InputReader.cpp
+index ea19c01..4bb782c 100644
+--- a/widget/gonk/libui/InputReader.cpp
++++ b/widget/gonk/libui/InputReader.cpp
+@@ -5608,9 +5608,9 @@ void MultiTouchInputMapper::syncTouch(nsecs_t when, bool* outHavePointerIds) {
+         outPointer.tiltX = 0;
+         outPointer.tiltY = 0;
+ 
+-        // Mozilla bug 739417
+-        if (!outPointer.touchMajor)
+-            continue;
++//        // Mozilla bug 739417
++//        if (!outPointer.touchMajor)
++//            continue;
+ 
+         outPointer.toolType = inSlot->getToolType();
+         if (outPointer.toolType == AMOTION_EVENT_TOOL_TYPE_UNKNOWN) {
