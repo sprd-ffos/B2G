@@ -83,13 +83,13 @@ case "$1" in
 "sp8825eabase")
        echo DEVICE=sp8825ea >> .tmp-config &&
        echo LUNCH=sp8825eabase-eng >> .tmp-config &&
-       repo_sync sprdroid4.0.3_vlx_3.0_gonkupdate_temp
+       repo_sync sprdroid4.0.3_vlx_3.0_b2g
        ;;
 
 "sp8825eaplus")
        echo DEVICE=sp8825ea >> .tmp-config &&
        echo LUNCH=sp8825eaplus-eng >> .tmp-config &&
-       repo_sync sprdroid4.0.3_vlx_3.0_gonkupdate_temp
+       repo_sync sprdroid4.0.3_vlx_3.0_b2g
        ;;
 
 "sp8810eabase_gonk_update")
