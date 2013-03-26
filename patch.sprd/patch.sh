@@ -10,9 +10,10 @@ then
     exit 1
 fi
 
-SCDIR=$(pwd)/$0
-SCDIR=${SCDIR%/*}
+SCDIR=$(pwd)/$0 
+SCDIR=$(echo ${SCDIR%/*} | sed -e 's/\/\.$//')
 BRDIR=$SCDIR/$1
+PLIST=$BRDIR/patch.list
 
 if [ ! -d $BRDIR ]
 then
@@ -20,32 +21,42 @@ then
     exit 0;
 fi
 
-for patch in ${BRDIR}/*.patch
+if [ ! -f $PLIST ]
+then
+    echo No SPRD patch list file for $1.
+    exit 0;
+fi
+
+cat $PLIST | grep -Po '\S+\s*:\s*\S+' | sed -e 's/ //g' | while read patch 
 do
-    mod=${patch##*/}
-    mod=${mod%.*}
+    dir=${SCDIR}/../$(echo $patch | awk -F: '{print $1}')
+    file=${BRDIR}/$(echo $patch | awk -F: '{print $2}')
+    #echo dir: =$dir=
+    #echo file: =$file=
 
-    if [ ! -d ${SCDIR}/../$mod ]
+    if [ ! -d $dir ]
     then
-        echo [ERROR!] $mod is not a valid module name.
-        exit 1
+        echo [ERROR!] $dir is not exist.
+        continue
     fi
 
-    echo ----
-    echo patching $mod...
-
-    cd ${SCDIR}/../$mod
-
-    git apply $patch
-
-    if [ $? -ne 0 ]
+    if [ ! -f $file ]
     then
-        echo [ERROR!] $mod.patch patch failed, maybe it is already patched.
-        exit 1
+        echo [ERROR!] $file is not exist.
+        continue
     fi
-    
-    cd -
 
-    echo $mod patch done!
-done
+    #fork new sub shell patching...
+    {
+        cd $dir
+        git apply $file
+
+        if [ $? -ne 0 ]
+        then
+            echo [ERROR!] $file patch failed, maybe it is already patched.
+        else
+            echo [DONE!] $file is patched now!
+        fi
+    }
+ done
 
