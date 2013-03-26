@@ -1,0 +1,3 @@
+build     : build.patch
+gaia      : gaia.patch
+gecko     : gecko.patch

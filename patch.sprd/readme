@@ -2,3 +2,7 @@
 
 run script patch.sh
 patch.sh branch-name
+
+Edit the *patch.list* file in the "branch-name" folder, the script will follow the *patch.list* to patch.
+
+In the patch.list, one patch per-line, like the mode "git-dir: patch-file". For friendly reading, you can add some space as you like, but *not* use "tab" key, or the line will be droped.
