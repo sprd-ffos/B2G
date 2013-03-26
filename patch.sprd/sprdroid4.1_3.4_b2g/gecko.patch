@@ -1,0 +1,726 @@
+diff --git a/b2g/app/BootAnimation.cpp b/b2g/app/BootAnimation.cpp
+index bb6fc01..f45c3af 100644
+--- a/b2g/app/BootAnimation.cpp
++++ b/b2g/app/BootAnimation.cpp
+@@ -577,6 +577,7 @@ NativeWindow()
+         return gNativeWindow.get();
+     }
+ 
++#if ANDROID_VERSION < 14
+     // Some gralloc HALs need this in order to open the
+     // framebuffer device after we restart with the screen off.
+     //
+@@ -584,6 +585,9 @@ NativeWindow()
+     // FramebufferNativeWindow.  Do not separate these two C++
+     // statements.
+     set_screen_state(1);
++#else
++#warning Not sure what to do!  Does not seem to be necessary.
++#endif
+ 
+     // For some devices, it takes a while for the framebuffer to become
+     // usable. So we wait until the framebuffer has woken up before we
+diff --git a/configure.in b/configure.in
+index 956532d..3eb7c78 100644
+--- a/configure.in
++++ b/configure.in
+@@ -220,9 +220,41 @@ if test -n "$gonkdir" ; then
+         ;;
+     esac
+ 
+-    CPPFLAGS="-DANDROID -isystem $gonkdir/bionic/libc/$ARCH_DIR/include -isystem $gonkdir/bionic/libc/include/ -isystem $gonkdir/bionic/libc/kernel/common -isystem $gonkdir/bionic/libc/kernel/$ARCH_DIR -isystem $gonkdir/bionic/libm/include -I$gonkdir/frameworks/base/opengl/include -I$gonkdir/frameworks/base/native/include -I$gonkdir/hardware/libhardware/include -I$gonkdir/hardware/libhardware_legacy/include -I$gonkdir/system -I$gonkdir/system/core/include -isystem $gonkdir/bionic -I$gonkdir/frameworks/base/include -I$gonkdir/external/dbus -I$gonkdir/external/bluetooth/bluez/lib $CPPFLAGS -I$gonkdir/frameworks/base/services/sensorservice -I$gonkdir/frameworks/base/services/camera -I$gonkdir/system/media/wilhelm/include -I$gonkdir/frameworks/base/include/media/stagefright -I$gonkdir/frameworks/base/include/media/stagefright/openmax -I$gonkdir/frameworks/base/media/libstagefright/rtsp -I$gonkdir/frameworks/base/media/libstagefright/include -I$gonkdir/dalvik/libnativehelper/include/nativehelper"
+-    CFLAGS="-mandroid -fno-short-enums -fno-exceptions $CFLAGS"
+-    CXXFLAGS="-mandroid -fno-short-enums -fno-exceptions -Wno-psabi $CXXFLAGS $STLPORT_CPPFLAGS"
++    # the actual version we're building for
++    ANDROID_VERSION=16
++    # the version of the prebuilt stuff, which may be lower than ANDROID_VERSION
++    PREBUILT_ANDROID_VERSION=14
++        CPPFLAGS="-DANDROID \
++-isystem $gonkdir/bionic/libc/$ARCH_DIR/include \
++-isystem $gonkdir/bionic/libc/include \
++-isystem $gonkdir/bionic/libc/kernel/common \
++-isystem $gonkdir/bionic/libc/kernel/$ARCH_DIR \
++-isystem $gonkdir/bionic/libm/include \
++-isystem $gonkdir/prebuilts/ndk/android-ndk-r7/platforms/android-14/$ARCH_DIR/usr/include \
++-I$gonkdir/frameworks/native/include \
++-I$gonkdir/frameworks/native/include/media \
++-I$gonkdir/frameworks/native/include/media/hardware \
++-I$gonkdir/frameworks/native/include/media/openmax \
++-I$gonkdir/frameworks/native/opengl/include \
++-I$gonkdir/frameworks/native/include/gui \
++-I$gonkdir/frameworks/av/include \
++-I$gonkdir/frameworks/av/services/camera/ \
++-I$gonkdir/frameworks/av/include/media \
++-I$gonkdir/frameworks/av/include/media/stagefright \
++-I$gonkdir/frameworks/av/media/libstagefright/rtsp \
++-I$gonkdir/frameworks/av/media/libstagefright/include \
++-I$gonkdir/frameworks/av/media/libstagefright/include \
++-I$gonkdir/hardware/libhardware/include \
++-I$gonkdir/hardware/libhardware_legacy/include \
++-I$gonkdir/system \
++-I$gonkdir/external/bluetooth/bluez/lib \
++-I$gonkdir/system/core/include \
++-isystem $gonkdir/bionic \
++-I$gonkdir/frameworks/base/include \
++-I$gonkdir/external/dbus \
++$CPPFLAGS"
++    CFLAGS="-mandroid -fno-short-enums -fno-exceptions -DANDROID_4_1 $CFLAGS"
++    CXXFLAGS="-mandroid -fno-short-enums -fno-exceptions -Wno-psabi -DANDROID_4_1 $CXXFLAGS $STLPORT_CPPFLAGS"
+     dnl Add -llog by default, since we use it all over the place.
+     LIBS="$LIBS -llog $STLPORT_LIBS"
+ 
+@@ -243,6 +275,8 @@ if test -n "$gonkdir" ; then
+     fi
+ 
+     AC_DEFINE(ANDROID)
++    AC_DEFINE_UNQUOTED(ANDROID_VERSION, $ANDROID_VERSION)
++    AC_SUBST(ANDROID_VERSION)
+     AC_DEFINE(HAVE_SYS_UIO_H)
+     AC_DEFINE(HAVE_PTHREADS)
+     CROSS_COMPILE=1
+diff --git a/content/media/ogg/OggCodecState.cpp b/content/media/ogg/OggCodecState.cpp
+index 4a36784..e8a19d0 100644
+--- a/content/media/ogg/OggCodecState.cpp
++++ b/content/media/ogg/OggCodecState.cpp
+@@ -354,7 +354,9 @@ TheoraState::IsHeader(ogg_packet* aPacket) {
+   return th_packet_isheader(aPacket);
+ }
+ 
+-# define TH_VERSION_CHECK(_info,_maj,_min,_sub) \
++#undef version_major
++#undef version_minor
++#define TH_VERSION_CHECK(_info,_maj,_min,_sub) \
+  (((_info)->version_major>(_maj)||(_info)->version_major==(_maj))&& \
+  (((_info)->version_minor>(_min)||(_info)->version_minor==(_min))&& \
+  (_info)->version_subminor>=(_sub)))
+diff --git a/dom/camera/AudioParameter.cpp b/dom/camera/AudioParameter.cpp
+index 59ccfd0..48638fd 100644
+--- a/dom/camera/AudioParameter.cpp
++++ b/dom/camera/AudioParameter.cpp
+@@ -14,21 +14,30 @@
+  * limitations under the License.
+  */
+ 
+-#define LOG_TAG "AudioParameter"
+-//#define LOG_NDEBUG 0
+-
+-#include <utils/Log.h>
+-
+ #include <media/AudioParameter.h>
+ 
++#define DOM_CAMERA_LOG_LEVEL        3
++#include "CameraCommon.h"
++#define LOGD DOM_CAMERA_LOGA
++#define LOGV DOM_CAMERA_LOGI
++#define LOGI DOM_CAMERA_LOGI
++#define LOGW DOM_CAMERA_LOGW
++#define LOGE DOM_CAMERA_LOGE
++
+ namespace android {
+ 
+-const char *AudioParameter::keyRouting = "routing";
+-const char *AudioParameter::keySamplingRate = "sampling_rate";
+-const char *AudioParameter::keyFormat = "format";
+-const char *AudioParameter::keyChannels = "channels";
+-const char *AudioParameter::keyFrameCount = "frame_count";
+-const char *AudioParameter::keyInputSource = "input_source";
++#if ANDROID_VERSION >= 14
++#define EXTRA_CONST const
++#else
++#define EXTRA_CONST
++#endif
++
++const char * EXTRA_CONST AudioParameter::keyRouting = "routing";
++const char * EXTRA_CONST AudioParameter::keySamplingRate = "sampling_rate";
++const char * EXTRA_CONST AudioParameter::keyFormat = "format";
++const char * EXTRA_CONST AudioParameter::keyChannels = "channels";
++const char * EXTRA_CONST AudioParameter::keyFrameCount = "frame_count";
++const char * EXTRA_CONST AudioParameter::keyInputSource = "input_source";
+ 
+ AudioParameter::AudioParameter(const String8& keyValuePairs)
+ {
+diff --git a/dom/camera/CameraCommon.h b/dom/camera/CameraCommon.h
+index 61d28e4..3c27305 100644
+--- a/dom/camera/CameraCommon.h
++++ b/dom/camera/CameraCommon.h
+@@ -23,6 +23,12 @@
+ #include "nsIDOMCameraManager.h"
+ #include "prlog.h"
+ 
++#if ANDROID_VERSION >= 14
++#include <mozilla/Assertions.h>
++#define CHECK_EQ(a,b)  MOZ_ASSERT((a) == (b), "failed")
++#define CHECK(a)       MOZ_ASSERT((a), "failed")
++#endif
++
+ #ifdef PR_LOGGING
+ extern PRLogModuleInfo* GetCameraLog();
+ #define DOM_CAMERA_LOG( type, ... ) PR_LOG(GetCameraLog(), (PRLogModuleLevel)type, ( __VA_ARGS__ ))
+diff --git a/dom/camera/GonkCameraHwMgr.cpp b/dom/camera/GonkCameraHwMgr.cpp
+index b184374..8053b96 100644
+--- a/dom/camera/GonkCameraHwMgr.cpp
++++ b/dom/camera/GonkCameraHwMgr.cpp
+@@ -176,7 +176,7 @@ GonkCameraHardware::Init()
+   mNativeWindow = new GonkNativeWindow();
+   mNativeWindow->setNewFrameCallback(this);
+   mCamera->setListener(this);
+-  mCamera->setPreviewTexture(mNativeWindow);
++  //mCamera->setPreviewTexture(mNativeWindow);
+   mInitialized = true;
+ }
+ 
+diff --git a/dom/camera/GonkCameraSource.cpp b/dom/camera/GonkCameraSource.cpp
+index ba01cc7..bd32646 100644
+--- a/dom/camera/GonkCameraSource.cpp
++++ b/dom/camera/GonkCameraSource.cpp
+@@ -28,7 +28,9 @@
+ #include "GonkCameraSource.h"
+ #include "GonkCameraListener.h"
+ #include "GonkCameraHwMgr.h"
++#if ANDROID_VERSION < 14
+ #include <media/stagefright/MediaDebug.h>
++#endif
+ #include <media/stagefright/MediaDefs.h>
+ #include <media/stagefright/MediaErrors.h>
+ #include <media/stagefright/MetaData.h>
+diff --git a/dom/camera/GonkNativeWindow.h b/dom/camera/GonkNativeWindow.h
+index f402bf9..22c6e1f 100644
+--- a/dom/camera/GonkNativeWindow.h
++++ b/dom/camera/GonkNativeWindow.h
+@@ -17,12 +17,14 @@
+ 
+ #ifndef DOM_CAMERA_GONKNATIVEWINDOW_H
+ #define DOM_CAMERA_GONKNATIVEWINDOW_H
+-
++#define ANDROID_VERSION 16
+ #include <stdint.h>
+ #include <sys/types.h>
++#if ANDROID_VERSION < 14
+ 
+-#include <gui/ISurfaceTexture.h>
+ #include <ui/egl/android_natives.h>
++#endif
++#include <gui/ISurfaceTexture.h>
+ #include <ui/GraphicBuffer.h>
+ #include <ui/Rect.h>
+ #include <utils/Errors.h>
+@@ -44,7 +46,11 @@ public:
+     virtual void OnNewFrame() = 0;
+ };
+ 
+-class GonkNativeWindow : public BnSurfaceTexture
++#if ANDROID_VERSION >= 14
++class GonkNativeWindow : public ANativeObjectBase<ANativeWindow, GonkNativeWindow, RefBase>
++#else
++class GonkNativeWindow : public EGLNativeBase<ANativeWindow, GonkNativeWindow, RefBase>
++#endif
+ {
+     friend class GonkNativeWindowClient;
+ 
+diff --git a/dom/camera/GonkNativeWindowClient.h b/dom/camera/GonkNativeWindowClient.h
+index c7b7ba3..1caec4f 100644
+--- a/dom/camera/GonkNativeWindowClient.h
++++ b/dom/camera/GonkNativeWindowClient.h
+@@ -18,13 +18,13 @@
+ #ifndef DOM_CAMERA_GONKNATIVEWINDOWCLIENT_H
+ #define DOM_CAMERA_GONKNATIVEWINDOWCLIENT_H
+ 
+-#include <ui/egl/android_natives.h>
++#include <ui/ANativeObjectBase.h>
+ 
+ #include "GonkNativeWindow.h"
+ 
+ namespace android {
+ 
+-class GonkNativeWindowClient : public EGLNativeBase<ANativeWindow, GonkNativeWindowClient, RefBase>
++class GonkNativeWindowClient : public ANativeObjectBase<ANativeWindow, GonkNativeWindowClient, RefBase>
+ {
+ public:
+     GonkNativeWindowClient(const sp<GonkNativeWindow>& window);
+diff --git a/dom/camera/GonkRecorder.cpp b/dom/camera/GonkRecorder.cpp
+index 922cda1..b6b7785 100644
+--- a/dom/camera/GonkRecorder.cpp
++++ b/dom/camera/GonkRecorder.cpp
+@@ -23,7 +23,9 @@
+ #include <media/stagefright/AMRWriter.h>
+ #include <media/stagefright/MPEG2TSWriter.h>
+ #include <media/stagefright/MPEG4Writer.h>
++#ifndef ANDROID_VERSION < 14
+ #include <media/stagefright/MediaDebug.h>
++#endif
+ #include <media/stagefright/MediaDefs.h>
+ #include <media/stagefright/MetaData.h>
+ #include <media/stagefright/OMXClient.h>
+diff --git a/dom/system/gonk/AudioManager.cpp b/dom/system/gonk/AudioManager.cpp
+index a251bb8..b734dc5 100644
+--- a/dom/system/gonk/AudioManager.cpp
++++ b/dom/system/gonk/AudioManager.cpp
+@@ -17,16 +17,28 @@
+ 
+ #include "mozilla/Hal.h"
+ #include "AudioManager.h"
+-#include "android_audio/AudioSystem.h"
+ #include "nsIObserverService.h"
+ #include "mozilla/Services.h"
+ #include "AudioChannelService.h"
+ 
++#if ANDROID_VERSION < 14
++#include "gonk/AudioSystem.h"
++#else
++#include "AudioSystem.h"
++#define AUDIO_DEVICE_OUT_FM  AUDIO_DEVICE_OUT_USB_ACCESSORY
++#endif
++
+ using namespace mozilla::dom::gonk;
+ using namespace android;
+ using namespace mozilla::hal;
+ using namespace mozilla;
+ 
++#if ANDROID_VERSION >= 14
++#define DEFAULT_AUDIO_DEVICE_OUT_ARG   , AUDIO_DEVICE_OUT_DEFAULT
++#else
++#define DEFAULT_AUDIO_DEVICE_OUT_ARG   /* nothing */
++#endif
++
+ #define LOG(args...)  __android_log_print(ANDROID_LOG_INFO, "AudioManager" , ## args)
+ 
+ #define HEADPHONES_STATUS_CHANGED "headphones-status-changed"
+@@ -48,7 +60,9 @@ static int sMaxStreamVolumeTbl[AUDIO_STREAM_CNT] = {
+   15,  // enforced audible
+   15,  // DTMF
+   15,  // TTS
++#if ANDROID_VERSION < 14
+   15,  // FM
++#endif
+ };
+ // A bitwise variable for recording what kind of headset is attached.
+ static int sHeadsetState;
+@@ -57,6 +71,10 @@ static int kBtSampleRate = 8000;
+ static bool
+ IsDeviceOn(audio_devices_t device)
+ {
++#if ANDROID_VERSION >= 14
++  return AudioSystem::getDeviceConnectionState(device, "") ==
++      AUDIO_POLICY_DEVICE_STATE_AVAILABLE;
++#else
+   if (static_cast<
+       audio_policy_dev_state_t (*) (audio_devices_t, const char *)
+       >(AudioSystem::getDeviceConnectionState))
+@@ -64,10 +82,27 @@ IsDeviceOn(audio_devices_t device)
+            AUDIO_POLICY_DEVICE_STATE_AVAILABLE;
+ 
+   return false;
++#endif
+ }
+ 
+ NS_IMPL_ISUPPORTS2(AudioManager, nsIAudioManager, nsIObserver)
+ 
++#if ANDROID_VERSION >= 14
++static audio_devices_t
++GetRoutingMode(int aType) {
++  if (aType == nsIAudioManager::FORCE_SPEAKER) {
++    return AUDIO_DEVICE_OUT_SPEAKER;
++  } else if (aType == nsIAudioManager::FORCE_HEADPHONES) {
++    return AUDIO_DEVICE_OUT_WIRED_HEADSET;
++  } else if (aType == nsIAudioManager::FORCE_BT_SCO) {
++    return AUDIO_DEVICE_OUT_BLUETOOTH_SCO;
++  } else if (aType == nsIAudioManager::FORCE_BT_A2DP) {
++    return AUDIO_DEVICE_OUT_BLUETOOTH_A2DP;
++  } else {
++    return AUDIO_DEVICE_IN_DEFAULT;
++  }
++}
++#else
+ static AudioSystem::audio_devices
+ GetRoutingMode(int aType) {
+   if (aType == nsIAudioManager::FORCE_SPEAKER) {
+@@ -82,6 +117,7 @@ GetRoutingMode(int aType) {
+     return AudioSystem::DEVICE_IN_DEFAULT;
+   }
+ }
++#endif
+ 
+ static void
+ InternalSetAudioRoutesICS(SwitchState aState)
+@@ -102,13 +138,22 @@ InternalSetAudioRoutesICS(SwitchState aState)
+ 
+   // The audio volume is not consistent when we plug and unplug the headset.
+   // Set the fm volume again here.
++#if 0
+   if (IsDeviceOn(AUDIO_DEVICE_OUT_FM)) {
++#if ANDROID_VERSION < 14
+     float masterVolume;
+     AudioSystem::getMasterVolume(&masterVolume);
+     AudioSystem::setFmVolume(masterVolume);
++#else
++    int index;
++    AudioSystem::getStreamVolumeIndex(AUDIO_STREAM_DEFAULT, &index, AUDIO_DEVICE_OUT_DEFAULT);
++    AudioSystem::setStreamVolume(AUDIO_STREAM_FM, index, AUDIO_DEVICE_OUT_DEFAULT);
++#endif
+   }
++#endif
+ }
+ 
++#if ANDROID_VERSION < 14
+ static void
+ InternalSetAudioRoutesGB(SwitchState aState)
+ {
+@@ -124,10 +169,14 @@ InternalSetAudioRoutesGB(SwitchState aState)
+ 
+   AudioSystem::setParameters(handle, cmd);
+ }
++#endif
+ 
+ static void
+ InternalSetAudioRoutes(SwitchState aState)
+ {
++#if ANDROID_VERSION >= 14
++  InternalSetAudioRoutesICS(aState);
++#else
+   if (static_cast<
+     status_t (*)(audio_devices_t, audio_policy_dev_state_t, const char*)
+     >(AudioSystem::setDeviceConnectionState)) {
+@@ -137,6 +186,7 @@ InternalSetAudioRoutes(SwitchState aState)
+     >(AudioSystem::getOutput)) {
+     InternalSetAudioRoutesGB(aState);
+   }
++#endif
+ }
+ 
+ nsresult
+@@ -206,6 +256,7 @@ AudioManager::AudioManager() : mPhoneState(PHONE_STATE_CURRENT),
+     NS_WARNING("Failed to add bluetooth-sco-status-changed oberver!");
+   }
+ 
++#if ANDROID_VERSION < 14
+   for (int loop = 0; loop < AUDIO_STREAM_CNT; loop++) {
+     AudioSystem::initStreamVolume(static_cast<audio_stream_type_t>(loop), 0,
+                                   sMaxStreamVolumeTbl[loop]);
+@@ -213,6 +264,9 @@ AudioManager::AudioManager() : mPhoneState(PHONE_STATE_CURRENT),
+   // Force publicnotification to output at maximal volume
+   AudioSystem::setStreamVolumeIndex(static_cast<audio_stream_type_t>(AUDIO_STREAM_ENFORCED_AUDIBLE),
+                                     sMaxStreamVolumeTbl[AUDIO_STREAM_ENFORCED_AUDIBLE]);
++#else
++#warning Unimplemented for ANDROID_VERSION >= 14
++#endif
+ }
+ 
+ AudioManager::~AudioManager() {
+@@ -262,10 +316,12 @@ AudioManager::SetMasterVolume(float aMasterVolume)
+     return NS_ERROR_FAILURE;
+   }
+ 
++#if 0
+   if (IsDeviceOn(AUDIO_DEVICE_OUT_FM) &&
+       AudioSystem::setFmVolume(aMasterVolume)) {
+     return NS_ERROR_FAILURE;
+   }
++#endif
+ 
+   return NS_OK;
+ }
+@@ -302,30 +358,26 @@ AudioManager::SetPhoneState(int32_t aState)
+     return NS_OK;
+   }
+ 
+-  if (AudioSystem::setPhoneState(aState)) {
++  if (AudioSystem::setPhoneState(static_cast<audio_mode_t>(aState))) {
+     return NS_ERROR_FAILURE;
+   }
+ 
+   mPhoneState = aState;
+ 
+-  if (mPhoneAudioAgent) {
+-    mPhoneAudioAgent->StopPlaying();
+-    mPhoneAudioAgent = nullptr;
+-  }
+-
+-  if (aState == PHONE_STATE_IN_CALL || aState == PHONE_STATE_RINGTONE) {
+-    mPhoneAudioAgent = do_CreateInstance("@mozilla.org/audiochannelagent;1");
+-    MOZ_ASSERT(mPhoneAudioAgent);
+-    if (aState == PHONE_STATE_IN_CALL) {
++  if (aState == PHONE_STATE_IN_CALL) {
++    if (!mPhoneAudioAgent) {
++      mPhoneAudioAgent = do_CreateInstance("@mozilla.org/audiochannelagent;1");
++      MOZ_ASSERT(mPhoneAudioAgent);
+       // Telephony doesn't be paused by any other channels.
+       mPhoneAudioAgent->Init(AUDIO_CHANNEL_TELEPHONY, nullptr);
+-    } else {
+-      mPhoneAudioAgent->Init(AUDIO_CHANNEL_RINGER, nullptr);
+-    }
+ 
+-    // Telephony can always play.
+-    bool canPlay;
+-    mPhoneAudioAgent->StartPlaying(&canPlay);
++      // Telephony can always play.
++      bool canPlay;
++      mPhoneAudioAgent->StartPlaying(&canPlay);
++    }
++  } else if (mPhoneAudioAgent) {
++    mPhoneAudioAgent->StopPlaying();
++    mPhoneAudioAgent = nullptr;
+   }
+ 
+   return NS_OK;
+@@ -350,6 +402,10 @@ AudioManager::SetForceForUse(int32_t aUsage, int32_t aForce)
+     aForce = nsIAudioManager::FORCE_BT_SCO;
+   }
+ 
++#if ANDROID_VERSION >= 14
++  status = AudioSystem::setForceUse((audio_policy_force_use_t)aUsage,
++                                    (audio_policy_forced_cfg_t)aForce);
++#else
+   if (static_cast<
+       status_t (*)(AudioSystem::force_use, AudioSystem::forced_config)
+       >(AudioSystem::setForceUse)) {
+@@ -363,12 +419,16 @@ AudioManager::SetForceForUse(int32_t aUsage, int32_t aForce)
+     status = AudioSystem::setForceUse((audio_policy_force_use_t)aUsage,
+                                       (audio_policy_forced_cfg_t)aForce);
+   }
++#endif
+ 
+   return status ? NS_ERROR_FAILURE : NS_OK;
+ }
+ 
+ NS_IMETHODIMP
+ AudioManager::GetForceForUse(int32_t aUsage, int32_t* aForce) {
++#if ANDROID_VERSION >= 14
++    *aForce = AudioSystem::getForceUse((audio_policy_force_use_t)aUsage);
++#else
+   if (static_cast<
+       AudioSystem::forced_config (*)(AudioSystem::force_use)
+       >(AudioSystem::getForceUse)) {
+@@ -380,6 +440,7 @@ AudioManager::GetForceForUse(int32_t aUsage, int32_t* aForce) {
+     // Dynamically resolved the ICS signature.
+     *aForce = AudioSystem::getForceUse((audio_policy_force_use_t)aUsage);
+   }
++#endif
+   return NS_OK;
+ }
+ 
+@@ -393,6 +454,7 @@ AudioManager::GetFmRadioAudioEnabled(bool *aFmRadioAudioEnabled)
+ NS_IMETHODIMP
+ AudioManager::SetFmRadioAudioEnabled(bool aFmRadioAudioEnabled)
+ {
++#if ANDROID_VERSION < 14
+   if (static_cast<
+       status_t (*) (AudioSystem::audio_devices, AudioSystem::device_connection_state, const char *)
+       >(AudioSystem::setDeviceConnectionState)) {
+@@ -403,28 +465,31 @@ AudioManager::SetFmRadioAudioEnabled(bool aFmRadioAudioEnabled)
+     // sync volume with music after powering on fm radio
+     if (aFmRadioAudioEnabled) {
+       int32_t volIndex = 0;
+-      AudioSystem::getStreamVolumeIndex(static_cast<audio_stream_type_t>(AUDIO_STREAM_MUSIC), &volIndex);
+-      AudioSystem::setStreamVolumeIndex(static_cast<audio_stream_type_t>(AUDIO_STREAM_FM), volIndex);
++      AudioSystem::getStreamVolumeIndex(static_cast<audio_stream_type_t>(AUDIO_STREAM_MUSIC), &volIndex DEFAULT_AUDIO_DEVICE_OUT_ARG);
++      AudioSystem::setStreamVolumeIndex(static_cast<audio_stream_type_t>(AUDIO_STREAM_FM), volIndex DEFAULT_AUDIO_DEVICE_OUT_ARG);
+     }
+     return NS_OK;
+-  } else {
+-    return NS_ERROR_NOT_IMPLEMENTED;
+   }
++#endif
++
++  return NS_ERROR_NOT_IMPLEMENTED;
+ }
+ 
+ NS_IMETHODIMP
+ AudioManager::SetStreamVolumeIndex(int32_t aStream, int32_t aIndex) {
+   status_t status =
+-    AudioSystem::setStreamVolumeIndex(static_cast<audio_stream_type_t>(aStream), aIndex);
++      AudioSystem::setStreamVolumeIndex(static_cast<audio_stream_type_t>(aStream), aIndex DEFAULT_AUDIO_DEVICE_OUT_ARG);
+ 
++#if ANDROID_VERSION < 14
+   // sync the fm stream volume with music volume, except set fm volume by audioChannelServices
+   if (aStream == AUDIO_STREAM_FM && IsDeviceOn(AUDIO_DEVICE_OUT_FM)) {
+     mFMChannelIsMuted = aIndex == 0;
+   }
+   // sync fm volume with music stream type
+   if (aStream == AUDIO_STREAM_MUSIC && IsDeviceOn(AUDIO_DEVICE_OUT_FM) && !mFMChannelIsMuted) {
+-    AudioSystem::setStreamVolumeIndex(static_cast<audio_stream_type_t>(AUDIO_STREAM_FM), aIndex);
++    AudioSystem::setStreamVolumeIndex(static_cast<audio_stream_type_t>(AUDIO_STREAM_FM), aIndex DEFAULT_AUDIO_DEVICE_OUT_ARG);
+   }
++#endif
+ 
+   return status ? NS_ERROR_FAILURE : NS_OK;
+ }
+@@ -432,7 +497,7 @@ AudioManager::SetStreamVolumeIndex(int32_t aStream, int32_t aIndex) {
+ NS_IMETHODIMP
+ AudioManager::GetStreamVolumeIndex(int32_t aStream, int32_t* aIndex) {
+   status_t status =
+-    AudioSystem::getStreamVolumeIndex(static_cast<audio_stream_type_t>(aStream), aIndex);
++    AudioSystem::getStreamVolumeIndex(static_cast<audio_stream_type_t>(aStream), aIndex DEFAULT_AUDIO_DEVICE_OUT_ARG);
+   return status ? NS_ERROR_FAILURE : NS_OK;
+ }
+ 
+diff --git a/gfx/gl/GLContextProviderEGL.cpp b/gfx/gl/GLContextProviderEGL.cpp
+index 5e96d41..55f30a4 100644
+--- a/gfx/gl/GLContextProviderEGL.cpp
++++ b/gfx/gl/GLContextProviderEGL.cpp
+@@ -274,6 +274,7 @@ public:
+         printf_stderr("Initializing context %p surface %p on display %p\n", mContext, mSurface, EGL_DISPLAY());
+ #endif
+ #ifdef MOZ_WIDGET_GONK
++#if ANDROID_VERSION < 14
+         if (!mIsOffscreen) {
+             mHwc = HwcComposer2D::GetInstance();
+             MOZ_ASSERT(!mHwc->Initialized());
+@@ -283,6 +284,9 @@ public:
+                 mHwc = nullptr;
+             }
+         }
++#else
++#warning HWComposer disabled on Android 4.2 for B2G; fixme!
++#endif
+ #endif
+     }
+ 
+@@ -1108,7 +1112,7 @@ PixelFormatForImage(gfxASurface::gfxImageFormat aFormat)
+     case gfxASurface::ImageFormatRGB16_565:
+         return PIXEL_FORMAT_RGB_565;
+     case gfxASurface::ImageFormatA8:
+-        return PIXEL_FORMAT_L_8;
++        return PIXEL_FORMAT_A_8;
+     default:
+         MOZ_NOT_REACHED("Unknown gralloc pixel format for Image format");
+     }
+@@ -1119,7 +1123,7 @@ static gfxASurface::gfxContentType
+ ContentTypeForPixelFormat(PixelFormat aFormat)
+ {
+     switch (aFormat) {
+-    case PIXEL_FORMAT_L_8:
++    case PIXEL_FORMAT_A_8:
+         return gfxASurface::CONTENT_ALPHA;
+     case PIXEL_FORMAT_RGBA_8888:
+         return gfxASurface::CONTENT_COLOR_ALPHA;
+diff --git a/hal/gonk/GonkHal.cpp b/hal/gonk/GonkHal.cpp
+index 97973bc8..9dc0c73 100644
+--- a/hal/gonk/GonkHal.cpp
++++ b/hal/gonk/GonkHal.cpp
+@@ -547,7 +547,9 @@ GetScreenEnabled()
+ void
+ SetScreenEnabled(bool enabled)
+ {
++#if 0
+   set_screen_state(enabled);
++#endif
+   sScreenEnabled = enabled;
+ }
+ 
+diff --git a/media/omx-plugin/Makefile.in b/media/omx-plugin/Makefile.in
+index ece14c6..7de54a3 100644
+--- a/media/omx-plugin/Makefile.in
++++ b/media/omx-plugin/Makefile.in
+@@ -59,11 +59,10 @@ INCLUDES        += \
+                 -I$(ANDROID_SOURCE)/frameworks/base/include/ \
+                 -I$(ANDROID_SOURCE)/frameworks/base/include/binder/ \
+                 -I$(ANDROID_SOURCE)/frameworks/base/include/utils/ \
+-                -I$(ANDROID_SOURCE)/frameworks/base/include/media/ \
+-                -I$(ANDROID_SOURCE)/frameworks/base/include/media/stagefright/openmax \
+-                -I$(ANDROID_SOURCE)/frameworks/base/media/libstagefright/include \
+-                -I$(ANDROID_SOURCE)/frameworks/base/native/include \
+-                -I$(ANDROID_SOURCE)/system/core/include \
++                -I$(ANDROID_SOURCE)/frameworks/native/include/media/openmax \
++                -I$(ANDROID_SOURCE)/frameworks/av/include/media/ \
++                -I$(ANDROID_SOURCE)/frameworks/av/include/media/stagefright \
++                -I$(ANDROID_SOURCE)/frameworks/av/media/libstagefright/include \
+                 -I$(ANDROID_SOURCE)/hardware/libhardware/include \
+                 $(NULL)
+ else
+diff --git a/netwerk/protocol/device/gonk/CameraHardwareInterface.h b/netwerk/protocol/device/gonk/CameraHardwareInterface.h
+index c60739c..865a5df 100644
+--- a/netwerk/protocol/device/gonk/CameraHardwareInterface.h
++++ b/netwerk/protocol/device/gonk/CameraHardwareInterface.h
+@@ -19,7 +19,7 @@
+ 
+ #include <binder/IMemory.h>
+ #include <utils/RefBase.h>
+-#include <surfaceflinger/ISurface.h>
++#include <gui/ISurface.h>
+ #include "Camera.h"
+ #include "CameraParameters.h"
+ 
+diff --git a/toolkit/library/Makefile.in b/toolkit/library/Makefile.in
+index afaa25b..6f7f4e4 100644
+--- a/toolkit/library/Makefile.in
++++ b/toolkit/library/Makefile.in
+@@ -458,6 +458,7 @@ OS_LIBS += \
+   -lstagefright_omx \
+   -lbinder \
+   -lgui \
++  -lz \
+   $(NULL)
+ endif
+ 
+diff --git a/widget/gonk/HWComposer.cpp b/widget/gonk/HWComposer.cpp
+index 12f90a3..caa934c 100644
+--- a/widget/gonk/HWComposer.cpp
++++ b/widget/gonk/HWComposer.cpp
+@@ -19,6 +19,11 @@
+ #include <hardware/hardware.h>
+ #include <EGL/egl.h>
+ 
++#if ANDROID_VERSION >= 14
++#define LOGW_IF ALOGW_IF
++#define LOGE_IF ALOGE_IF
++#endif
++
+ namespace android {
+ // ---------------------------------------------------------------------------
+ 
+diff --git a/widget/gonk/libui/InputDispatcher.cpp b/widget/gonk/libui/InputDispatcher.cpp
+index 3ec3727..965c075 100644
+--- a/widget/gonk/libui/InputDispatcher.cpp
++++ b/widget/gonk/libui/InputDispatcher.cpp
+@@ -53,7 +53,7 @@
+ 
+ #include "InputDispatcher.h"
+ 
+-#include <ui/PowerManager.h>
++#include <androidfw/PowerManager.h>
+ 
+ #include <stddef.h>
+ #include <unistd.h>
+@@ -63,6 +63,12 @@
+ #define INDENT "  "
+ #define INDENT2 "    "
+ 
++
++#define USER_ACTIVITY_EVENT_OTHER  POWER_MANAGER_OTHER_EVENT  
++#define USER_ACTIVITY_EVENT_BUTTON  POWER_MANAGER_BUTTON_EVENT 
++#define USER_ACTIVITY_EVENT_TOUCH  POWER_MANAGER_TOUCH_EVENT  
++
++
+ namespace android {
+ 
+ // Default input dispatching timeout if there is no focused application or paused window
+diff --git a/widget/gonk/nsWindow.cpp b/widget/gonk/nsWindow.cpp
+index 3bdcd95..e0b8c4b 100644
+--- a/widget/gonk/nsWindow.cpp
++++ b/widget/gonk/nsWindow.cpp
+@@ -22,6 +22,9 @@
+ 
+ #include "android/log.h"
+ #include "ui/FramebufferNativeWindow.h"
++#if ANDROID_VERSION >= 14
++#include "ui/PixelFormat.h"
++#endif
+ 
+ #include "mozilla/dom/TabParent.h"
+ #include "mozilla/Hal.h"
+@@ -735,12 +738,12 @@ static uint32_t
+ ColorDepth()
+ {
+     switch (NativeWindow()->getDevice()->format) {
+-    case GGL_PIXEL_FORMAT_RGB_565:
++    case android::PIXEL_FORMAT_RGB_565:
+         return 16;
+-    case GGL_PIXEL_FORMAT_RGBA_8888:
++    case android::PIXEL_FORMAT_RGBA_8888:
+         return 32;
+     }
+-    return 24; // GGL_PIXEL_FORMAT_RGBX_8888
++    return 24; // PIXEL_FORMAT_RGBX_8888
+ }
+ 
+ NS_IMETHODIMP

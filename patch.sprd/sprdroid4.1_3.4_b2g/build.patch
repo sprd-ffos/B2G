@@ -1,0 +1,21 @@
+diff --git a/target/product/full_base.mk b/target/product/full_base.mk
+index 6a702da..0b497fa 100644
+--- a/target/product/full_base.mk
++++ b/target/product/full_base.mk
+@@ -20,9 +20,6 @@
+ # in inherited configurations.
+ 
+ PRODUCT_PACKAGES := \
+-    drmserver \
+-    libdrmframework \
+-    libdrmframework_jni \
+     libfwdlockengine \
+     OpenWnn \
+     PinyinIME \
+@@ -62,3 +59,6 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/locales_full.mk)
+ 
+ # Get everything else from the parent package
+ $(call inherit-product, $(SRC_TARGET_DIR)/product/generic_no_telephony.mk)
++
++# B2G
++$(call inherit-product, gonk-misc/b2g.mk)

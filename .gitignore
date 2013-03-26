@@ -25,6 +25,7 @@ gonk-misc/
 hardware/
 kernel/
 libcore/
+libnativehelper/
 librecovery/
 ndk/
 objdir-gecko*/

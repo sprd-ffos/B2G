@@ -1,0 +1,5 @@
+build     : build.patch
+gecko     : gecko.patch
+device/sprd : device.patch
+frameworks/native : frameworks_native.patch
+rilproxy : rilproxy.patch
