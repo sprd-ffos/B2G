@@ -1,3 +1,5 @@
 build     : build.patch
 gaia      : gaia.patch
 gecko     : gecko.patch
+gecko     : incoming_call.patch
+external/moztt : no_chinese.patch

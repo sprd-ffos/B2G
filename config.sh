@@ -58,25 +58,25 @@ echo DEVICE_NAME=$1 >> .tmp-config
 case "$1" in
 "tara")
 	echo DEVICE=sp8810ea >> .tmp-config &&
-	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
+	echo LUNCH=sp8810eabase-userdebug >> .tmp-config &&
 	repo_sync tara4.0.3_vlx_3.0_b2g
 	;;
 
 "tara_512x256_hvga")
 	echo DEVICE=sp8810ea_512x256_hvga>> .tmp-config &&
-	echo LUNCH=sp8810eabase_512x256_hvga-eng >> .tmp-config &&
+	echo LUNCH=sp8810eabase_512x256_hvga-userdebug >> .tmp-config &&
 	repo_sync tara4.0.3_vlx_3.0_b2g
 	;;
 
 "mozilla_weekly_build")
 	echo DEVICE=sp8810ea >> .tmp-config &&
-	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
+	echo LUNCH=sp8810eabase-userdebug >> .tmp-config &&
 	repo_sync nightly4.0.3_vlx_3.0_b2g
 	;;
 
 "mozilla_weekly_build_512x256_hvga")
 	echo DEVICE=sp8810ea_512x256_hvga>> .tmp-config &&
-	echo LUNCH=sp8810eabase_512x256_hvga-eng >> .tmp-config &&
+	echo LUNCH=sp8810eabase_512x256_hvga-userdebug >> .tmp-config &&
 	repo_sync nightly4.0.3_vlx_3.0_b2g
 	;;
 
@@ -88,73 +88,73 @@ case "$1" in
 
 "sp8825eabase")
        echo DEVICE=sp8825ea >> .tmp-config &&
-       echo LUNCH=sp8825eabase-eng >> .tmp-config &&
+       echo LUNCH=sp8825eabase-userdebug >> .tmp-config &&
        repo_sync sprdroid4.0.3_vlx_3.0_b2g
        ;;
 
 "sp8825eaplus")
        echo DEVICE=sp8825ea >> .tmp-config &&
-       echo LUNCH=sp8825eaplus-eng >> .tmp-config &&
+       echo LUNCH=sp8825eaplus-userdebug >> .tmp-config &&
        repo_sync sprdroid4.0.3_vlx_3.0_b2g
        ;;
 
 "sp8810eabase_gonk_update")
 	echo DEVICE=sp8810ea >> .tmp-config &&
-	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
+	echo LUNCH=sp8810eabase-userdebug >> .tmp-config &&
 	repo_sync sprdroid4.0.3_vlx_3.0_gonkupdate_temp
 	;;
 
 "sp8810eabase_mozilla_update")
 	echo DEVICE=sp8810ea >> .tmp-config &&
-	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
+	echo LUNCH=sp8810eabase-userdebug >> .tmp-config &&
 	repo_sync mozilla_update_temp
 	;;
 
 "sp8810eabase")
 	echo DEVICE=sp8810ea >> .tmp-config &&
-	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
+	echo LUNCH=sp8810eabase-userdebug >> .tmp-config &&
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
 "sp8810eaplus")
 	echo DEVICE=sp8810ea >> .tmp-config &&
-	echo LUNCH=sp8810eaplus-eng >> .tmp-config &&
+	echo LUNCH=sp8810eaplus-userdebug >> .tmp-config &&
 	repo_sync mozilla_mutisim4.0.3_vlx_3.0_b2g
 	;;
 
 "sp8810eabase_512x512_wvga")
 	echo DEVICE=sp8810ea_512x512_wvga>> .tmp-config &&
-	echo LUNCH=sp8810eabase_512x512_wvga-eng >> .tmp-config &&
+	echo LUNCH=sp8810eabase_512x512_wvga-userdebug >> .tmp-config &&
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
 "sp8810eabase_512x256_wvga")
 	echo DEVICE=sp8810ea_512x256_wvga>> .tmp-config &&
-	echo LUNCH=sp8810eabase_512x256_wvga-eng >> .tmp-config &&
+	echo LUNCH=sp8810eabase_512x256_wvga-userdebug >> .tmp-config &&
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
 "sp8810eabase_512x256_hvga")
 	echo DEVICE=sp8810ea_512x256_hvga>> .tmp-config &&
-	echo LUNCH=sp8810eabase_512x256_hvga-eng >> .tmp-config &&
+	echo LUNCH=sp8810eabase_512x256_hvga-userdebug >> .tmp-config &&
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
 "sp8810eabase_512x128_hvga")
 	echo DEVICE=sp8810ea_512x128_hvga>> .tmp-config &&
-	echo LUNCH=sp8810eabase_512x128_hvga-eng >> .tmp-config &&
+	echo LUNCH=sp8810eabase_512x128_hvga-userdebug >> .tmp-config &&
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
 "sp8810ebbase")
 	echo DEVICE=sp8810eb >> .tmp-config &&
-	echo LUNCH=sp8810ebbase-eng >> .tmp-config &&
+	echo LUNCH=sp8810ebbase-userdebug >> .tmp-config &&
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
 "sp8810ebplus")
 	echo DEVICE=sp8810eb >> .tmp-config &&
-	echo LUNCH=sp8810ebplus-eng >> .tmp-config &&
+	echo LUNCH=sp8810ebplus-userdebug >> .tmp-config &&
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
