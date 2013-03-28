@@ -27,12 +27,13 @@ then
     exit 0;
 fi
 
-cat $PLIST | grep -Po '\S+\s*:\s*\S+' | sed -e 's/ //g' | while read patch 
+cat $PLIST | grep -Po '^ *[^# ]+ *: *[^# ]+' | sed -e 's/ //g' | while read patch 
 do
     dir=${SCDIR}/../$(echo $patch | awk -F: '{print $1}')
     file=${BRDIR}/$(echo $patch | awk -F: '{print $2}')
-    #echo dir: =$dir=
-    #echo file: =$file=
+    echo dir: =$dir=
+    echo file: =$file=
+    continue
 
     if [ ! -d $dir ]
     then
