@@ -31,9 +31,9 @@ cat $PLIST | grep -Po '^ *[^# ]+ *: *[^# ]+' | sed -e 's/ //g' | while read patc
 do
     dir=${SCDIR}/../$(echo $patch | awk -F: '{print $1}')
     file=${BRDIR}/$(echo $patch | awk -F: '{print $2}')
-    echo dir: =$dir=
-    echo file: =$file=
-    continue
+    #echo dir: =$dir=
+    #echo file: =$file=
+    #continue
 
     if [ ! -d $dir ]
     then
