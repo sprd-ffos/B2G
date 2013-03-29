@@ -98,6 +98,12 @@ case "$1" in
        repo_sync sprdroid4.0.3_vlx_3.0_b2g
        ;;
 
+"sp8810eabase_4.0.3_vlx_3.0_track")
+	echo DEVICE=sp8810ea >> .tmp-config &&
+	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
+	repo_sync sprdroid4.0.3_vlx_3.0_track
+	;;
+
 "sp8810eabase_gonk_update")
 	echo DEVICE=sp8810ea >> .tmp-config &&
 	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
