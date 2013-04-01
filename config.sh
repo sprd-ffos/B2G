@@ -222,6 +222,7 @@ case "$1" in
 	echo - sp8825eabase_sprdroid4.1
 	echo - sp8825eabase
 	echo - sp8825eaplus
+	echo - sp8810eabase_4.0.3_vlx_3.0_track
 	echo - sp8810eabase_gonk_update
 	echo - sp8810eabase_mozilla_update
 	echo - sp8810eabase
