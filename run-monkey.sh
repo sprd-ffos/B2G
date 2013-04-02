@@ -3,11 +3,12 @@
 
 #ADB=./out/host/linux-x86/bin/adb
 ADB=adb
+FIND="$ADB shell busybox find"
 PCDIR=./monkey-tool
 DVCDIR=/data
 MTFILE=(orng script)
 SYMBDIR=./objdir-gecko/dist/crashreporter-symbols
-DMPDIR=/data/b2g/mozilla/*.default/minidumps
+DMPDIR=/data/b2g/mozilla
 DMPPRE=cr
 DUMPTOOL=./monkey-tool/minidump_stackwalk
 
@@ -47,7 +48,7 @@ done
 #push monkey test file
 for file in ${MTFILE[@]} ; do
     #maybe need some check...
-    [ -z $($ADB shell find ${DVCDIR} -name ${file}) ] || continue
+    [ -z $($FIND ${DVCDIR} -name ${file}) ] || continue
     [ -f ${PCDIR}/${file} ] || { echo ${PCDIR}/${file} does not exist; exit 1; }
         
     $ADB push ${PCDIR}/${file} ${DVCDIR}
@@ -68,10 +69,10 @@ do
     #check - is creashed
     while sleep 10
     do
-        files=($($ADB shell find $DMPDIR -name "*.dmp" -o -name "*.extra" | sed 's/\r//'))
+        file_cnt=$($FIND $DMPDIR -name "*.dmp" -o -name "*.extra" | wc -l)
         
         #if has dmp file, it means... crashed...
-        if [ ${#files[@]} -gt 0 ]
+        if [ $file_cnt -gt 0 ]
         then
             #gen time tag
             tag=${DMPPRE}$(date +%y%m%d%H%M$S)
@@ -79,12 +80,12 @@ do
             mkdir $tag
 
             #dump files
-            for file in ${files[@]}
+            $FIND $DMPDIR -name "*.dmp" -o -name "*.extra" | sed 's/\r//'| while read file
             do
                 #pull file
-                $ADB pull $file $tag
+                $ADB pull "$file" $tag
                 #delete dmp file
-                $ADB shell rm $file
+                $ADB shell rm "$file"
             done
 
             $DUMPTOOL ${tag}/*.dmp $SYMBDIR > ${tag}/dump_parse
