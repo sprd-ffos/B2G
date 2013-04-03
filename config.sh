@@ -191,7 +191,7 @@ case "$1" in
 
 "otoro"|"unagi")
 	echo DEVICE=$1 >> .tmp-config &&
-	repo_sync $1
+	repo_sync unagi_weekly_build
 	;;
 
 "pandaboard")
@@ -227,12 +227,8 @@ case "$1" in
 	echo - sp8810eabase_mozilla_update
 	echo - sp8810eabase
 	echo - sp8810eaplus
-	echo - sp8810eabase_512x512_wvga
-	echo - sp8810eabase_512x256_wvga
 	echo - sp8810eabase_512x256_hvga
 	echo - sp8810eabase_512x128_hvga
-	echo - sp8810ebbase
-	echo - sp8810ebplus
 	echo - galaxy-s2
 	echo - galaxy-nexus
 	echo - nexus-s

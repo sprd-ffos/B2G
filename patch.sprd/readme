@@ -3,6 +3,16 @@
 run script patch.sh
 patch.sh branch-name
 
+You can patch the follow type patches. If there is the list file, then the script would do the patching.
+
+1. patch git patches
+
 Edit the *patch.list* file in the "branch-name" folder, the script will follow the *patch.list* to patch.
 
 In the patch.list, one patch per-line, like the mode "git-dir: patch-file". For friendly reading, you can add some space as you like, but *not* use "tab" key, or the line will be droped.
+
+the "dir" is raletive to the "B2G" folder.
+
+2. copy files
+
+Edit the *copy.list* file in the "branch-name" folder, the details are same to patch.

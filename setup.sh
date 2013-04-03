@@ -2,9 +2,11 @@
 
 . load-config.sh
 
+KHEADER=1
 VARIANT=${VARIANT:-eng}
 if [ ! $LUNCH ];then
 LUNCH=${LUNCH:-full_${DEVICE}-${VARIANT}}
+KHEADER=0
 fi
 
 export USE_CCACHE=yes &&
@@ -24,4 +26,6 @@ echo rm -rf gaia/profile
 echo rm -rf gaia/profile.tar.gz
 rm -rf gaia/profile
 rm -rf gaia/profile.tar.gz
+if [ $KHEADER = "1" ];then
 kheader
+fi
