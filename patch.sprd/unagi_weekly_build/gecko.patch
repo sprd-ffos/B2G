@@ -1,0 +1,27 @@
+diff --git a/toolkit/xre/nsAppRunner.cpp b/toolkit/xre/nsAppRunner.cpp
+index e3dd0df..5ebe417 100644
+--- a/toolkit/xre/nsAppRunner.cpp
++++ b/toolkit/xre/nsAppRunner.cpp
+@@ -2972,6 +2972,7 @@ XREMain::XRE_mainInit(const nsXREAppData* aAppData, bool* aExitFlag)
+     return 1;
+ 
+ #ifdef MOZ_CRASHREPORTER
++  SaveToEnv("MOZ_CRASHREPORTER=1");
+   if (EnvHasValue("MOZ_CRASHREPORTER")) {
+     mAppData->flags |= NS_XRE_ENABLE_CRASH_REPORTER;
+   }
+diff --git a/widget/gonk/libui/InputReader.cpp b/widget/gonk/libui/InputReader.cpp
+index ea19c01..204afd7 100644
+--- a/widget/gonk/libui/InputReader.cpp
++++ b/widget/gonk/libui/InputReader.cpp
+@@ -5609,8 +5609,8 @@ void MultiTouchInputMapper::syncTouch(nsecs_t when, bool* outHavePointerIds) {
+         outPointer.tiltY = 0;
+ 
+         // Mozilla bug 739417
+-        if (!outPointer.touchMajor)
+-            continue;
++        //if (!outPointer.touchMajor)
++        //    continue;
+ 
+         outPointer.toolType = inSlot->getToolType();
+         if (outPointer.toolType == AMOTION_EVENT_TOOL_TYPE_UNKNOWN) {
