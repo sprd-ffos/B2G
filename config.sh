@@ -4,13 +4,8 @@ REPO=`which repo`
 #REPO=./repo
 
 repo_sync() {
-	if [ "$GITREPO" = "$GIT_TEMP_REPO" ]; then
-		BRANCH="master"
-	else
-		BRANCH=$1
-	fi
 	rm -rf .repo/manifest* &&
-	$REPO init -u $GITREPO -b $BRANCH &&
+	$REPO init -u $GITREPO -b $BRANCH -m $1.xml &&
 	$REPO sync
 	ret=$?
 	if [ "$GITREPO" = "$GIT_TEMP_REPO" ]; then
@@ -35,7 +30,7 @@ case `uname` in
 esac
 
 #GITREPO=${GITREPO:-"git://github.com/mozilla-b2g/b2g-manifest"}
-#BRANCH=${BRANCH:-master}
+BRANCH=${BRANCH:-sprdroid4.0.3_vlx_3.0_b2g}
 GITREPO="gitb2g@sprdroid.git.spreadtrum.com.cn:b2g/b2g-manifest"
 
 GIT_TEMP_REPO="tmp_manifest_repo"
@@ -71,13 +66,13 @@ case "$1" in
 "mozilla_weekly_build")
 	echo DEVICE=sp8810ea >> .tmp-config &&
 	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
-	repo_sync nightly4.0.3_vlx_3.0_b2g
+	repo_sync mozilla_weekly_build
 	;;
 
 "mozilla_weekly_build_512x256_hvga")
 	echo DEVICE=sp8810ea_512x256_hvga>> .tmp-config &&
 	echo LUNCH=sp8810eabase_512x256_hvga-eng >> .tmp-config &&
-	repo_sync nightly4.0.3_vlx_3.0_b2g
+	repo_sync mozilla_weekly_build
 	;;
 
 "sp8825eabase_sprdroid4.1")
@@ -191,7 +186,7 @@ case "$1" in
 
 "otoro"|"unagi"|"keon"|"inari"|"leo"|"hamachi")
 	echo DEVICE=$1 >> .tmp-config &&
-	repo_sync unagi_weekly_build
+	repo_sync $1
 	;;
 
 "pandaboard")
