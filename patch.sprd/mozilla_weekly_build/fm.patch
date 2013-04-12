@@ -1,0 +1,398 @@
+diff --git a/dom/fm/FMRadio.cpp b/dom/fm/FMRadio.cpp
+index 2e333f6..a746699 100644
+--- a/dom/fm/FMRadio.cpp
++++ b/dom/fm/FMRadio.cpp
+@@ -246,6 +246,7 @@ void FMRadio::Notify(const FMRadioOperationInformation& info)
+   {
+     case FM_RADIO_OPERATION_ENABLE:
+       DispatchTrustedEvent(RADIO_ENABLED_EVENT_NAME);
++      CanPlayChanged(true);
+       break;
+     case FM_RADIO_OPERATION_DISABLE:
+       DispatchTrustedEvent(RADIO_DIABLED_EVENT_NAME);
+diff --git a/hal/Makefile.in b/hal/Makefile.in
+index 05da4bc..d5484ec 100644
+--- a/hal/Makefile.in
++++ b/hal/Makefile.in
+@@ -62,8 +62,8 @@ CPPSRCS += \
+   GonkSensor.cpp \
+   UeventPoller.cpp \
+   GonkSwitch.cpp \
+-  GonkFMRadio.cpp \
+   $(NULL)
++CPPSRCS += GonkFMRadio_brcm.cpp
+ else ifeq (Linux,$(OS_TARGET))
+ CPPSRCS += \
+   LinuxPower.cpp \
+diff --git a/hal/gonk/GonkFMRadio_brcm.cpp b/hal/gonk/GonkFMRadio_brcm.cpp
+new file mode 100644
+index 0000000..b120b5a
+--- /dev/null
++++ b/hal/gonk/GonkFMRadio_brcm.cpp
+@@ -0,0 +1,366 @@
++/* Copyright 2012 Mozilla Foundation and Mozilla contributors
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#include "Hal.h"
++#include "tavarua.h"
++#include "nsThreadUtils.h"
++//#include "mozilla/FileUtils.h"
++
++#include <errno.h>
++#include <fcntl.h>
++#include <linux/videodev2.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++
++#include <hardware/fm.h>
++#include <android/log.h>
++#define LOGE(args...)  __android_log_print(ANDROID_LOG_ERROR, "GonkFMRadio" , ## args)
++
++#include<unistd.h>
++#define FMFIFO "/data/fmpseudopipe"
++
++namespace mozilla {
++namespace hal_impl {
++  /*
++   * Frequency conversions
++   	*
++   * HAL uses units of 1kHz for frequencies
++   * SPRD FM uses units of 100 kHz
++   * Dividing by 100 converts from HAL units to V4L2.
++   */
++#define FM_FREQ_CONVERSION		100
++#define FM_SEARCH_TIME_OUT		3000
++
++enum radio_state_t {
++	FM_OFF,
++	FM_RECV,
++	FM_TRANS,
++	FM_RESET,
++};
++
++uint32_t GetFMRadioFrequency();
++bool SetFMRadioVolumeIndex(int index);
++//static int sRadioFD;
++static bool sRadioEnabled;
++static pthread_t sRadioThread;
++static hal::FMRadioSettings sRadioSettings;
++//static int sTavaruaVersion;
++static hw_device_t* sFmDevice;
++static pthread_t sVolumeThread;
++
++static int
++setControl(int32_t id, int32_t value)
++{
++  fm_device_t* device = (fm_device_t *)sFmDevice;
++  if(NULL == device) {
++    LOGE("setControl device is null\n");
++    return 0;
++  }
++
++  if (!sRadioEnabled && V4L2_CID_PRIVATE_TAVARUA_STATE != id){
++    LOGE("setControl not avaliable id %d\n",id);
++    return 0;
++  }
++
++  LOGE("(setControl)enter\n");
++
++  int err = device->setControl(device,id,value);
++
++  LOGE("(setControl)operation=%x value=%d result=%d errno=%d\n", id, value, err, errno);
++
++  if (err < 0) {
++    return 0;
++  }
++
++  return 1;
++}
++
++class RadioUpdate : public nsRunnable {
++  hal::FMRadioOperation mOp;
++  hal::FMRadioOperationStatus mStatus;
++public:
++  RadioUpdate(hal::FMRadioOperation op, hal::FMRadioOperationStatus status)
++    : mOp(op)
++    , mStatus(status)
++  {}
++
++  NS_IMETHOD Run() {
++    hal::FMRadioOperationInformation info;
++    info.operation() = mOp;
++    info.status() = mStatus;
++    info.frequency() = GetFMRadioFrequency();
++    hal::NotifyFMRadioStatus(info);
++    return NS_OK;
++  }
++};
++
++/* Runs on the radio thread */
++static void
++initTavaruaRadio(hal::FMRadioSettings &aInfo)
++{
++  int rc = setControl(V4L2_CID_PRIVATE_TAVARUA_STATE, FM_RECV);
++
++  if (rc < 1) {
++     LOGE("Unable to turn on radio |%s|", strerror(errno));
++     return;
++  }
++
++  sRadioEnabled = true;
++}
++
++static void *
++runVolumeSet(void *)
++{
++  int fd = -1;
++  int volume = 0;
++  int result = -1;
++
++  LOGE("%s\n",__FUNCTION__);
++
++  if (mkfifo(FMFIFO,S_IFIFO|0666) <0) {
++    if (errno != EEXIST) {
++      LOGE("%s create fm fifo error %d \n",__FUNCTION__,strerror(errno));
++      return NULL;
++    }
++  }
++
++  fd = open(FMFIFO,O_RDONLY);
++  if (fd == -1) {
++    LOGE("%s open FM FIFO error %d\n",__FUNCTION__,strerror(errno));
++    return NULL;
++  }
++
++  while (volume != -1) {
++    result = read(fd,&volume,sizeof(int));
++    if (result >0) {
++      SetFMRadioVolumeIndex(volume);
++    }
++  }
++
++  LOGE("exit from voluem thread");
++
++  close(fd);
++  unlink(FMFIFO);
++  pthread_exit(NULL);
++  return NULL;
++}
++
++/* Runs on the radio thread */
++static void *
++runTavaruaRadio(void *)
++{
++  initTavaruaRadio(sRadioSettings);
++  if (!sRadioEnabled) {
++    NS_DispatchToMainThread(new RadioUpdate(hal::FM_RADIO_OPERATION_ENABLE,
++					    hal::FM_RADIO_OPERATION_STATUS_FAIL));
++  } else {
++    //notify gecko already init radio device
++    NS_DispatchToMainThread(
++	new RadioUpdate(hal::FM_RADIO_OPERATION_ENABLE,
++			hal::FM_RADIO_OPERATION_STATUS_SUCCESS));
++  }
++
++  HAL_LOG(("runTavaruaRadio sRadioEnabled is %d",sRadioEnabled));
++
++  return NULL;
++}
++
++/* This runs on the main thread but most of the
++ * initialization is pushed to the radio thread. */
++void
++EnableFMRadio(const hal::FMRadioSettings& aInfo)
++{
++  if (sRadioEnabled) {
++    HAL_LOG(("Radio already enabled!"));
++    return;
++  }
++  LOGE("EnableFMRadio");
++
++  int err;
++  hw_module_t* module;
++  hw_device_t* device;
++
++  if (sRadioEnabled) {
++    HAL_LOG(("Radio already enabled!"));
++    return;
++  }
++  err = hw_get_module(FM_HARDWARE_MODULE_ID, (hw_module_t const**)&module);
++  LOGE("acquire:hw_get_module:result=%d",err);
++
++  if (err == 0) {
++    err = module->methods->open(module, FM_HARDWARE_MODULE_ID, &device);
++    LOGE("acquire:hw_get_device:result=%d",err);
++  }
++
++  if( err == 0) {
++    sFmDevice = device;
++    sRadioSettings = aInfo;
++
++    // Tavarua specific start
++    //sTavaruaVersion = cap.version;
++    pthread_create(&sRadioThread, NULL, runTavaruaRadio, NULL);
++    pthread_create(&sVolumeThread, NULL, runVolumeSet, NULL);
++
++    // Tavarua specific end
++    } else {
++      NS_DispatchToMainThread(new RadioUpdate(hal::FM_RADIO_OPERATION_ENABLE,
++					      hal::FM_RADIO_OPERATION_STATUS_FAIL));
++    }
++}
++
++void
++CancelVolumeThread() {
++  int fifo_id = open(FMFIFO ,O_WRONLY|O_NONBLOCK);
++  int buff = -1; //write pipe -1 to nofity volume thread quit
++
++  write(fifo_id,&buff,sizeof(int));
++  close(fifo_id);
++
++  pthread_join(sVolumeThread, NULL);
++}
++
++void
++DisableFMRadio()
++{
++  LOGE("DisableFMRadio\n");
++
++  if( NULL == sFmDevice ){
++    return ;
++  }
++
++  // Tavarua specific start
++  int rc = setControl(V4L2_CID_PRIVATE_TAVARUA_STATE, FM_OFF);
++  if (rc <= 0) {
++    HAL_LOG(("Unable to turn off radio"));
++  }
++  // Tavarua specific end
++  pthread_join(sRadioThread, NULL);
++  CancelVolumeThread();
++  sFmDevice->close(sFmDevice);
++  sFmDevice = NULL;
++  sRadioEnabled = false;
++	
++  hal::FMRadioOperationInformation info;
++  info.operation() = hal::FM_RADIO_OPERATION_DISABLE;
++  info.status() = hal::FM_RADIO_OPERATION_STATUS_SUCCESS;
++  info.frequency() = 0;
++  hal::NotifyFMRadioStatus(info);
++}
++void
++FMRadioSeek(const hal::FMRadioSeekDirection& aDirection)
++{
++  LOGE("FMRadioSeek\n");
++  fm_device_t* device = (fm_device_t *)sFmDevice;
++  if(NULL == device ){
++    return ;
++  }
++
++  int freq = 0;
++  freq = GetFMRadioFrequency()/FM_FREQ_CONVERSION; //start frequency
++  int dir =  hal::FMRadioSeekDirection::FM_RADIO_SEEK_DIRECTION_UP;
++  //hal direction is reverse as sprd fm direction
++  if ( aDirection == hal::FMRadioSeekDirection::FM_RADIO_SEEK_DIRECTION_UP ) {
++    dir = hal::FMRadioSeekDirection::FM_RADIO_SEEK_DIRECTION_DOWN;
++  } else {
++    dir = hal::FMRadioSeekDirection::FM_RADIO_SEEK_DIRECTION_UP;
++  }
++
++  int reserve = 0;
++
++  int err = device->startSearch(device,freq,dir,FM_SEARCH_TIME_OUT,reserve);
++
++  LOGE("(seek)freq=%d direction=%d timeout=%d reserve=%d result=%d \n", freq, dir, FM_SEARCH_TIME_OUT, reserve, err);
++  if (err >= 0) {
++     NS_DispatchToMainThread(
++	new RadioUpdate(hal::FM_RADIO_OPERATION_SEEK,
++			hal::FM_RADIO_OPERATION_STATUS_SUCCESS));
++  }
++}
++
++void
++GetFMRadioSettings(hal::FMRadioSettings* aInfo)
++{
++  if (!sRadioEnabled || NULL == aInfo) {
++    return;
++  }
++
++  aInfo->upperLimit() = sRadioSettings.upperLimit();
++  aInfo->lowerLimit() = sRadioSettings.lowerLimit();
++}
++
++void
++SetFMRadioFrequency(const uint32_t frequency)
++{
++  fm_device_t* device = (fm_device_t *)sFmDevice;
++  if( NULL == device ){
++    return  ;
++  }
++
++  int err = device->setFreq(device,frequency/FM_FREQ_CONVERSION);
++  LOGE("(setFreq)frequency=%d result=%d\n", frequency, err);
++}
++
++uint32_t
++GetFMRadioFrequency()
++{
++  fm_device_t* device = (fm_device_t *)sFmDevice;
++  if( NULL == device ){
++    return 0;
++  }
++  int freq = -1;
++
++  int err = device->getFreq(device,&freq);
++
++  LOGE("(getFreq)result=%d freq=%d\n", err, freq);
++
++  if(err < 0){
++    return 0;
++  }
++  return freq*FM_FREQ_CONVERSION;
++}
++
++bool
++IsFMRadioOn()
++{
++  return sRadioEnabled;
++}
++
++uint32_t
++GetFMRadioSignalStrength()
++{
++  //no implement
++  return 0;
++}
++
++void
++CancelFMRadioSeek()
++{
++  fm_device_t* device = (fm_device_t *)sFmDevice;
++  if( NULL == device ){
++    return ;
++  }
++  device->cancelSearch(device);
++}
++
++bool
++SetFMRadioVolumeIndex(int index)
++{
++  return setControl(V4L2_CID_AUDIO_VOLUME,index);
++}
++
++} // hal_impl
++} // namespace mozilla
