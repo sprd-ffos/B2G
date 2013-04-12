@@ -53,18 +53,22 @@ do
     shift
 done
 
+#if you want to change the rate if each command
+#you can simply set more the command in the array
+#such as more tap and no sleep
+#CMDS=(tap tap tap tap tap tap drag drag pinch)
 CMDS=(tap drag pinch sleep)
 
 for((i=0;i<$STEPS;i++))
 do
-    cmd=${CMDS[$(( $RANDOM % 4 ))]}
+    cmd=${CMDS[$(( $RANDOM % ${#CMDS[@]} ))]}
     case $cmd in
     tap)
         #tap x y step duration
         x=$(( $RANDOM % $MAXW ))
         y=$(( $RANDOM % $MAXH ))
         tap=$(( $RANDOM % 3 + 1 ))
-        dur=$(( $RANDOM % 500 + 50 ))
+        dur=$(( $RANDOM % 500 + 100 ))
         echo $cmd $x $y $tap $dur 
         ;;
     drag)
@@ -93,7 +97,7 @@ do
         ;;
     sleep)
         #sleep duration
-        dur=$(( $RANDOM % 1000 + 50 ))
+        dur=$(( $RANDOM % 1000 + 1000 ))
         echo $cmd $dur 
         ;;
     *)

@@ -6,6 +6,7 @@
 *.pyc
 *.fix_b2g_stack.cache
 Adreno*
+mtlog*
 Makefile
 abi/
 backup-*/

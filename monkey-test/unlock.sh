@@ -52,20 +52,16 @@ done
 
 while true 
 do
-    $ADB shell cat /sys/power/wait_for_fb_sleep > /dev/null 2>&1 
-    [ $? -ne 0 ] && exit 1
     $ADB shell sendevent $KEYDEV 1 $POWERKEY 1 > /dev/null 2>&1 
     [ $? -ne 0 ] && exit 1
     $ADB shell sendevent $KEYDEV 0 0 0 > /dev/null 2>&1 
-    [ $? -ne 0 ] && exit 1
     $ADB shell sendevent $KEYDEV 1 $POWERKEY 0 > /dev/null 2>&1 
-    [ $? -ne 0 ] && exit 1
     $ADB shell sendevent $KEYDEV 0 0 0 > /dev/null 2>&1 
-    [ $? -ne 0 ] && exit 1
     for((i=0;i<2;i++))
     do
         sleep 1
         $ADB shell /data/orng $TSDEV /data/unlock_${VGA}.sc > /dev/null 2>&1 
-        [ $? -ne 0 ] && exit 1
     done
+    $ADB shell cat /sys/power/wait_for_fb_sleep > /dev/null 2>&1 
+    [ $? -ne 0 ] && exit 1
 done

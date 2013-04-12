@@ -8,11 +8,13 @@
 
 #set $BUSYBOX
 . ./set_busybox.sh
+. ./set_gsnap.sh
 ADB=adb
 FIND="$ADB shell $BUSYBOX find"
 DMPDIR=/data/b2g/mozilla
 DUMPTOOL=./bin/minidump_stackwalk
 SYMBDIR=../objdir-gecko/dist/crashreporter-symbols
+LOGHEAD=mtlog
 
 #options
 DEV=dev
@@ -58,9 +60,13 @@ then
     exit 1
 fi
 #gen time tag
-tag=${DEV}-${USR}-$(date +%y%m%d%H%M$S)
+tag=${LOGHEAD}-${DEV}-${USR}-$(date +%y%m%d%H%M$S)
 
 mkdir $tag
+
+#ganap
+$ADB shell $GSNAP /data/snapshot.jpg /dev/graphics/fb0
+$ADB pull /data/snapshot.jpg $tag
 
 #dump files
 $FIND $DMPDIR -name "*.dmp" -o -name "*.extra" | sed 's/\r//'| while read file

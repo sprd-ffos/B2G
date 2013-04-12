@@ -1,5 +1,5 @@
 1 copy /test folder to the /B2g folder
 2 chdir to /test
 3 run run_test.sh with the config file, such as 
-        ./run_test.sh tara.config
+        ./run_test.sh --config tara.config
 4 the buildsymbols must make by yourself

@@ -11,13 +11,13 @@ while true
 do
     #test defined busybox or system busybox, if one has?
     foo=${BUSYBOX:=busybox}
-    foo=$($ADB shell $BUSYBOX echo 9527 | grep "9527")
-    [ $? -eq 0 ] && break
+    foo=$($ADB shell $BUSYBOX | grep ": not found")
+    [ $? -eq 0 ] || break
 
     #test /data/busybox, has?
     BUSYBOX=/data/busybox
-    foo=$($ADB shell $BUSYBOX echo 9527 | grep "9527")
-    [ $? -eq 0 ] && break
+    foo=$($ADB shell $BUSYBOX | grep ": not found")
+    [ $? -eq 0 ] || break
 
     #no busybox, push one to /data
     $ADB push ./bin/busybox /data
