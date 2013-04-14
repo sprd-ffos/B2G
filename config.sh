@@ -123,6 +123,12 @@ case "$1" in
 	repo_sync mozilla_mutisim4.0.3_vlx_3.0_b2g
 	;;
 
+"sp8810eabase_android")
+	echo DEVICE=sp8810eabase_android >> .tmp-config &&
+	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
+	repo_sync manifest.W13.11.2-010325.xml
+	;;
+
 "sp8810eabase_512x512_wvga")
 	echo DEVICE=sp8810ea_512x512_wvga>> .tmp-config &&
 	echo LUNCH=sp8810eabase_512x512_wvga-eng >> .tmp-config &&
@@ -210,26 +216,25 @@ case "$1" in
 	echo Usage: $0 \(device name\)
 	echo
 	echo Valid devices to configure are:
-	echo - tara
-	echo - tara_512x256_hvga
-	echo - mozilla_weekly_build
-	echo - mozilla_weekly_build_512x256_hvga
-	echo - sp8825eabase_sprdroid4.1
-	echo - sp8825eabase
-	echo - sp8825eaplus
-	echo - sp8810eabase_4.0.3_vlx_3.0_track
-	echo - sp8810eabase_gonk_update
-	echo - sp8810eabase_mozilla_update
-	echo - sp8810eabase
-	echo - sp8810eaplus
-	echo - sp8810eabase_512x256_hvga
-	echo - sp8810eabase_512x128_hvga
+	echo - tara =================================== Mozilla main branch, gecko/gaia@master, gonk@sprdroid4.0.3_vlx_3.0_b2g
+	echo - tara_512x256_hvga ====================== The same as tara, use HVGA
+	echo - mozilla_weekly_build =================== Mozilla weekly build, gecko/gaia@mozilla weekly stable revision, gonk@sprdroid4.0.3_vlx_3.0_b2g
+	echo - mozilla_weekly_build_512x256_hvga ====== The same as mozilla_weekly_build, use HVGA
+	echo - sp8825eabase_sprdroid4.1 =============== Sprdroid4.1_3.4, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.1 and sprdlinux3.4
+	echo - sp8810eabase_4.0.3_vlx_3.0_track ======= Debug gonk bugs, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.0.3 ANY revision
+	echo - sp8810eabase_gonk_update =============== Upgrade only, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.0.3 LATEST revision
+	echo - sp8810eabase_mozilla_update ============ Upgrade only, gecko/gaia@mozilla weekly stable revision, gonk@sprdroid4.0.3 LATEST revision
+	echo - sp8810eabase =========================== MAIN BRANCH, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use WVAG and 512 RAM
+	echo - sp8810eaplus =========================== Debug multi-sim
+	echo - sp8810eabase_512x256_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 256 RAM
+	echo - sp8810eabase_512x128_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 128 RAM
+       echo - sp8810eabase_android =================== Gonk refernce verison, MocorDroid4.0.3_VLX_3.0_W13.03.1_MP_W13.11.2
 	echo - galaxy-s2
 	echo - galaxy-nexus
 	echo - nexus-s
 	echo - nexus-s-4g
 	echo - otoro
-	echo - unagi
+	echo - unagi ================================== Qcom refernce phone, gecko/gaia@mozilla weekly stable revision, gonk@qcom
 	echo - inari
 	echo - keon
 	echo - leo
