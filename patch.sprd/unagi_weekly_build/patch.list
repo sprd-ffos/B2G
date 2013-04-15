@@ -1,2 +1,3 @@
 device/qcom/unagi : device_qcom_unagi.patch
 gecko : gecko.patch
+gaia : enable_debugger.patch

@@ -10,8 +10,7 @@ then
     exit 1
 fi
 
-SCDIR=$(pwd)/$0 
-SCDIR=$(echo ${SCDIR%/*} | sed -e 's/\/\.$//')
+SCDIR=$(cd "$(dirname "$0")"; pwd) 
 B2GDIR=$(dirname $SCDIR)
 BRDIR=$SCDIR/$1
 PLIST=$BRDIR/patch.list

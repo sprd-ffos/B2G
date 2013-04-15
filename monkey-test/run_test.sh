@@ -73,6 +73,10 @@ do
     if [ $? -eq 0 ]
     then
         pkill unlock.sh
+
+        #push crash report to server
+        ./push_report.sh --dev $DEV
+
         $ADB reboot
         #wait for restart device
         sleep 60
