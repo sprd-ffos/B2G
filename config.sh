@@ -153,6 +153,12 @@ case "$1" in
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
+"sp8810eabase_weekly_build")
+	echo DEVICE=sp8810ea_512x256_hvga>> .tmp-config &&
+	echo LUNCH=sp8810eabase_512x256_hvga-eng >> .tmp-config &&
+	repo_sync sp8810eabase_weekly_build
+	;;
+
 "sp8810ebbase")
 	echo DEVICE=sp8810eb >> .tmp-config &&
 	echo LUNCH=sp8810ebbase-eng >> .tmp-config &&
@@ -228,6 +234,7 @@ case "$1" in
 	echo - sp8810eaplus =========================== Debug multi-sim
 	echo - sp8810eabase_512x256_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 256 RAM
 	echo - sp8810eabase_512x128_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 128 RAM
+       echo - sp8810eabase_weekly_build ============== Sprd weekly build, gecko/gaia/gonk@sprd weekly revision
        echo - sp8810eabase_android =================== Gonk refernce verison, MocorDroid4.0.3_VLX_3.0_W13.03.1_MP_W13.11.2
 	echo - galaxy-s2
 	echo - galaxy-nexus
