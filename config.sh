@@ -126,7 +126,7 @@ case "$1" in
 "sp8810eabase_android")
 	echo DEVICE=sp8810eabase_android >> .tmp-config &&
 	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
-	repo_sync manifest.W13.11.2-010325.xml
+	repo_sync manifest.W13.11.2-010325
 	;;
 
 "sp8810eabase_512x512_wvga")
