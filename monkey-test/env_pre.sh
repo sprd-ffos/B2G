@@ -79,3 +79,7 @@ expect {
 }
 expect eof"
 
+#adb check
+./adb_check.sh $passwd
+[ $? -ne 0 ] && exit 1
+

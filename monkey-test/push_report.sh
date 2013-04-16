@@ -40,32 +40,44 @@ fi
 
 #push to server
 push_files=mtlog-*.tar.bz2
-#用户名;mocorhtml5_log   密码:PSD#sciuser    服务器：10.0.0.217
-#log目录weeklybuild_monkeylog
-srv_folder=mocorhtml5_log@10.0.0.217:/mocorhtml5_log/weeklybuild_monkeylog
-#get the folder on server
-dev_folder=
-config_file=report.config
-if [ -f $config_file ]
+
+#get server config from file
+srv_cfg=server.config
+if [ ! -f $srv_cfg ]
 then
-    dev_folder=$( grep -Po "^ *$DEV *: *[^# ]+" $config_file | sed -e 's/ //g' | awk -F: '{print $2}' )
+    echo no server config file, please config the server in server.config file
+    exit 1
 fi
 
-if [ -z "$dev_folder" ]
-then
-    push_folder=${srv_folder}/
-else
-    push_folder=${srv_folder}/${dev_folder}/
-fi
+ssrv=$( grep -Po "^ *server *: *[^ ]+" $srv_cfg | sed -e 's/ //g' | awk -F: '{print $2}' )
+susr=$( grep -Po "^ *user *: *[^ ]+" $srv_cfg | sed -e 's/ //g' | awk -F: '{print $2}' )
+spasswd=$( grep -Po "^ *passwd *: *[^ ]+" $srv_cfg | sed -e 's/ //g' | awk -F: '{print $2}' )
+sfolder=$( grep -Po "^ *folder *: *[^ ]+" $srv_cfg | sed -e 's/ //g' | awk -F: '{print $2}' )
+
+srv_folder=$susr@$ssrv:$sfolder
+
+#use device name as the folder name on server
+push_folder=${srv_folder}/${DEV}/
+
+#if no folder, create it
+expect -c "
+
+spawn ssh $susr@$ssrv \"\[ -d ${sfolder}/${DEV} \] || mkdir ${sfolder}/${DEV}\"
+set timeout -1
+expect {
+    \"*@*'s password:\" {send \"$spasswd\r\"; exp_continue}
+    \"Are you sure you want to continue connecting *?\" {send \"yes\r\"; exp_continue}
+}
+expect eof"
 
 #there is something wrong with wildcard characters in expect, so use find
 for file in $push_files
 do
-    ./pscp.sh --passwd 'PSD#sciuser' -c "$file $push_folder"
+    ./pscp.sh --passwd "$spasswd" -c "$file $push_folder"
 done
 
 #mv to backup folder
-BACKUP=backup
+BACKUP=crash_report_backup
 [ ! -d $BACKUP ] && mkdir $BACKUP
 mv $push_files $BACKUP
 
