@@ -63,6 +63,12 @@ case "$1" in
 	repo_sync tara4.0.3_vlx_3.0_b2g
 	;;
 
+"tara_512x128_hvga")
+	echo DEVICE=sp8810ea_512x128_hvga>> .tmp-config &&
+	echo LUNCH=sp8810eabase_512x128_hvga-eng >> .tmp-config &&
+	repo_sync tara4.0.3_vlx_3.0_b2g
+	;;
+
 "mozilla_weekly_build")
 	echo DEVICE=sp8810ea >> .tmp-config &&
 	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
@@ -222,8 +228,9 @@ case "$1" in
 	echo Usage: $0 \(device name\)
 	echo
 	echo Valid devices to configure are:
-	echo - tara =================================== Mozilla main branch, gecko/gaia@master, gonk@sprdroid4.0.3_vlx_3.0_b2g
-	echo - tara_512x256_hvga ====================== The same as tara, use HVGA
+	echo - tara =================================== Mozilla main branch, gecko/gaia@master, gonk@sprdroid4.0.3_vlx_3.0_b2g, use WVAG and 512 RAM
+	echo - tara_512x256_hvga ====================== The same as tara, use HVAG and 256 RAM
+       echo - tara_512x128_hvga ====================== The same as tara, use HVAG and 128 RAM
 	echo - mozilla_weekly_build =================== Mozilla weekly build, gecko/gaia@mozilla weekly stable revision, gonk@sprdroid4.0.3_vlx_3.0_b2g
 	echo - mozilla_weekly_build_512x256_hvga ====== The same as mozilla_weekly_build, use HVGA
 	echo - sp8825eabase_sprdroid4.1 =============== Sprdroid4.1_3.4, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.1 and sprdlinux3.4
