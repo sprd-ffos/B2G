@@ -1,0 +1,13 @@
+diff --git a/build/settings.py b/build/settings.py
+index 5bdf79f..726a83a 100644
+--- a/build/settings.py
++++ b/build/settings.py
+@@ -206,7 +206,7 @@ def main():
+             settings["keyboard.layouts.english"] = False
+             settings["keyboard.layouts.{0}".format(default_layout)] = True
+ 
+-    settings["devtools.debugger.remote-enabled"] = enable_debugger
++    settings["devtools.debugger.remote-enabled"] = True
+ 
+     # Grab wallpaper.jpg and convert it into a base64 string
+     wallpaper_file = open(wallpaper_filename, "rb")

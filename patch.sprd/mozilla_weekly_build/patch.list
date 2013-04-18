@@ -1,5 +1,7 @@
 build     : build.patch
 gaia      : gaia.patch
+gaia      : enable_debugger.patch
+gecko     : crash_report.patch
 gecko     : gecko.patch
 gecko     : incoming_call.patch
 gecko     : fm.patch
