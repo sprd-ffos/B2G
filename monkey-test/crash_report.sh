@@ -15,6 +15,7 @@ DMPDIR=/data/b2g/mozilla
 DUMPTOOL=./bin/minidump_stackwalk
 SYMBDIR=../objdir-gecko/dist/crashreporter-symbols
 LOGHEAD=mtlog
+TOMBSTONES=/data/tombstones
 
 #options
 DEV=dev
@@ -67,6 +68,8 @@ mkdir $tag
 #ganap
 $ADB shell $GSNAP /data/snapshot.jpg /dev/graphics/fb0
 $ADB pull /data/snapshot.jpg $tag
+$ADB pull $TOMBSTONES $tag
+$ADB shell rm -r $TOMBSTONES
 
 #dump files
 $FIND $DMPDIR -name "*.dmp" -o -name "*.extra" | sed 's/\r//'| while read file
