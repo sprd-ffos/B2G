@@ -24,4 +24,6 @@ then
     ${SCDIR}/patch.sh $branch
 fi
 
+${SCDIR}/patch.sh monkey_test
+
 
