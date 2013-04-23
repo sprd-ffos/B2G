@@ -66,6 +66,7 @@ tag=${LOGHEAD}-${DEV}-${USR}-$(date +%y%m%d%H%M$S)
 mkdir $tag
 
 #ganap
+sleep 60 #sleep for a while to wait for files generating finished
 $ADB shell $GSNAP /data/snapshot.jpg /dev/graphics/fb0
 $ADB pull /data/snapshot.jpg $tag
 $ADB pull $TOMBSTONES $tag
