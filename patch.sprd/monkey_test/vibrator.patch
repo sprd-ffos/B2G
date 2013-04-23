@@ -1,0 +1,13 @@
+diff --git a/hal/gonk/GonkHal.cpp b/hal/gonk/GonkHal.cpp
+index c5b0273..875bd9b0 100644
+--- a/hal/gonk/GonkHal.cpp
++++ b/hal/gonk/GonkHal.cpp
+@@ -170,7 +170,7 @@ VibratorRunnable::Run()
+     if (mIndex < mPattern.Length()) {
+       uint32_t duration = mPattern[mIndex];
+       if (mIndex % 2 == 0) {
+-        vibrator_on(duration);
++        //vibrator_on(duration);
+       }
+       mIndex++;
+       mMonitor.Wait(PR_MillisecondsToInterval(duration));

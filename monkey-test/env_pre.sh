@@ -44,9 +44,22 @@ git clean -df
 git reset --hard HEAD
 git fetch origin
 git checkout origin/sprdroid4.0.3_vlx_3.0_b2g
-repo forall -c 'git clean -df && git reset --hard HEAD'
 
 #./config.sh $dev
+expect -c "
+
+spawn ./config.sh $dev
+set timeout -1 
+expect {
+    \"Your Name *:\" {send \"\r\"; exp_continue}
+    \"Your Email *:\" {send \"\r\"; exp_continue}
+    \"is this correct *?\" {send \"y\r\"; exp_continue}
+}
+expect eof"
+
+repo forall -c 'git clean -df && git reset --hard HEAD'
+
+#./config.sh $dev twice, avoid first config abort
 expect -c "
 
 spawn ./config.sh $dev

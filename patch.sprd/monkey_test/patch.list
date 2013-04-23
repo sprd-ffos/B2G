@@ -1,1 +1,2 @@
-gonk-misc : add_log.patch
+#gonk-misc : add_log.patch
+gecko     : vibrator.patch
