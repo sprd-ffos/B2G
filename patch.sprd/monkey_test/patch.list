@@ -1,2 +1,3 @@
 #gonk-misc : add_log.patch
 hardware/libhardware_legacy : vibrator.patch
+gaia/apps/settings:remote-debugging.patch
