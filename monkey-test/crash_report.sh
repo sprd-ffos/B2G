@@ -66,11 +66,14 @@ tag=${LOGHEAD}-${DEV}-${USR}-$(date +%y%m%d%H%M$S)
 mkdir $tag
 
 #ganap
-sleep 60 #sleep for a while to wait for files generating finished
 $ADB shell $GSNAP /data/snapshot.jpg /dev/graphics/fb0
 $ADB pull /data/snapshot.jpg $tag
-$ADB pull $TOMBSTONES $tag
-$ADB shell rm -r $TOMBSTONES
+
+#adb log and ps
+cp adb_log ${tag}/
+$ADB shell b2g-ps > ${tag}/b2g-ps
+$ADB shell b2g-procrank > ${tag}/b2g-procrank
+$ADB shell bugreport > ${tag}/bugreport
 
 #dump files
 $FIND $DMPDIR -name "*.dmp" -o -name "*.extra" | sed 's/\r//'| while read file
@@ -81,16 +84,22 @@ do
     $ADB shell rm "$file"
 done
 
+#parse files, may wait for 5 minute
 if [ -f $DUMPTOOL ] && [ -d $SYMBDIR ]
 then
     $DUMPTOOL ${tag}/*.dmp $SYMBDIR > ${tag}/dump_parse
 fi
 
-#more info
-cp adb_log ${tag}/
-$ADB shell b2g-ps > ${tag}/b2g-ps
-$ADB shell b2g-procrank > ${tag}/b2g-procrank
+#generate manifest
 repo manifest -o ${tag}/manifest.xml -r
+
+#cp .config and .userconfig
+cp ../.config ${tag}/config
+cp ../.userconfig ${tag}/userconfig
+
+#tombstones
+$ADB pull $TOMBSTONES $tag
+$ADB shell rm -r $TOMBSTONES
 
 #tar files
 tar -caf ${tag}.tar.bz2 ${tag}/*
