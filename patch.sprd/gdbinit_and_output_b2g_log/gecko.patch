@@ -1,0 +1,12 @@
+diff --git a/configure.in b/configure.in
+index 2aabfb3..fa702e5 100644
+--- a/configure.in
++++ b/configure.in
+@@ -2096,6 +2096,7 @@ ia64*-hpux*)
+ 
+     MOZ_GFX_OPTIMIZE_MOBILE=1
+     MOZ_OPTIMIZE_FLAGS="-Os -freorder-blocks -fno-reorder-functions"
++    MOZ_DEBUG_FLAGS="-g -fno-inline"
+     ;;
+ 
+ *-*linux*)

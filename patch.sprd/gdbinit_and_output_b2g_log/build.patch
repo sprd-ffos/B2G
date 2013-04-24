@@ -1,0 +1,13 @@
+diff --git a/core/combo/TARGET_linux-arm.mk b/core/combo/TARGET_linux-arm.mk
+index 3b818b1..c9f7642 100644
+--- a/core/combo/TARGET_linux-arm.mk
++++ b/core/combo/TARGET_linux-arm.mk
+@@ -148,7 +148,7 @@ else
+ TARGET_GLOBAL_CFLAGS +=	-mno-thumb-interwork
+ endif
+ 
+-TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
++#TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
+ 
+ # More flags/options can be added here
+ TARGET_RELEASE_CFLAGS := \

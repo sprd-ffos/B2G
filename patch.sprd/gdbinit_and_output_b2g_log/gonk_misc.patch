@@ -1,0 +1,13 @@
+diff --git a/init.b2g.rc b/init.b2g.rc
+index a886bd2..1f540eb 100644
+--- a/init.b2g.rc
++++ b/init.b2g.rc
+@@ -2,7 +2,7 @@ service fakeperm /system/bin/fakeperm
+     class main
+     user root
+ 
+-service b2g /system/bin/b2g.sh
++service b2g /system/bin/logwrapper /system/bin/b2g.sh
+     class main
+     onrestart restart media
+ 
