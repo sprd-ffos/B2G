@@ -5,8 +5,6 @@
 
 ADB=adb
 
-[ -f ./bin/busybox ] || exit 1
-
 while true
 do
     #test defined busybox or system busybox, if one has?

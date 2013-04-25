@@ -13,7 +13,7 @@ hometick=$HOME_TICK
 
 usage()
 {
-    echo "Usage: $(basename $0) --config config_file [--no-symbols] [--help]"
+    echo "Usage: $(basename $0) --config config_file [--no-symbols] [--test-app] [--help]"
     exit $1
 }
 
@@ -26,6 +26,9 @@ do
     --config)
         shift
         config=$1
+        ;;
+    --test-app)
+        test_app=yes
         ;;
     --help | -h)
         usage 0
@@ -80,6 +83,9 @@ do
         $ADB reboot
         #wait for restart device
         sleep 60
+
+        #log once is enough
+        $ADB logcat > adb_log &
     fi
 
     if [ "$UNLOCK" = "y" ]

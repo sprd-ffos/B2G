@@ -8,24 +8,19 @@ then
     exit 1
 fi
 
-ADB=adb
+ADB=$(which adb)
 passwd=$1
 start_cnt=0
 
+#null command to save passwd
+echo $passwd | sudo -S test
+
 while ! $ADB shell echo -n
 do
-    expect -c "
-
-    spawn sudo -s
-    sleep 1
-    send \"$passwd\r\"
-    sleep 3
-    send \"$ADB kill-server\r\"
-    sleep 3
-    send \"$ADB start-server\r\"
-    sleep 10
-    send \"exit\r\"
-    "
+    sudo $ADB kill-server
+    sudo $ADB start-server
 
     [ $(( start_cnt++ )) -lt 3 ] || exit 1 
 done
+
+sudo -K

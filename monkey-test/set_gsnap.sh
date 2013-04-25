@@ -5,8 +5,6 @@
 
 ADB=adb
 
-[ -f ./bin/gsnap ] || exit 1
-
 while true
 do
     #test defined gsnap or system gsnap, if one has?
