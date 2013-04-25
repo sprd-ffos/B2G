@@ -1,41 +1,13 @@
-From 88b785df4100e016c2bffd0d6aa503603ad5ebc1 Mon Sep 17 00:00:00 2001
-From: kaisheng <kaisheng.yang@spreadtrum.com>
-Date: Wed, 24 Apr 2013 15:56:47 +0800
-Subject: [PATCH] bug#156321<title>
-
-[bug number ]
-[root cause ]vibration and cancel remote-debugging cause device not found
-[changes ]modify remote-debugging and vibration cannot change
-[side effects]
-[reviewers ]
-
-Signed-off-by: kaisheng <kaisheng.yang@spreadtrum.com>
----
- apps/settings/index.html |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/apps/settings/index.html b/apps/settings/index.html
-index 5033c11..9bf2e06 100644
---- a/apps/settings/index.html
-+++ b/apps/settings/index.html
-@@ -1369,7 +1369,7 @@
-       <ul>
-         <li>
-           <label>
--            <input type="checkbox" name="keyboard.vibration"/>
-+            <input type="checkbox" name="keyboard.vibration" checked=false disabled=ture/>
-             <span></span>
-           </label>
-           <a data-l10n-id="vibration">Vibration</a>
-@@ -1837,7 +1837,7 @@
-         </li>
-         <li>
-           <label>
--            <input type="checkbox" name="devtools.debugger.remote-enabled"/>
-+            <input type="checkbox" name="devtools.debugger.remote-enabled" checked disabled='true'/>
-             <span></span>
-           </label>
-           <a data-l10n-id="remote-debugging">Remote Debugging</a>
--- 
-1.7.4.1
-
+diff --git a/apps/settings/js/settings.js b/apps/settings/js/settings.js
+index b44098c..3996977 100644
+--- a/apps/settings/js/settings.js
++++ b/apps/settings/js/settings.js
+@@ -400,7 +400,7 @@ var Settings = {
+     var key = input.name;
+ 
+     var settings = window.navigator.mozSettings;
+-    if (!key || !settings || event.type != 'change')
++    if (!key || !settings || event.type != 'change' ||key=='devtools.debugger.remote-enabled')
+       return;
+ 
+    // Not touching <input> with data-setting attribute here
