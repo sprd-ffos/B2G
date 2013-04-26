@@ -2,6 +2,8 @@
 
 #prepare the clean run environment for test
 
+TESTDIR=$(cd "$(dirname "$0")"; pwd)
+
 #options
 passwd=
 dev=sp8810eabase_512x256_hvga
@@ -93,6 +95,6 @@ expect {
 expect eof"
 
 #adb check
-./adb_check.sh $passwd
+${TESTDIR}/adb_check.sh $passwd
 [ $? -ne 0 ] && exit 1
 
