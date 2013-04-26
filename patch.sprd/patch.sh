@@ -69,12 +69,6 @@ then
         #echo file: =$file=
         #continue
     
-        if [ ! -d $dir ]
-        then
-            echo [ERROR!] $dir is not exist.
-            continue
-        fi
-    
         if [ ! -f $file ]
         then
             echo [ERROR!] $file is not exist.
