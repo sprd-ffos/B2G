@@ -1,0 +1,152 @@
+# HG changeset patch
+# User Benjamin Chen <bechen@mozilla.com>
+# Date 1366833490 -28800
+# Node ID ecd9fa208e3573125856e39501ebdee1072e08a5
+# Parent  93ffde808bd941d6bd41d1636e2c935053982f04
+Similair to bug 833964, add null checking and reset the runnable member pointer when entering runnable method. r=drs
+
+diff --git a/gfx/layers/ipc/GestureEventListener.cpp b/gfx/layers/ipc/GestureEventListener.cpp
+--- a/gfx/layers/ipc/GestureEventListener.cpp
++++ b/gfx/layers/ipc/GestureEventListener.cpp
+@@ -137,32 +137,30 @@ nsEventStatus GestureEventListener::Hand
+ 
+     NS_WARN_IF_FALSE(foundAlreadyExistingTouch, "Touch ended, but not in list");
+ 
+     if (event.mTime - mTapStartTime <= MAX_TAP_TIME) {
+       if (mState == GESTURE_WAITING_DOUBLE_TAP &&
+           event.mTime - mLastTapEndTime > MAX_TAP_TIME) {
+         // mDoubleTapTimeoutTask wasn't scheduled in time. We need to run the
+         // task synchronously to confirm the last tap.
+-        mDoubleTapTimeoutTask->Cancel();
++        CancelDoubleTapTimeoutTask();
+         TimeoutDoubleTap();
+ 
+         // Change the state so we can proceed to process the current tap.
+         mState = GESTURE_WAITING_SINGLE_TAP;
+       }
+ 
+       if (mState == GESTURE_WAITING_DOUBLE_TAP) {
+-        mDoubleTapTimeoutTask->Cancel();
+-
++        CancelDoubleTapTimeoutTask();
+         // We were waiting for a double tap and it has arrived.
+         HandleDoubleTap(event);
+         mState = GESTURE_NONE;
+       } else if (mState == GESTURE_WAITING_SINGLE_TAP) {
+-        mLongTapTimeoutTask->Cancel();
+-
++        CancelLongTapTimeoutTask();
+         HandleSingleTapUpEvent(event);
+ 
+         // We were not waiting for anything but a single tap has happened that
+         // may turn into a double tap. Wait a while and if it doesn't turn into
+         // a double tap, send a single tap instead.
+         mState = GESTURE_WAITING_DOUBLE_TAP;
+ 
+         mDoubleTapTimeoutTask =
+@@ -294,17 +292,17 @@ nsEventStatus GestureEventListener::Hand
+ 
+ nsEventStatus GestureEventListener::HandleTapCancel(const MultiTouchInput& aEvent)
+ {
+   mTapStartTime = 0;
+ 
+   switch (mState)
+   {
+   case GESTURE_WAITING_SINGLE_TAP:
+-    mLongTapTimeoutTask->Cancel();
++    CancelLongTapTimeoutTask();
+     mState = GESTURE_NONE;
+     break;
+ 
+   case GESTURE_WAITING_DOUBLE_TAP:
+     mState = GESTURE_NONE;
+     break;
+   default:
+     break;
+@@ -316,35 +314,51 @@ nsEventStatus GestureEventListener::Hand
+ nsEventStatus GestureEventListener::HandleDoubleTap(const MultiTouchInput& aEvent)
+ {
+   TapGestureInput tapEvent(TapGestureInput::TAPGESTURE_DOUBLE, aEvent.mTime, aEvent.mTouches[0].mScreenPoint);
+   return mAsyncPanZoomController->HandleInputEvent(tapEvent);
+ }
+ 
+ void GestureEventListener::TimeoutDoubleTap()
+ {
++  mDoubleTapTimeoutTask = nullptr;
+   // If we haven't gotten another tap by now, reset the state and treat it as a
+   // single tap. It couldn't have been a double tap.
+   if (mState == GESTURE_WAITING_DOUBLE_TAP) {
+     mState = GESTURE_NONE;
+ 
+     HandleSingleTapConfirmedEvent(mLastTouchInput);
+   }
+ }
+ 
++void GestureEventListener::CancelDoubleTapTimeoutTask() {
++  if (mDoubleTapTimeoutTask) {
++    mDoubleTapTimeoutTask->Cancel();
++    mDoubleTapTimeoutTask = nullptr;
++  }
++}
++
+ void GestureEventListener::TimeoutLongTap()
+ {
++  mLongTapTimeoutTask = nullptr;
+   // If the tap has not been released, this is a long press.
+   if (mState == GESTURE_WAITING_SINGLE_TAP) {
+     mState = GESTURE_NONE;
+ 
+     HandleLongTapEvent(mLastTouchInput);
+   }
+ }
+ 
++void GestureEventListener::CancelLongTapTimeoutTask() {
++  if (mLongTapTimeoutTask) {
++    mLongTapTimeoutTask->Cancel();
++    mLongTapTimeoutTask = nullptr;
++  }
++}
++
+ AsyncPanZoomController* GestureEventListener::GetAsyncPanZoomController() {
+   return mAsyncPanZoomController;
+ }
+ 
+ void GestureEventListener::CancelGesture() {
+   mTouches.Clear();
+   mState = GESTURE_NONE;
+ }
+diff --git a/gfx/layers/ipc/GestureEventListener.h b/gfx/layers/ipc/GestureEventListener.h
+--- a/gfx/layers/ipc/GestureEventListener.h
++++ b/gfx/layers/ipc/GestureEventListener.h
+@@ -196,25 +196,31 @@ protected:
+    * tap).
+    */
+   MultiTouchInput mLastTouchInput;
+ 
+   /**
+    * Task used to timeout a double tap. This gets posted to the UI thread such
+    * that it runs a short time after a single tap happens. We cache it so that
+    * we can cancel it if a double tap actually comes in.
++   * CancelDoubleTapTimeoutTask: Cancel the mDoubleTapTimeoutTask and also set
++   * it to null.
+    */
+   CancelableTask *mDoubleTapTimeoutTask;
++  inline void CancelDoubleTapTimeoutTask();
+ 
+   /**
+    * Task used to timeout a long tap. This gets posted to the UI thread such
+    * that it runs a time when a single tap happens. We cache it so that
+    * we can cancel it if any other touch event happens.
++   * CancelLongTapTimeoutTask: Cancel the mLongTapTimeoutTask and also set
++   * it to null.
+    */
+   CancelableTask *mLongTapTimeoutTask;
++  inline void CancelLongTapTimeoutTask();
+ 
+   /**
+    * Position of the last touch starting. This is only valid during an attempt
+    * to determine if a touch is a tap. This means that it is used in both the
+    * "GESTURE_WAITING_SINGLE_TAP" and "GESTURE_WAITING_DOUBLE_TAP" states.
+    */
+   nsIntPoint mTouchStartPosition;
+ };
