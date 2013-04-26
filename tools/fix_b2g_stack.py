@@ -532,6 +532,12 @@ def fix_b2g_stacks_in_file(infile, outfile, args={}, **kwargs):
     # On Mac OS, the native c++filt doesn't filter our output correctly, so we
     # use the cross-compiled one.  (I don't know if the system c++filt works
     # properly on Linux, though I imagine it does.)
+    print("start write")
+    for line in infile:
+        outfile.write(matcher.sub(subfn, line))
+    print("end write")
+    '''print("start try")
+
     cppfilt = subprocess.Popen([options.cross_bin('c++filt')],
                                stdin=subprocess.PIPE,
                                stdout=subprocess.PIPE)
@@ -542,6 +548,7 @@ def fix_b2g_stacks_in_file(infile, outfile, args={}, **kwargs):
     finally:
         cppfilt.stdin.close()
     p.join()
+     '''
     fixer.close()
 
 def add_argparse_arguments(parser):
