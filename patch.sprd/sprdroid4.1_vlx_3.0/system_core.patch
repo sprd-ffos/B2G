@@ -1,0 +1,12 @@
+diff --git a/include/system/audio.h b/include/system/audio.h
+index 9cd4ba1..0c237ae 100644
+--- a/include/system/audio.h
++++ b/include/system/audio.h
+@@ -46,6 +46,7 @@ typedef enum {
+     AUDIO_STREAM_ENFORCED_AUDIBLE = 7, /* Sounds that cannot be muted by user and must be routed to speaker */
+     AUDIO_STREAM_DTMF             = 8,
+     AUDIO_STREAM_TTS              = 9,
++    AUDIO_STREAM_FM               = 10,
+ 
+     AUDIO_STREAM_CNT,
+     AUDIO_STREAM_MAX              = AUDIO_STREAM_CNT - 1,

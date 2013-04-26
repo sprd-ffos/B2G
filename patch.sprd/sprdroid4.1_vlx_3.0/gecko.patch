@@ -1,0 +1,984 @@
+From sprdroid4.0.3_vlx_3.0_b2g revision b81704c50b9ea09e2441a31c4fad86764112a202 commit
+diff --git a/b2g/app/BootAnimation.cpp b/b2g/app/BootAnimation.cpp
+index 5945ebe..a3f9d34 100644
+--- a/b2g/app/BootAnimation.cpp
++++ b/b2g/app/BootAnimation.cpp
+@@ -542,7 +542,7 @@ NativeWindow()
+     if (gNativeWindow.get()) {
+         return gNativeWindow.get();
+     }
+-
++#if ANDROID_VERSION < 16
+     // Some gralloc HALs need this in order to open the
+     // framebuffer device after we restart with the screen off.
+     //
+@@ -550,7 +550,9 @@ NativeWindow()
+     // FramebufferNativeWindow.  Do not separate these two C++
+     // statements.
+     set_screen_state(1);
+-
++#else
++#warning Not sure what to do!  Does not seem to be necessary.
++#endif
+     // For some devices, it takes a while for the framebuffer to become
+     // usable. So we wait until the framebuffer has woken up before we
+     // try to open it.
+diff --git a/configure.in b/configure.in
+index 2aabfb3..b7f3f67 100644
+--- a/configure.in
++++ b/configure.in
+@@ -200,6 +200,13 @@ if test -n "$gonkdir" ; then
+     esac
+ 
+     CPPFLAGS="-DANDROID -isystem $gonkdir/bionic/libc/$ARCH_DIR/include -isystem $gonkdir/bionic/libc/include/ -isystem $gonkdir/bionic/libc/kernel/common -isystem $gonkdir/bionic/libc/kernel/$ARCH_DIR -isystem $gonkdir/bionic/libm/include -I$gonkdir/frameworks/base/opengl/include -I$gonkdir/frameworks/base/native/include -I$gonkdir/hardware/libhardware/include -I$gonkdir/hardware/libhardware_legacy/include -I$gonkdir/system -I$gonkdir/system/core/include -isystem $gonkdir/bionic -I$gonkdir/frameworks/base/include -I$gonkdir/external/dbus -I$gonkdir/external/bluetooth/bluez/lib $CPPFLAGS -I$gonkdir/frameworks/base/services/sensorservice -I$gonkdir/frameworks/base/services/camera -I$gonkdir/system/media/wilhelm/include -I$gonkdir/frameworks/base/include/media/stagefright -I$gonkdir/frameworks/base/include/media/stagefright/openmax -I$gonkdir/frameworks/base/media/libstagefright/rtsp -I$gonkdir/frameworks/base/media/libstagefright/include -I$gonkdir/dalvik/libnativehelper/include/nativehelper"
++    # the actual version we're building for
++    ANDROID_VERSION=16
++    # the version of the prebuilt stuff, which may be lower than ANDROID_VERSION
++    PREBUILT_ANDROID_VERSION=14
++    PREBUILD_NDK_VERSION=7
++    CPPFLAGS="$CPPFLAGS -isystem $gonkdir/prebuilts/ndk/android-ndk-r$PREBUILD_NDK_VERSION/platforms/android-$PREBUILT_ANDROID_VERSION/$ARCH_DIR/usr/include \
++-I$gonkdir/frameworks/native/include -I$gonkdir/frameworks/native/include/media -I$gonkdir/frameworks/native/include/media/hardware -I$gonkdir/frameworks/native/include/media/openmax -I$gonkdir/frameworks/native/opengl/include -I$gonkdir/frameworks/native/include/gui -I$gonkdir/frameworks/av/include -I$gonkdir/external/dbus -I$gonkdir/frameworks/av/services/camera/ -I$gonkdir/frameworks/av/include/media -I$gonkdir/frameworks/av/include/media/stagefright -I$gonkdir/frameworks/av/media/libstagefright/rtsp -I$gonkdir/frameworks/av/media/libstagefright/include"
+     CFLAGS="-mandroid -fno-short-enums -fno-exceptions $CFLAGS"
+     CXXFLAGS="-mandroid -fno-short-enums -fno-exceptions -Wno-psabi $CXXFLAGS $STLPORT_CPPFLAGS"
+     dnl Add -llog by default, since we use it all over the place.
+@@ -222,6 +229,8 @@ if test -n "$gonkdir" ; then
+     fi
+ 
+     AC_DEFINE(ANDROID)
++    AC_DEFINE_UNQUOTED(ANDROID_VERSION, $ANDROID_VERSION)
++    AC_SUBST(ANDROID_VERSION)
+     AC_DEFINE(HAVE_SYS_UIO_H)
+     AC_DEFINE(HAVE_PTHREADS)
+     CROSS_COMPILE=1
+diff --git a/content/media/ogg/nsOggCodecState.cpp b/content/media/ogg/nsOggCodecState.cpp
+index a712772..a97c2d7 100644
+--- a/content/media/ogg/nsOggCodecState.cpp
++++ b/content/media/ogg/nsOggCodecState.cpp
+@@ -351,7 +351,9 @@ nsTheoraState::IsHeader(ogg_packet* aPacket) {
+   return th_packet_isheader(aPacket);
+ }
+ 
+-# define TH_VERSION_CHECK(_info,_maj,_min,_sub) \
++#undef version_major
++#undef version_minor
++#define TH_VERSION_CHECK(_info,_maj,_min,_sub) \
+  (((_info)->version_major>(_maj)||(_info)->version_major==(_maj))&& \
+  (((_info)->version_minor>(_min)||(_info)->version_minor==(_min))&& \
+  (_info)->version_subminor>=(_sub)))
+diff --git a/dom/camera/AudioParameter.cpp b/dom/camera/AudioParameter.cpp
+index 59ccfd0..e4c4598 100644
+--- a/dom/camera/AudioParameter.cpp
++++ b/dom/camera/AudioParameter.cpp
+@@ -17,18 +17,30 @@
+ #define LOG_TAG "AudioParameter"
+ //#define LOG_NDEBUG 0
+ 
+-#include <utils/Log.h>
+-
+ #include <media/AudioParameter.h>
+ 
++#define DOM_CAMERA_LOG_LEVEL        3
++#include "CameraCommon.h"
++#define LOGD DOM_CAMERA_LOGA
++#define LOGV DOM_CAMERA_LOGI
++#define LOGI DOM_CAMERA_LOGI
++#define LOGW DOM_CAMERA_LOGW
++#define LOGE DOM_CAMERA_LOGE
++
+ namespace android {
+ 
+-const char *AudioParameter::keyRouting = "routing";
+-const char *AudioParameter::keySamplingRate = "sampling_rate";
+-const char *AudioParameter::keyFormat = "format";
+-const char *AudioParameter::keyChannels = "channels";
+-const char *AudioParameter::keyFrameCount = "frame_count";
+-const char *AudioParameter::keyInputSource = "input_source";
++#if ANDROID_VERSION >= 16
++#define EXTRA_CONST const
++#else
++#define EXTRA_CONST
++#endif
++
++const char * EXTRA_CONST AudioParameter::keyRouting = "routing";
++const char * EXTRA_CONST AudioParameter::keySamplingRate = "sampling_rate";
++const char * EXTRA_CONST AudioParameter::keyFormat = "format";
++const char * EXTRA_CONST AudioParameter::keyChannels = "channels";
++const char * EXTRA_CONST AudioParameter::keyFrameCount = "frame_count";
++const char * EXTRA_CONST AudioParameter::keyInputSource = "input_source";
+ 
+ AudioParameter::AudioParameter(const String8& keyValuePairs)
+ {
+diff --git a/dom/camera/CameraCommon.h b/dom/camera/CameraCommon.h
+index ef5c56b..1f5887d 100644
+--- a/dom/camera/CameraCommon.h
++++ b/dom/camera/CameraCommon.h
+@@ -23,6 +23,12 @@
+ #include "nsIDOMCameraManager.h"
+ #include "prlog.h"
+ 
++#if ANDROID_VERSION >= 16
++#include <mozilla/Assertions.h>
++#define CHECK_EQ(a,b)  MOZ_ASSERT((a) == (b), "failed")
++#define CHECK(a)       MOZ_ASSERT((a), "failed")
++#endif
++
+ #ifdef PR_LOGGING
+ extern PRLogModuleInfo* gCameraLog;
+ #define DOM_CAMERA_LOG( type, ... ) PR_LOG(gCameraLog, (PRLogModuleLevel)type, ( __VA_ARGS__ ))
+diff --git a/dom/camera/GonkCameraSource.cpp b/dom/camera/GonkCameraSource.cpp
+index 7ed3c35..64359be 100644
+--- a/dom/camera/GonkCameraSource.cpp
++++ b/dom/camera/GonkCameraSource.cpp
+@@ -28,7 +28,9 @@
+ #include "GonkCameraSource.h"
+ #include "GonkCameraListener.h"
+ #include "GonkCameraHwMgr.h"
++#if ANDROID_VERSION < 16
+ #include <media/stagefright/MediaDebug.h>
++#endif
+ #include <media/stagefright/MediaDefs.h>
+ #include <media/stagefright/MediaErrors.h>
+ #include <media/stagefright/MetaData.h>
+@@ -677,7 +679,7 @@ status_t GonkCameraSource::read(
+ 
+  
+ 	//aoke add from camerasource to get physical address @sprd 
+-	 if (mOMXRunLocally) {
++	 if (true) {
+ 	     int32_t phy_addr;
+ 	     ssize_t offset = 0;
+     	     size_t size = 0;
+diff --git a/dom/camera/GonkNativeWindow.cpp b/dom/camera/GonkNativeWindow.cpp
+index 7a99798..4875d97 100644
+--- a/dom/camera/GonkNativeWindow.cpp
++++ b/dom/camera/GonkNativeWindow.cpp
+@@ -478,6 +478,16 @@ status_t GonkNativeWindow::queueBuffer(int buf, int64_t timestamp,
+     return OK;
+ }
+ 
++status_t GonkNativeWindow::queueBuffer(int slot,
++            const QueueBufferInput& input, QueueBufferOutput* output) {
++//Empty implementation
++	return OK;
++}
++
++status_t GonkNativeWindow::connect(int api, QueueBufferOutput* output) {
++//Empty implementation
++	return OK;
++}
+ 
+ already_AddRefed<GraphicBufferLocked>
+ GonkNativeWindow::getCurrentBuffer()
+diff --git a/dom/camera/GonkNativeWindow.h b/dom/camera/GonkNativeWindow.h
+index f402bf9..cfff158 100644
+--- a/dom/camera/GonkNativeWindow.h
++++ b/dom/camera/GonkNativeWindow.h
+@@ -22,7 +22,11 @@
+ #include <sys/types.h>
+ 
+ #include <gui/ISurfaceTexture.h>
++#if ANDROID_VERSION < 16
+ #include <ui/egl/android_natives.h>
++#else
++#include <ui/ANativeObjectBase.h>
++#endif
+ #include <ui/GraphicBuffer.h>
+ #include <ui/Rect.h>
+ #include <utils/Errors.h>
+@@ -92,6 +96,11 @@ public:
+     // client.
+     virtual status_t queueBuffer(int buf, int64_t timestamp,
+             uint32_t* outWidth, uint32_t* outHeight, uint32_t* outTransform);
++
++    virtual status_t queueBuffer(int slot,
++            const QueueBufferInput& input, QueueBufferOutput* output);
++    virtual status_t connect(int api, QueueBufferOutput* output);
++
+     virtual void cancelBuffer(int buf);
+     virtual status_t setCrop(const Rect& reg);
+     virtual status_t setTransform(uint32_t transform);
+diff --git a/dom/camera/GonkNativeWindowClient.h b/dom/camera/GonkNativeWindowClient.h
+index c7b7ba3..dab79c9 100644
+--- a/dom/camera/GonkNativeWindowClient.h
++++ b/dom/camera/GonkNativeWindowClient.h
+@@ -17,14 +17,20 @@
+ 
+ #ifndef DOM_CAMERA_GONKNATIVEWINDOWCLIENT_H
+ #define DOM_CAMERA_GONKNATIVEWINDOWCLIENT_H
+-
++#if ANDROID_VERSION < 16
+ #include <ui/egl/android_natives.h>
+-
++#else
++#include <ui/ANativeObjectBase.h>
++#endif
+ #include "GonkNativeWindow.h"
+ 
+ namespace android {
+ 
+-class GonkNativeWindowClient : public EGLNativeBase<ANativeWindow, GonkNativeWindowClient, RefBase>
++#if ANDROID_VERSION < 16
++class GonkNativeWindowClient : public EGLNativeBase<ANativeWindow, GonkNativeWindowClient,, RefBase>
++#else
++class GonkNativeWindowClient : public ANativeObjectBase<ANativeWindow, GonkNativeWindowClient, RefBase>
++#endif
+ {
+ public:
+     GonkNativeWindowClient(const sp<GonkNativeWindow>& window);
+diff --git a/dom/camera/GonkRecorder.cpp b/dom/camera/GonkRecorder.cpp
+index 1ee2899..17eb8bb 100644
+--- a/dom/camera/GonkRecorder.cpp
++++ b/dom/camera/GonkRecorder.cpp
+@@ -23,7 +23,9 @@
+ #include <media/stagefright/AMRWriter.h>
+ #include <media/stagefright/MPEG2TSWriter.h>
+ #include <media/stagefright/MPEG4Writer.h>
++#if ANDROID_VERSION < 16
+ #include <media/stagefright/MediaDebug.h>
++#endif
+ #include <media/stagefright/MediaDefs.h>
+ #include <media/stagefright/MetaData.h>
+ #include <media/stagefright/OMXClient.h>
+diff --git a/dom/system/gonk/AudioManager.cpp b/dom/system/gonk/AudioManager.cpp
+index 7b20cc1..83ea0ba 100644
+--- a/dom/system/gonk/AudioManager.cpp
++++ b/dom/system/gonk/AudioManager.cpp
+@@ -17,16 +17,29 @@
+ 
+ #include "mozilla/Hal.h"
+ #include "AudioManager.h"
+-#include "gonk/AudioSystem.h"
++
+ #include "nsIObserverService.h"
+ #include "mozilla/Services.h"
+ #include "AudioChannelService.h"
+ 
++#if ANDROID_VERSION < 16
++#include "gonk/AudioSystem.h"
++#else
++#include "AudioSystem.h"
++#define AUDIO_DEVICE_OUT_FM  AUDIO_DEVICE_OUT_USB_ACCESSORY
++#endif
++
+ using namespace mozilla::dom::gonk;
+ using namespace android;
+ using namespace mozilla::hal;
+ using namespace mozilla;
+ 
++#if ANDROID_VERSION >= 16
++#define DEFAULT_AUDIO_DEVICE_OUT_ARG   , AUDIO_DEVICE_OUT_DEFAULT
++#else
++#define DEFAULT_AUDIO_DEVICE_OUT_ARG   /* nothing */
++#endif
++
+ #define LOG(args...)  __android_log_print(ANDROID_LOG_INFO, "AudioManager" , ## args)
+ 
+ #define HEADPHONES_STATUS_CHANGED "headphones-status-changed"
+@@ -47,7 +60,9 @@ static int sMaxStreamVolumeTbl[AUDIO_STREAM_CNT] = {
+   15,  // enforced audible
+   15,  // DTMF
+   15,  // TTS
++#if ANDROID_VERSION < 16
+   15,  // FM
++#endif
+ };
+ 
+ // A bitwise variable for recording what kind of headset is attached.
+@@ -57,6 +72,10 @@ static int kBtSampleRate = 8000;
+ static bool
+ IsDeviceOn(audio_devices_t device)
+ {
++#if ANDROID_VERSION >= 16
++  return AudioSystem::getDeviceConnectionState(device, "") ==
++      AUDIO_POLICY_DEVICE_STATE_AVAILABLE;
++#else
+   if (static_cast<
+       audio_policy_dev_state_t (*) (audio_devices_t, const char *)
+       >(AudioSystem::getDeviceConnectionState))
+@@ -64,10 +83,27 @@ IsDeviceOn(audio_devices_t device)
+            AUDIO_POLICY_DEVICE_STATE_AVAILABLE;
+ 
+   return false;
++#endif
+ }
+ 
+ NS_IMPL_ISUPPORTS2(AudioManager, nsIAudioManager, nsIObserver)
+ 
++#if ANDROID_VERSION >= 16
++static audio_devices_t
++GetRoutingMode(int aType) {
++  if (aType == nsIAudioManager::FORCE_SPEAKER) {
++    return AUDIO_DEVICE_OUT_SPEAKER;
++  } else if (aType == nsIAudioManager::FORCE_HEADPHONES) {
++    return AUDIO_DEVICE_OUT_WIRED_HEADSET;
++  } else if (aType == nsIAudioManager::FORCE_BT_SCO) {
++    return AUDIO_DEVICE_OUT_BLUETOOTH_SCO;
++  } else if (aType == nsIAudioManager::FORCE_BT_A2DP) {
++    return AUDIO_DEVICE_OUT_BLUETOOTH_A2DP;
++  } else {
++    return AUDIO_DEVICE_IN_DEFAULT;
++  }
++}
++#else
+ static AudioSystem::audio_devices
+ GetRoutingMode(int aType) {
+   if (aType == nsIAudioManager::FORCE_SPEAKER) {
+@@ -82,6 +118,7 @@ GetRoutingMode(int aType) {
+     return AudioSystem::DEVICE_IN_DEFAULT;
+   }
+ }
++#endif
+ 
+ static void
+ InternalSetAudioRoutesICS(SwitchState aState)
+@@ -103,12 +140,20 @@ InternalSetAudioRoutesICS(SwitchState aState)
+   // The audio volume is not consistent when we plug and unplug the headset.
+   // Set the fm volume again here.
+   if (IsDeviceOn(AUDIO_DEVICE_OUT_FM)) {
++#if ANDROID_VERSION < 16
+     float masterVolume;
+     AudioSystem::getMasterVolume(&masterVolume);
+     AudioSystem::setFmVolume(masterVolume);
++#else
++    int index;
++    AudioSystem::getStreamVolumeIndex(AUDIO_STREAM_DEFAULT, &index, AUDIO_DEVICE_OUT_DEFAULT);
++    AudioSystem::setStreamVolume(AUDIO_STREAM_FM, index, AUDIO_DEVICE_OUT_DEFAULT);
++#endif
+   }
++
+ }
+ 
++#if ANDROID_VERSION < 16
+ static void
+ InternalSetAudioRoutesGB(SwitchState aState)
+ {
+@@ -124,10 +169,14 @@ InternalSetAudioRoutesGB(SwitchState aState)
+ 
+   AudioSystem::setParameters(handle, cmd);
+ }
++#endif
+ 
+ static void
+ InternalSetAudioRoutes(SwitchState aState)
+ {
++#if ANDROID_VERSION >= 16
++  InternalSetAudioRoutesICS(aState);
++#else
+   if (static_cast<
+     status_t (*)(audio_devices_t, audio_policy_dev_state_t, const char*)
+     >(AudioSystem::setDeviceConnectionState)) {
+@@ -137,6 +186,7 @@ InternalSetAudioRoutes(SwitchState aState)
+     >(AudioSystem::getOutput)) {
+     InternalSetAudioRoutesGB(aState);
+   }
++#endif
+ }
+ 
+ nsresult
+@@ -204,6 +254,7 @@ AudioManager::AudioManager() : mPhoneState(PHONE_STATE_CURRENT),
+     NS_WARNING("Failed to add bluetooth-sco-status-changed oberver!");
+   }
+ 
++#if ANDROID_VERSION < 16
+   for (int loop = 0; loop < AUDIO_STREAM_CNT; loop++) {
+     AudioSystem::initStreamVolume(static_cast<audio_stream_type_t>(loop), 0,
+                                   sMaxStreamVolumeTbl[loop]);
+@@ -211,6 +262,9 @@ AudioManager::AudioManager() : mPhoneState(PHONE_STATE_CURRENT),
+   // Force publicnotification to output at maximal volume
+   AudioSystem::setStreamVolumeIndex(static_cast<audio_stream_type_t>(AUDIO_STREAM_ENFORCED_AUDIBLE),
+                                     sMaxStreamVolumeTbl[AUDIO_STREAM_ENFORCED_AUDIBLE]);
++#else
++#warning Unimplemented for ANDROID_VERSION >= 16
++#endif
+ }
+ 
+ AudioManager::~AudioManager() {
+@@ -260,10 +314,12 @@ AudioManager::SetMasterVolume(float aMasterVolume)
+     return NS_ERROR_FAILURE;
+   }
+ 
++#if 0
+   if (IsDeviceOn(AUDIO_DEVICE_OUT_FM) &&
+       AudioSystem::setFmVolume(aMasterVolume)) {
+     return NS_ERROR_FAILURE;
+   }
++#endif
+ 
+   return NS_OK;
+ }
+@@ -300,7 +356,7 @@ AudioManager::SetPhoneState(int32_t aState)
+     return NS_OK;
+   }
+ 
+-  if (AudioSystem::setPhoneState(aState)) {
++  if (AudioSystem::setPhoneState(static_cast<audio_mode_t>(aState))) {
+     return NS_ERROR_FAILURE;
+   }
+ 
+@@ -348,6 +404,10 @@ AudioManager::SetForceForUse(int32_t aUsage, int32_t aForce)
+     aForce = nsIAudioManager::FORCE_BT_SCO;
+   }
+ 
++#if ANDROID_VERSION >= 16
++  status = AudioSystem::setForceUse((audio_policy_force_use_t)aUsage,
++                                    (audio_policy_forced_cfg_t)aForce);
++#else
+   if (static_cast<
+       status_t (*)(AudioSystem::force_use, AudioSystem::forced_config)
+       >(AudioSystem::setForceUse)) {
+@@ -361,12 +421,16 @@ AudioManager::SetForceForUse(int32_t aUsage, int32_t aForce)
+     status = AudioSystem::setForceUse((audio_policy_force_use_t)aUsage,
+                                       (audio_policy_forced_cfg_t)aForce);
+   }
++#endif
+ 
+   return status ? NS_ERROR_FAILURE : NS_OK;
+ }
+ 
+ NS_IMETHODIMP
+ AudioManager::GetForceForUse(int32_t aUsage, int32_t* aForce) {
++#if ANDROID_VERSION >= 16
++    *aForce = AudioSystem::getForceUse((audio_policy_force_use_t)aUsage);
++#else
+   if (static_cast<
+       AudioSystem::forced_config (*)(AudioSystem::force_use)
+       >(AudioSystem::getForceUse)) {
+@@ -378,6 +442,7 @@ AudioManager::GetForceForUse(int32_t aUsage, int32_t* aForce) {
+     // Dynamically resolved the ICS signature.
+     *aForce = AudioSystem::getForceUse((audio_policy_force_use_t)aUsage);
+   }
++#endif
+   return NS_OK;
+ }
+ 
+@@ -391,6 +456,7 @@ AudioManager::GetFmRadioAudioEnabled(bool *aFmRadioAudioEnabled)
+ NS_IMETHODIMP
+ AudioManager::SetFmRadioAudioEnabled(bool aFmRadioAudioEnabled)
+ {
++#if ANDROID_VERSION < 16
+   if (static_cast<
+       status_t (*) (AudioSystem::audio_devices, AudioSystem::device_connection_state, const char *)
+       >(AudioSystem::setDeviceConnectionState)) {
+@@ -401,28 +467,31 @@ AudioManager::SetFmRadioAudioEnabled(bool aFmRadioAudioEnabled)
+     // sync volume with music after powering on fm radio
+     if (aFmRadioAudioEnabled) {
+       int32_t volIndex = 0;
+-      AudioSystem::getStreamVolumeIndex(static_cast<audio_stream_type_t>(AUDIO_STREAM_MUSIC), &volIndex);
+-      AudioSystem::setStreamVolumeIndex(static_cast<audio_stream_type_t>(AUDIO_STREAM_FM), volIndex);
++      AudioSystem::getStreamVolumeIndex(static_cast<audio_stream_type_t>(AUDIO_STREAM_MUSIC), &volIndex DEFAULT_AUDIO_DEVICE_OUT_ARG);
++      AudioSystem::setStreamVolumeIndex(static_cast<audio_stream_type_t>(AUDIO_STREAM_FM), volIndex DEFAULT_AUDIO_DEVICE_OUT_ARG);
+     }
+     return NS_OK;
+-  } else {
+-    return NS_ERROR_NOT_IMPLEMENTED;
+   }
++#endif
++
++  return NS_ERROR_NOT_IMPLEMENTED;
+ }
+ 
+ NS_IMETHODIMP
+ AudioManager::SetStreamVolumeIndex(int32_t aStream, int32_t aIndex) {
+   status_t status =
+-    AudioSystem::setStreamVolumeIndex(static_cast<audio_stream_type_t>(aStream), aIndex);
++      AudioSystem::setStreamVolumeIndex(static_cast<audio_stream_type_t>(aStream), aIndex DEFAULT_AUDIO_DEVICE_OUT_ARG);
+ 
++#if ANDROID_VERSION < 16
+   // sync the fm stream volume with music volume, except set fm volume by audioChannelServices
+   if (aStream == AUDIO_STREAM_FM && IsDeviceOn(AUDIO_DEVICE_OUT_FM)) {
+     mFMChannelIsMuted = aIndex == 0;
+   }
+   // sync fm volume with music stream type
+   if (aStream == AUDIO_STREAM_MUSIC && IsDeviceOn(AUDIO_DEVICE_OUT_FM) && !mFMChannelIsMuted) {
+-    AudioSystem::setStreamVolumeIndex(static_cast<audio_stream_type_t>(AUDIO_STREAM_FM), aIndex);
++    AudioSystem::setStreamVolumeIndex(static_cast<audio_stream_type_t>(AUDIO_STREAM_FM), aIndex DEFAULT_AUDIO_DEVICE_OUT_ARG);
+   }
++#endif
+ 
+   return status ? NS_ERROR_FAILURE : NS_OK;
+ }
+@@ -430,7 +499,7 @@ AudioManager::SetStreamVolumeIndex(int32_t aStream, int32_t aIndex) {
+ NS_IMETHODIMP
+ AudioManager::GetStreamVolumeIndex(int32_t aStream, int32_t* aIndex) {
+   status_t status =
+-    AudioSystem::getStreamVolumeIndex(static_cast<audio_stream_type_t>(aStream), aIndex);
++    AudioSystem::getStreamVolumeIndex(static_cast<audio_stream_type_t>(aStream), aIndex DEFAULT_AUDIO_DEVICE_OUT_ARG);
+   return status ? NS_ERROR_FAILURE : NS_OK;
+ }
+ 
+diff --git a/dom/system/gonk/Makefile.in b/dom/system/gonk/Makefile.in
+index 9823d9e..8c223f2 100644
+--- a/dom/system/gonk/Makefile.in
++++ b/dom/system/gonk/Makefile.in
+@@ -75,7 +75,7 @@ CPPSRCS += \
+   VolumeServiceTest.cpp \
+   $(NULL)
+ # for our local copy of AudioSystem.h
+-LOCAL_INCLUDES += -I$(topsrcdir)/media/libsydneyaudio/src
++#LOCAL_INCLUDES += -I$(topsrcdir)/media/libsydneyaudio/src
+ EXPORTS = \
+   GonkGPSGeolocationProvider.h \
+   nsVolume.h \
+diff --git a/dom/system/gonk/VolumeCommand.h b/dom/system/gonk/VolumeCommand.h
+index 58c9733..5886f60 100644
+--- a/dom/system/gonk/VolumeCommand.h
++++ b/dom/system/gonk/VolumeCommand.h
+@@ -104,7 +104,8 @@ class VolumeCommand : public RefCounted<VolumeCommand>
+ public:
+   VolumeCommand(VolumeResponseCallback* aCallback)
+     : mBytesConsumed(0),
+-      mCallback(aCallback)
++      mCallback(aCallback),
++      mSequenceNumber(0)
+   {
+     SetCmd(NS_LITERAL_CSTRING(""));
+   }
+@@ -120,7 +121,11 @@ public:
+ 
+   void SetCmd(const nsACString& aCommand)
+   {
+-    mCmd = aCommand;
++    //FrameworkListener need to be start seqnum
++    mSequenceNumber++;
++    mCmd.Append(NS_LITERAL_CSTRING("1 "));
++
++    mCmd.Append( aCommand );
+     // Add a null character. We want this to be included in the length since
+     // vold uses it to determine the end of the command.
+     mCmd.Append('\0');
+@@ -162,6 +167,7 @@ private:
+ 
+   // Called when a response to the command is received.
+   RefPtr<VolumeResponseCallback>  mCallback;
++  int    mSequenceNumber;//FrameworkListener need to be start seqnum
+ };
+ 
+ class VolumeActionCommand : public VolumeCommand
+diff --git a/dom/system/gonk/VolumeManager.cpp b/dom/system/gonk/VolumeManager.cpp
+index aceeba6..9db5d25 100644
+--- a/dom/system/gonk/VolumeManager.cpp
++++ b/dom/system/gonk/VolumeManager.cpp
+@@ -151,6 +151,7 @@ class VolumeListCallback : public VolumeResponseCallback
+         // So for each volume that we get back, we update any volumes that
+         // we have of the same name, or add new ones if they don't exist.
+         nsCWhitespaceTokenizer tokenizer(ResponseStr());
++        tokenizer.nextToken();   //Android JB vold add seqNum for command
+         nsDependentCSubstring volName(tokenizer.nextToken());
+         RefPtr<Volume> vol = VolumeManager::FindAddVolumeByName(volName);
+         vol->HandleVoldResponse(ResponseCode(), tokenizer);
+diff --git a/dom/system/gonk/systemlibs.js b/dom/system/gonk/systemlibs.js
+index 9c42da0..aae9748 100644
+--- a/dom/system/gonk/systemlibs.js
++++ b/dom/system/gonk/systemlibs.js
+@@ -201,6 +201,7 @@ this.libnetutils = (function () {
+     let dns1buf = ctypes.char.array(4096)();
+     let dns2buf = ctypes.char.array(4096)();
+     let serverbuf = ctypes.char.array(4096)();
++    let vendorInfo = ctypes.char.array(4096)();
+     let lease = ctypes.int();
+     let c_dhcp_do_request =
+       library.declare("dhcp_do_request", ctypes.default_abi,
+@@ -212,7 +213,8 @@ this.libnetutils = (function () {
+                       ctypes.char.ptr, // dns1
+                       ctypes.char.ptr, // dns2
+                       ctypes.char.ptr, // server
+-                      ctypes.int.ptr); // lease
++                      ctypes.int.ptr, // lease
++                      ctypes.char.ptr); // vendorInfo
+ 
+ 
+     iface.dhcp_do_request = function dhcp_do_request(ifname) {
+@@ -223,7 +225,7 @@ this.libnetutils = (function () {
+                                   dns1buf,
+                                   dns2buf,
+                                   serverbuf,
+-                                  lease.address());
++                                  lease.address(), vendorInfo);
+ 
+       if (ret && DEBUG) {
+         let error = iface.dhcp_get_errmsg();
+@@ -237,7 +239,8 @@ this.libnetutils = (function () {
+         dns1_str: dns1buf.readString(),
+         dns2_str: dns2buf.readString(),
+         server_str: serverbuf.readString(),
+-        lease: lease.value | 0
++        lease: lease.value | 0,
++        server_str: ""
+       };
+       obj.ipaddr = netHelpers.stringToIP(obj.ipaddr_str);
+       obj.mask_str = netHelpers.ipToString(obj.mask);
+@@ -246,6 +249,7 @@ this.libnetutils = (function () {
+       obj.dns1 = netHelpers.stringToIP(obj.dns1_str);
+       obj.dns2 = netHelpers.stringToIP(obj.dns2_str);
+       obj.server = netHelpers.stringToIP(obj.server_str);
++      obj.vendorInfo = "";
+       return obj;
+     };
+     // dhcp_do_request_renew() went away in newer libnetutils.
+@@ -262,7 +266,7 @@ this.libnetutils = (function () {
+       return c_ifc_reset_connections(ifname, reset_mask) | 0;
+     }
+   } else {
+-    let ints = ctypes.int.array(8)();
++    let ints = ctypes.int.array(9)();
+     let c_dhcp_do_request =
+       library.declare("dhcp_do_request", ctypes.default_abi,
+                       ctypes.int,      // return value
+@@ -273,7 +277,8 @@ this.libnetutils = (function () {
+                       ctypes.int.ptr,  // dns1
+                       ctypes.int.ptr,  // dns2
+                       ctypes.int.ptr,  // server
+-                      ctypes.int.ptr); // lease
++                      ctypes.int.ptr, // lease
++                      ctypes.int.ptr);  // vendorInfo
+     let c_dhcp_do_request_renew =
+       library.declare("dhcp_do_request_renew", ctypes.default_abi,
+                       ctypes.int,      // return value
+@@ -295,7 +300,8 @@ this.libnetutils = (function () {
+                        ints.addressOfElement(3),
+                        ints.addressOfElement(4),
+                        ints.addressOfElement(5),
+-                       ints.addressOfElement(6));
++                       ints.addressOfElement(6),
++                       ints.addressOfElement(7));
+         if (ret && DEBUG) {
+           let error = iface.dhcp_get_errmsg();
+           dump("dhcp_do_request_* failed - " + error.readString());
+@@ -307,7 +313,8 @@ this.libnetutils = (function () {
+                 dns1: ints[3] | 0,
+                 dns2: ints[4] | 0,
+                 server: ints[5] | 0,
+-                lease: ints[6] | 0};
++                lease: ints[6] | 0,
++                vendorInfo: ints[7] | 0};
+       };
+     };
+     iface.dhcp_do_request = wrapCFunc(c_dhcp_do_request);
+diff --git a/dom/wifi/libhardware_legacy.js b/dom/wifi/libhardware_legacy.js
+index b537b87..76f56fe 100644
+--- a/dom/wifi/libhardware_legacy.js
++++ b/dom/wifi/libhardware_legacy.js
+@@ -18,23 +18,23 @@ let libhardware_legacy = (function () {
+     unload_driver: library.declare("wifi_unload_driver", ctypes.default_abi, ctypes.int),
+ 
+     // Start supplicant, 0 on success, < 0 on failure.
+-    start_supplicant: library.declare("wifi_start_supplicant", ctypes.default_abi, ctypes.int),
++    start_supplicant: library.declare("wifi_start_supplicant", ctypes.default_abi, ctypes.int, ctypes.int),
+ 
+     // Stop supplicant, 0 on success, < 0 on failure.
+     stop_supplicant: library.declare("wifi_stop_supplicant", ctypes.default_abi, ctypes.int),
+ 
+     // Open a connection to the supplicant, 0 on success, < 0 on failure.
+-    connect_to_supplicant: library.declare("wifi_connect_to_supplicant", ctypes.default_abi, ctypes.int),
++    connect_to_supplicant: library.declare("wifi_connect_to_supplicant", ctypes.default_abi, ctypes.int, ctypes.char.ptr),
+ 
+     // Close connection to connection to the supplicant, 0 on success, < 0 on failure.
+-    close_supplicant_connection: library.declare("wifi_close_supplicant_connection", ctypes.default_abi, ctypes.void_t),
++    close_supplicant_connection: library.declare("wifi_close_supplicant_connection", ctypes.default_abi, ctypes.void_t, ctypes.char.ptr),
+ 
+     // Block until a wifi event is returned, buf is the buffer, len is the max length of the buffer.
+     // Return value is number of bytes in buffer, or 0 if no event (no connection for instance), and < 0 on failure.
+-    wait_for_event: library.declare("wifi_wait_for_event", ctypes.default_abi, ctypes.int, ctypes.char.ptr, ctypes.size_t),
++    wait_for_event: library.declare("wifi_wait_for_event", ctypes.default_abi, ctypes.int, ctypes.char.ptr, ctypes.char.ptr, ctypes.size_t),
+ 
+     // Issue a command to the wifi driver. command is the command string, reply will hold the reply, reply_len contains
+     // the maximum reply length initially and is updated with the actual length. 0 is returned on success, < 0 on failure.
+-    command: library.declare("wifi_command", ctypes.default_abi, ctypes.int, ctypes.char.ptr, ctypes.char.ptr, ctypes.size_t.ptr),
++    command: library.declare("wifi_command", ctypes.default_abi, ctypes.int, ctypes.char.ptr, ctypes.char.ptr, ctypes.char.ptr, ctypes.size_t.ptr),
+   };
+ })();
+diff --git a/dom/wifi/wifi_worker.js b/dom/wifi/wifi_worker.js
+index f6bb430..1544fe1 100644
+--- a/dom/wifi/wifi_worker.js
++++ b/dom/wifi/wifi_worker.js
+@@ -42,7 +42,7 @@ self.onmessage = function(e) {
+   switch (cmd) {
+   case "command":
+     len.value = 4096;
+-    var ret = libhardware_legacy.command(data.request, cbuf, len.address());
++    var ret = libhardware_legacy.command("wlan0", data.request, cbuf, len.address());
+     var reply = "";
+     if (!ret) {
+       // The return value from libhardware_legacy.command is not guaranteed to
+@@ -67,7 +67,7 @@ self.onmessage = function(e) {
+     postMessage({ id: id, status: ret, reply: reply });
+     break;
+   case "wait_for_event":
+-    var ret = libhardware_legacy.wait_for_event(cbuf, 4096);
++    var ret = libhardware_legacy.wait_for_event("wlan0", cbuf, 4096);
+     var event = cbuf.readString().substr(0, ret.value);
+     postMessage({ id: id, event: event });
+     break;
+@@ -119,7 +119,18 @@ self.onmessage = function(e) {
+     postMessage({ id: id, status: ret });
+     break;
+   case "close_supplicant_connection":
+-    libhardware_legacy.close_supplicant_connection();
++    var ret = libhardware_legacy.close_supplicant_connection("wlan0");
++    debug("WIFI: close_supplicant_connection: " + ret + "\n");
++    postMessage({ id: id, status: ret });
++    break;
++  case "start_supplicant":
++    var ret = libhardware_legacy.start_supplicant(1);
++    debug("WIFI: start_supplicant: " + ret + "\n");
++    postMessage({ id: id, status: ret });
++    break;
++  case "connect_to_supplicant":
++    var ret = libhardware_legacy.connect_to_supplicant("wlan0");
++    debug("WIFI: connect_to_supplicant: " + ret + "\n");
+     postMessage({ id: id, status: ret });
+     break;
+   default:
+diff --git a/gfx/gl/GLContextProviderEGL.cpp b/gfx/gl/GLContextProviderEGL.cpp
+index 91c501e..c8e2990 100644
+--- a/gfx/gl/GLContextProviderEGL.cpp
++++ b/gfx/gl/GLContextProviderEGL.cpp
+@@ -1364,7 +1364,7 @@ PixelFormatForImage(gfxASurface::gfxImageFormat aFormat)
+     case gfxASurface::ImageFormatRGB16_565:
+         return PIXEL_FORMAT_RGB_565;
+     case gfxASurface::ImageFormatA8:
+-        return PIXEL_FORMAT_L_8;
++        return PIXEL_FORMAT_A_8;
+     default:
+         MOZ_NOT_REACHED("Unknown gralloc pixel format for Image format");
+     }
+@@ -1375,7 +1375,7 @@ static gfxASurface::gfxContentType
+ ContentTypeForPixelFormat(PixelFormat aFormat)
+ {
+     switch (aFormat) {
+-    case PIXEL_FORMAT_L_8:
++    case PIXEL_FORMAT_A_8:
+         return gfxASurface::CONTENT_ALPHA;
+     case PIXEL_FORMAT_RGBA_8888:
+         return gfxASurface::CONTENT_COLOR_ALPHA;
+diff --git a/hal/gonk/GonkHal.cpp b/hal/gonk/GonkHal.cpp
+index c5b0273..4484137 100644
+--- a/hal/gonk/GonkHal.cpp
++++ b/hal/gonk/GonkHal.cpp
+@@ -544,7 +544,11 @@ GetScreenEnabled()
+ void
+ SetScreenEnabled(bool enabled)
+ {
++#if ANDROID_VERSION < 16
+   set_screen_state(enabled);
++#else
++#warning Not sure what to do!  Does not seem to be necessary.
++#endif
+   sScreenEnabled = enabled;
+ }
+ 
+diff --git a/media/libsydneyaudio/src/sydney_audio_gonk.cpp b/media/libsydneyaudio/src/sydney_audio_gonk.cpp
+index 25b681a..592c1f4 100644
+--- a/media/libsydneyaudio/src/sydney_audio_gonk.cpp
++++ b/media/libsydneyaudio/src/sydney_audio_gonk.cpp
+@@ -9,7 +9,11 @@ extern "C" {
+ #include "sydney_audio.h"
+ }
+ 
++#if ANDROID_VERSION < 16
+ #include "gonk/AudioTrack.h"
++#else
++#include "AudioTrack.h"
++#endif
+ #include "android/log.h"
+ 
+ #if defined(DEBUG) || defined(FORCE_ALOG)
+@@ -94,7 +98,7 @@ sa_stream_create_pcm(
+ 
+   s->bufferSize = 0;
+ 
+-  s->streamType = AudioSystem::SYSTEM;
++  s->streamType = AUDIO_STREAM_SYSTEM;
+ 
+   *_s = s;
+   return SA_SUCCESS;
+@@ -111,35 +115,37 @@ sa_stream_set_stream_type(sa_stream_t *s,  const sa_stream_type_t stream_type)
+   switch (stream_type)
+  {
+     case SA_STREAM_TYPE_VOICE_CALL:
+-      s->streamType = AudioSystem::VOICE_CALL;
++      s->streamType = AUDIO_STREAM_VOICE_CALL;
+       break;
+     case SA_STREAM_TYPE_SYSTEM:
+-      s->streamType = AudioSystem::SYSTEM;
++      s->streamType = AUDIO_STREAM_SYSTEM;
+       break;
+     case SA_STREAM_TYPE_RING:
+-      s->streamType = AudioSystem::RING;
++      s->streamType = AUDIO_STREAM_RING;
+       break;
+     case SA_STREAM_TYPE_MUSIC:
+-      s->streamType = AudioSystem::MUSIC;
++      s->streamType = AUDIO_STREAM_MUSIC;
+       break;
+     case SA_STREAM_TYPE_ALARM:
+-      s->streamType = AudioSystem::ALARM;
++      s->streamType = AUDIO_STREAM_ALARM;
+       break;
+     case SA_STREAM_TYPE_NOTIFICATION:
+-      s->streamType = AudioSystem::NOTIFICATION;
++      s->streamType = AUDIO_STREAM_NOTIFICATION;
+       break;
+     case SA_STREAM_TYPE_BLUETOOTH_SCO:
+-      s->streamType = AudioSystem::BLUETOOTH_SCO;
++      s->streamType = AUDIO_STREAM_BLUETOOTH_SCO;
+       break;
+     case SA_STREAM_TYPE_ENFORCED_AUDIBLE:
+-      s->streamType = AudioSystem::ENFORCED_AUDIBLE;
++      s->streamType = AUDIO_STREAM_ENFORCED_AUDIBLE;
+       break;
+     case SA_STREAM_TYPE_DTMF:
+-      s->streamType = AudioSystem::DTMF;
++      s->streamType = AUDIO_STREAM_DTMF;
+       break;
++#if ANDROID_VERSION < 16
+     case SA_STREAM_TYPE_FM:
+       s->streamType = AudioSystem::FM;
+       break;
++#endif
+     default:
+       return SA_ERROR_INVALID;
+       break;
+@@ -159,12 +165,12 @@ sa_stream_open(sa_stream_t *s) {
+   }
+ 
+   int32_t chanConfig = s->channels == 1 ?
+-    AudioSystem::CHANNEL_OUT_MONO : AudioSystem::CHANNEL_OUT_STEREO;
++    AUDIO_CHANNEL_OUT_MONO : AUDIO_CHANNEL_OUT_STEREO;
+ 
+   int frameCount;
+   /* frameCount returned here is already twice of minFrameCount and calculated
+    * inside AudioTrack::getMinFrameCount() */
+-  if (AudioTrack::getMinFrameCount(&frameCount, s->streamType,
++  if (AudioTrack::getMinFrameCount(&frameCount, static_cast<audio_stream_type_t>(s->streamType),
+                                    s->rate) != NO_ERROR) {
+     return SA_ERROR_INVALID;
+   }
+@@ -173,7 +179,7 @@ sa_stream_open(sa_stream_t *s) {
+    * For music stream type, the frameCount is set to 1 second which meets the
+    * settings in decoding thread.
+    * The others just set to 4 times of minFrameCount for short latency. */
+-  if (s->streamType != AudioSystem::MUSIC) {
++  if (s->streamType != AUDIO_STREAM_MUSIC) {
+     frameCount *= 2;
+   } else {
+     frameCount = s->rate;
+@@ -189,7 +195,7 @@ sa_stream_open(sa_stream_t *s) {
+   AudioTrack *track =
+     new AudioTrack(s->streamType,
+                    s->rate,
+-                   AudioSystem::PCM_16_BIT,
++                   AUDIO_FORMAT_PCM_16_BIT,
+                    chanConfig,
+                    frameCount,
+                    0,
+diff --git a/media/omx-plugin/Makefile.in b/media/omx-plugin/Makefile.in
+index d498d35..41f3ebe 100644
+--- a/media/omx-plugin/Makefile.in
++++ b/media/omx-plugin/Makefile.in
+@@ -71,6 +71,12 @@ INCLUDES        += \
+                 -I$(ANDROID_SOURCE)/system/core/include \
+                 -I$(ANDROID_SOURCE)/hardware/libhardware/include \
+                 $(NULL)
++INCLUDES        += \
++                -I$(ANDROID_SOURCE)/frameworks/native/include/media/openmax \
++                -I$(ANDROID_SOURCE)/frameworks/av/include/media/ \
++                -I$(ANDROID_SOURCE)/frameworks/av/include/media/stagefright \
++                -I$(ANDROID_SOURCE)/frameworks/av/media/libstagefright/include \
++                $(NULL)
+ else
+ EXTRA_DSO_LDOPTS += \
+ 		-L$(DEPTH)/media/omx-plugin/lib/ics/libutils \
+diff --git a/netwerk/protocol/device/gonk/CameraHardwareInterface.h b/netwerk/protocol/device/gonk/CameraHardwareInterface.h
+index c60739c..865a5df 100644
+--- a/netwerk/protocol/device/gonk/CameraHardwareInterface.h
++++ b/netwerk/protocol/device/gonk/CameraHardwareInterface.h
+@@ -19,7 +19,7 @@
+ 
+ #include <binder/IMemory.h>
+ #include <utils/RefBase.h>
+-#include <surfaceflinger/ISurface.h>
++#include <gui/ISurface.h>
+ #include "Camera.h"
+ #include "CameraParameters.h"
+ 
+diff --git a/toolkit/library/Makefile.in b/toolkit/library/Makefile.in
+index 7ec916b..b69a924 100644
+--- a/toolkit/library/Makefile.in
++++ b/toolkit/library/Makefile.in
+@@ -449,6 +449,7 @@ OS_LIBS += \
+   -lstagefright_omx \
+   -lbinder \
+   -lgui \
++  -lz \
+   $(NULL)
+ endif
+ 
+diff --git a/widget/gonk/HWComposer.cpp b/widget/gonk/HWComposer.cpp
+index 12f90a3..4d6fb76 100644
+--- a/widget/gonk/HWComposer.cpp
++++ b/widget/gonk/HWComposer.cpp
+@@ -19,6 +19,11 @@
+ #include <hardware/hardware.h>
+ #include <EGL/egl.h>
+ 
++#if ANDROID_VERSION >= 16
++#define LOGW_IF ALOGW_IF
++#define LOGE_IF ALOGE_IF
++#endif
++
+ namespace android {
+ // ---------------------------------------------------------------------------
+ 
+diff --git a/widget/gonk/libui/InputDispatcher.cpp b/widget/gonk/libui/InputDispatcher.cpp
+index 3ec3727..ce72ad4 100644
+--- a/widget/gonk/libui/InputDispatcher.cpp
++++ b/widget/gonk/libui/InputDispatcher.cpp
+@@ -52,9 +52,11 @@
+ #define DEBUG_HOVER 0
+ 
+ #include "InputDispatcher.h"
+-
++#if ANDROID_VERSION < 16
+ #include <ui/PowerManager.h>
+-
++#else
++#include <androidfw/PowerManager.h>
++#endif
+ #include <stddef.h>
+ #include <unistd.h>
+ #include <errno.h>
+@@ -63,6 +65,7 @@
+ #define INDENT "  "
+ #define INDENT2 "    "
+ 
++
+ namespace android {
+ 
+ // Default input dispatching timeout if there is no focused application or paused window
+diff --git a/widget/gonk/nsWindow.cpp b/widget/gonk/nsWindow.cpp
+index 54c4010..20b2b2b 100644
+--- a/widget/gonk/nsWindow.cpp
++++ b/widget/gonk/nsWindow.cpp
+@@ -20,6 +20,9 @@
+ 
+ #include "android/log.h"
+ #include "ui/FramebufferNativeWindow.h"
++#if ANDROID_VERSION >= 16
++#include "ui/PixelFormat.h"
++#endif
+ 
+ #include "mozilla/dom/TabParent.h"
+ #include "mozilla/Hal.h"
+@@ -716,9 +719,9 @@ static uint32_t
+ ColorDepth()
+ {
+     switch (NativeWindow()->getDevice()->format) {
+-    case GGL_PIXEL_FORMAT_RGB_565:
++    case android::PIXEL_FORMAT_RGB_565:
+         return 16;
+-    case GGL_PIXEL_FORMAT_RGBA_8888:
++    case android::PIXEL_FORMAT_RGBA_8888:
+         return 32;
+     }
+     return 24; // GGL_PIXEL_FORMAT_RGBX_8888
