@@ -81,6 +81,7 @@ then
             continue
         fi
         
+        mkdir -p $dir
         cp $file $dir
     
         if [ $? -ne 0 ]
