@@ -1,0 +1,15 @@
+diff --git a/src/rilproxy.c b/src/rilproxy.c
+index 4b10ab9..3b16872 100644
+--- a/src/rilproxy.c
++++ b/src/rilproxy.c
+@@ -54,6 +54,10 @@
+ #include <utils/Log.h>
+ #include <cutils/sockets.h>
+ 
++#ifndef LOGD
++#define LOGD ALOGD
++#define LOGE ALOGE
++#endif
+ 
+ void switchUser() {
+   prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0);
