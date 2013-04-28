@@ -1,1 +1,2 @@
 external/junit : Common.mk
+device/sprd/sp7710ga : ft5x0x_ts.kl

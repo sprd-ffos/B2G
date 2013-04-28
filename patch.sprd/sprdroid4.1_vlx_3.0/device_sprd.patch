@@ -1,4 +1,4 @@
-From commit 2ed11a786d15f90ff846e6113432a70778238d8e
+From tag MOCORDROID4.1_3.0_SP7710_dualsim_W13.17.1
 diff --git a/common/tools/slog/Android.mk b/common/tools/slog/Android.mk
 index 35531f1..bbbb353 100644
 --- a/common/tools/slog/Android.mk
@@ -134,22 +134,22 @@ index 57825e6..e6e3b86 100644
  # include standard configs
  $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
 diff --git a/sp7710ga/AndroidProducts.mk b/sp7710ga/AndroidProducts.mk
-index 1442bc3..1bb5492 100644
+index 700ef1a..4f3f617 100644
 --- a/sp7710ga/AndroidProducts.mk
 +++ b/sp7710ga/AndroidProducts.mk
 @@ -17,5 +17,5 @@
  PRODUCT_MAKEFILES := $(LOCAL_DIR)/prod_sp7710ga.mk
- PRODUCT_MAKEFILES += $(LOCAL_DIR)/prod_sp7710gahvga.mk
+ #PRODUCT_MAKEFILES += $(LOCAL_DIR)/prod_sp7710gahvga.mk
  PRODUCT_MAKEFILES += $(LOCAL_DIR)/prod_sp7710gatri.mk
 -PRODUCT_MAKEFILES += $(LOCAL_DIR)/prod_sp7710gacuccspecAplus.mk
 +#PRODUCT_MAKEFILES += $(LOCAL_DIR)/prod_sp7710gacuccspecAplus.mk
  
 diff --git a/sp7710ga/base.mk b/sp7710ga/base.mk
-index db153b2..19487ee 100644
+index dbabba0..a6f8d73 100644
 --- a/sp7710ga/base.mk
 +++ b/sp7710ga/base.mk
-@@ -46,8 +46,8 @@ PRODUCT_PACKAGES += \
-     vtserver
+@@ -48,8 +48,8 @@ PRODUCT_PACKAGES += \
+     libstagefright_soft_h264dec_sprd
  
  # prebuild files
 -PRODUCT_PACKAGES += \
@@ -160,7 +160,7 @@ index db153b2..19487ee 100644
  PRODUCT_PACKAGES += \
  	modem_control\
 diff --git a/sp7710ga/init.rc b/sp7710ga/init.rc
-index dd3934b..3149ae2 100644
+index 4a39b86..0a53684 100644
 --- a/sp7710ga/init.rc
 +++ b/sp7710ga/init.rc
 @@ -17,6 +17,8 @@ on early-init
@@ -188,7 +188,7 @@ index dd3934b..3149ae2 100644
 -    mount rootfs rootfs / ro remount
 +#    mount rootfs rootfs / ro remount
  
-     mount yaffs2 mtd@fixnv /fixnv nosuid nodev no-checkpoint,tags-ecc-off
+     mount yaffs2 mtd@fixnv /fixnv nosuid nodev no-checkpoint
      chown system system /fixnv
 @@ -397,6 +402,10 @@ service console /system/bin/sh
  
@@ -201,15 +201,6 @@ index dd3934b..3149ae2 100644
  
  # adbd is controlled via property triggers in init.<platform>.usb.rc
  service adbd /sbin/adbd
-@@ -424,7 +433,7 @@ service servicemanager /system/bin/servicemanager
-     user system
-     group system
-     critical
--    onrestart restart zygote
-+#    onrestart restart zygote
-     onrestart restart media
-     onrestart restart surfaceflinger
-     onrestart restart drm
 @@ -454,15 +463,15 @@ service surfaceflinger /system/bin/surfaceflinger
      class main
      user system
@@ -235,7 +226,7 @@ index dd3934b..3149ae2 100644
  service drm /system/bin/drmserver
      class main
 diff --git a/sp7710ga/prod_sp7710ga.mk b/sp7710ga/prod_sp7710ga.mk
-index 41fac37..45e63b5 100644
+index 1551a4e..eeb3fdb 100644
 --- a/sp7710ga/prod_sp7710ga.mk
 +++ b/sp7710ga/prod_sp7710ga.mk
 @@ -19,7 +19,7 @@ TARGET_BOARD := sp7710ga
@@ -247,29 +238,11 @@ index 41fac37..45e63b5 100644
  
  PRODUCT_AAPT_CONFIG := hdpi
  
-@@ -68,7 +68,7 @@ PRODUCT_COPY_FILES := \
- 	$(BOARDDIR)/ft5x0x_ts.idc:system/usr/idc/ft5x0x_ts.idc \
- 	$(BOARDDIR)/headset-keyboard.kl:system/usr/keylayout/headset-keyboard.kl
- 
--$(call inherit-product, frameworks/native/build/phone-hdpi-256-dalvik-heap.mk)
-+#$(call inherit-product, frameworks/native/build/phone-hdpi-256-dalvik-heap.mk)
- 
- # include classified configs
- $(call inherit-product, $(BOARDDIR)/base.mk)
-diff --git a/sp7710ga/prod_sp7710gahvga.mk b/sp7710ga/prod_sp7710gahvga.mk
-index 54747df..1c4fd03 100644
---- a/sp7710ga/prod_sp7710gahvga.mk
-+++ b/sp7710ga/prod_sp7710gahvga.mk
-@@ -19,7 +19,7 @@ TARGET_BOARD := sp7710ga
- BOARDDIR := device/sprd/$(TARGET_BOARD)
- 
- DEVICE_PACKAGE_OVERLAYS := $(BOARDDIR)/overlay
--PRODUCT_PACKAGE_OVERLAYS := vendor/sprd/operator/cmcc/specA/overlay
-+#PRODUCT_PACKAGE_OVERLAYS := vendor/sprd/operator/cmcc/specA/overlay
- 
- PRODUCT_AAPT_CONFIG := hdpi
- 
-@@ -69,7 +69,7 @@ PRODUCT_COPY_FILES := \
+@@ -71,10 +71,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
+ 	
+ PRODUCT_COPY_FILES := \
+ 	$(BOARDDIR)/sprd-keypad.kl:system/usr/keylayout/sprd-keypad.kl \
++        $(BOARDDIR)/ft5x0x_ts.kl:system/usr/keylayout/ft5x0x_ts.kl \
  	$(BOARDDIR)/ft5x0x_ts.idc:system/usr/idc/ft5x0x_ts.idc \
  	$(BOARDDIR)/headset-keyboard.kl:system/usr/keylayout/headset-keyboard.kl
  
@@ -279,7 +252,7 @@ index 54747df..1c4fd03 100644
  # include classified configs
  $(call inherit-product, $(BOARDDIR)/base.mk)
 diff --git a/sp7710ga/prod_sp7710gatri.mk b/sp7710ga/prod_sp7710gatri.mk
-index c5b2262..3c02eb2 100644
+index 9514fd8..f826839 100644
 --- a/sp7710ga/prod_sp7710gatri.mk
 +++ b/sp7710ga/prod_sp7710gatri.mk
 @@ -19,7 +19,7 @@ TARGET_BOARD := sp7710ga
@@ -291,7 +264,7 @@ index c5b2262..3c02eb2 100644
  
  PRODUCT_AAPT_CONFIG := hdpi
  
-@@ -69,13 +69,13 @@ PRODUCT_COPY_FILES := \
+@@ -74,13 +74,13 @@ PRODUCT_COPY_FILES := \
  	$(BOARDDIR)/ft5x0x_ts.idc:system/usr/idc/ft5x0x_ts.idc \
  	$(BOARDDIR)/headset-keyboard.kl:system/usr/keylayout/headset-keyboard.kl
  
@@ -333,7 +306,7 @@ index cbce02a..f4a95cf 100644
 -PRODUCT_MAKEFILES += $(LOCAL_DIR)/prod_sp8825eacmccspecAplus_UUI.mk
 +#PRODUCT_MAKEFILES += $(LOCAL_DIR)/prod_sp8825eacmccspecAplus_UUI.mk
 diff --git a/sp8830ea/AndroidProducts.mk b/sp8830ea/AndroidProducts.mk
-index 96f7710..dadf864 100644
+index 207be99..2efab23 100644
 --- a/sp8830ea/AndroidProducts.mk
 +++ b/sp8830ea/AndroidProducts.mk
 @@ -15,9 +15,9 @@
@@ -346,6 +319,6 @@ index 96f7710..dadf864 100644
 +#PRODUCT_MAKEFILES := $(LOCAL_DIR)/prod_sp7735eacuccspecAplus_UUI.mk
 +#PRODUCT_MAKEFILES += $(LOCAL_DIR)/prod_sp8735eaplus_UUI.mk
 +#PRODUCT_MAKEFILES += $(LOCAL_DIR)/prod_sp8835eacmccspecAplus_UUI.mk
+ PRODUCT_MAKEFILES += $(LOCAL_DIR)/prod_sp8835eabase.mk
  				      
- 
  
