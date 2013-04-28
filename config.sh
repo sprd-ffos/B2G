@@ -189,6 +189,12 @@ case "$1" in
        repo_sync $1
        ;;
 
+"sp8825eabase_android")
+       echo DEVICE=sp8825ea >> .tmp-config &&
+       echo LUNCH=sp8825eabase-userdebug >> .tmp-config &&
+       repo_sync sp8825eabase_android
+       ;;
+
 "galaxy-s2")
 	echo DEVICE=galaxys2 >> .tmp-config &&
 	repo_sync $1
@@ -256,8 +262,6 @@ case "$1" in
 	echo - sp8810eabase_512x128_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 128 RAM
        echo - sp7710ga_sprdroid4.1 =================== Sprdroid4.1_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.1 and sprdlinux3.0
        echo - sp8810eabase_weekly_build ============== Sprd weekly build, gecko/gaia/gonk@sprd weekly revision
-       echo - sp8810eabase_android =================== Gonk refernce verison, MocorDroid4.0.3_VLX_3.0_W13.03.1_MP_W13.11.2
-       echo - sp7710ga_android ======================= Gonk refernce verison, MOCORDROID4.1_3.0_SP7710_dualsim_W13.15.3
 	echo - galaxy-s2
 	echo - galaxy-nexus
 	echo - nexus-s
@@ -270,6 +274,10 @@ case "$1" in
 	echo - pandaboard
 	echo - emulator
 	echo - emulator-x86
+       echo - sprdroid refernce code as below
+       echo - sp8810eabase_android =================== Gonk refernce verison, MocorDroid4.0.3_VLX_3.0_W13.03.1_MP_W13.11.2
+       echo - sp7710ga_android ======================= Gonk refernce verison, MOCORDROID4.1_3.0_SP7710_dualsim_W13.15.3
+       echo - sp8825eabase_android =================== Gonk refernce verison
 	exit -1
 	;;
 esac
