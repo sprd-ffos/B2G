@@ -719,7 +719,7 @@ index f6bb430..1544fe1 100644
 +    postMessage({ id: id, status: ret });
 +    break;
 +  case "start_supplicant":
-+    var ret = libhardware_legacy.start_supplicant(1);
++    var ret = libhardware_legacy.start_supplicant(0);
 +    debug("WIFI: start_supplicant: " + ret + "\n");
 +    postMessage({ id: id, status: ret });
 +    break;
