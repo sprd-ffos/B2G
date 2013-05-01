@@ -1,5 +1,4 @@
 build       : build.patch
-device/sprd : device_sprd.patch
 gecko       : gecko.patch
 rilproxy    : rilproxy.patch
 system/core : system_core.patch
