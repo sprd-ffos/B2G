@@ -3,7 +3,7 @@
 #run test...
 
 trap 'pkill unlock.sh' EXIT
-
+. ./set_gsnap.sh
 ADB=adb
 config=
 foo=${DEV:=dev}
@@ -71,6 +71,7 @@ $ADB shell "echo tap $HOMEX $HOMEY 3 200 > /data/home.sc"
 
 while true
 do
+       
     #crash report
     ./crash_report.sh --dev $DEV --usr $(cat /etc/hostname)
     if [ $? -eq 0 ]
@@ -79,13 +80,15 @@ do
 
         #push crash report to server
         ./push_report.sh --dev $DEV
-
+	
         $ADB reboot
         #wait for restart device
         sleep 60
 
-        #log once is enough
-        $ADB logcat > adb_log &
+        
+     else
+	$ADB shell mv /data/2.jpg /data/1.jpg
+	$ADB shell $GSNAP /data/2.jpg /dev/graphics/fb0
     fi
 
     if [ "$UNLOCK" = "y" ]

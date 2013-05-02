@@ -7,8 +7,8 @@
 #or exit 1
 
 #set $BUSYBOX
-. ./set_busybox.sh
 . ./set_gsnap.sh
+. ./set_busybox.sh
 ADB=adb
 FIND="$ADB shell $BUSYBOX find"
 DMPDIR=/data/b2g/mozilla
@@ -66,10 +66,14 @@ tag=${LOGHEAD}-${DEV}-${USR}-$(date +%y%m%d%H%M$S)
 mkdir $tag
 
 #ganap
-$ADB shell $GSNAP /data/snapshot.jpg /dev/graphics/fb0
-$ADB pull /data/snapshot.jpg $tag
+$ADB shell $GSNAP /data/3.jpg /dev/graphics/fb0
+$ADB pull /data/3.jpg $tag
+$ADB pull /data/1.jpg $tag
+$ADB pull /data/2.jpg $tag
 
 #adb log and ps
+$ADB logcat > adb_log &
+sleep 60
 cp adb_log ${tag}/
 $ADB shell b2g-ps > ${tag}/b2g-ps
 $ADB shell b2g-procrank > ${tag}/b2g-procrank
