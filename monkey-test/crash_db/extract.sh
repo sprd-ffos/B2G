@@ -58,6 +58,10 @@ fi
 
 . ./crdb.config
 
+#backup any valid tar.bz2 to host
+[ -d $TAR_FOLDER ] || mkdir $TAR_FOLDER
+cp -n $report $TAR_FOLDER
+
 pf_name=$(tar -tf $report | grep dump_parse)
 
 if [ -z "$pf_name" ]

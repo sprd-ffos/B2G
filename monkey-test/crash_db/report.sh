@@ -64,6 +64,9 @@ report=$CRASH_REPORT
 last_is_sim=n
 last_sim=
 
+#clean report
+>$report
+
 echo '<html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <head><title>crash report</title></head>
@@ -93,7 +96,8 @@ do
     
     if [ -n "$usr" ]
     then
-        [ "$cusr" = "$usr" ] || continue
+        foo=$(echo $cusr | grep -i "$usr") 
+        [ $? -eq 0 ] || continue
     fi
 
     ctime=$(echo $cr | awk -F- '{print $4}')
@@ -122,7 +126,7 @@ echo '</p>
 </body>
 </html>' >> $report
 
-perl -i -pe 's#(mtlog-\w+-\w+-\d+)#<a href="stack/$1">$1</a>#' $report
+perl -i -pe 's#(mtlog-\w+-\w+-\d+)#<a href="'$STACK_FOLDER'/$1">$1</a>[<a href="'$TAR_FOLDER'/$1.tar.bz2">Detail</a>]#' $report
 
 firefox $report
 
