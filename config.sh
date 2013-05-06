@@ -144,7 +144,7 @@ case "$1" in
 "sp8810eabase_512x256_wvga")
 	echo DEVICE=sp8810ea_512x256_wvga>> .tmp-config &&
 	echo LUNCH=sp8810eabase_512x256_wvga-eng >> .tmp-config &&
-	repo_sync sprdroid4.0.3_vlx_3.0_b2g
+	repo_sync sprdroid4.0.3_vlx_3.0_b2g_master
 	;;
 
 "sp8810eabase_512x256_hvga")
@@ -174,7 +174,7 @@ case "$1" in
 "sp7710ga_512x256_fwvga")
        echo DEVICE=sp7710ga >> .tmp-config &&
        echo LUNCH=sp7710ga-eng >> .tmp-config &&
-       repo_sync sprdroid4.1_vlx_3.0_b2g
+       repo_sync sprdroid4.1_vlx_3.0_b2g_master
        ;;
 
 "sp7710ga_512x256_hvga")
@@ -271,10 +271,10 @@ case "$1" in
        echo - sp8810eabase_mozilla_update_512x256_hvga Upgrade only, gecko/gaia@mozilla weekly stable revision, gonk@sprdroid4.0.3 LATEST revision, use HVAG and 256 RAM
 	echo - sp8810eabase =========================== MAIN BRANCH, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use WVAG and 512 RAM
 	echo - sp8810eaplus =========================== Debug multi-sim
-       echo - sp8810eabase_512x256_wvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use WVAG and 256 RAM
+       echo - sp8810eabase_512x256_wvga ============== *MAIN BRANCH*, gecko/gonk@sprdroid4.0.3_vlx_3.0_b2g, gaia@master, use WVAG and 256 RAM
 	echo - sp8810eabase_512x256_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 256 RAM
 	echo - sp8810eabase_512x128_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 128 RAM
-       echo - sp7710ga_512x256_fwvga ================= Sprdroid4.1_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.1 and sprdlinux3.0
+       echo - sp7710ga_512x256_fwvga ================= Sprdroid4.1_vlx_3.0, gecko@sprdroid4.0.3_vlx_3.0_b2g, gaia@master, gonk@sprdroid4.1 and sprdlinux3.0
        echo - sp7710ga_512x256_hvga ================== Sprdroid4.1_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.1 and sprdlinux3.0
        echo - sp8810eabase_weekly_build ============== Sprd weekly build, gecko/gaia/gonk@sprd weekly revision
 	echo - galaxy-s2
