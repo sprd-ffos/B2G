@@ -171,11 +171,18 @@ case "$1" in
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
-"sp7710ga_sprdroid4.1")
+"sp7710ga_512x256_fwvga")
        echo DEVICE=sp7710ga >> .tmp-config &&
        echo LUNCH=sp7710ga-eng >> .tmp-config &&
        repo_sync sprdroid4.1_vlx_3.0_b2g
        ;;
+
+"sp7710ga_512x256_hvga")
+        echo DEVICE=sp7710ga >> .tmp-config &&
+        echo LUNCH=sp7710ga-eng >> .tmp-config &&
+        echo TARGET_HVGA_ENABLE=true >> .tmp-config &&
+        repo_sync sprdroid4.1_vlx_3.0_b2g
+        ;;
 
 "sp8810eabase_weekly_build")
 	echo DEVICE=sp8810ea_512x256_hvga>> .tmp-config &&
@@ -267,7 +274,8 @@ case "$1" in
        echo - sp8810eabase_512x256_wvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use WVAG and 256 RAM
 	echo - sp8810eabase_512x256_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 256 RAM
 	echo - sp8810eabase_512x128_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 128 RAM
-       echo - sp7710ga_sprdroid4.1 =================== Sprdroid4.1_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.1 and sprdlinux3.0
+       echo - sp7710ga_512x256_fwvga ================= Sprdroid4.1_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.1 and sprdlinux3.0
+       echo - sp7710ga_512x256_hvga ================== Sprdroid4.1_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.1 and sprdlinux3.0
        echo - sp8810eabase_weekly_build ============== Sprd weekly build, gecko/gaia/gonk@sprd weekly revision
 	echo - galaxy-s2
 	echo - galaxy-nexus

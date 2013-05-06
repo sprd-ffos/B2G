@@ -20,6 +20,7 @@ export B2G_NOOPT &&
 export B2G_DEBUG &&
 export MOZ_CHROME_MULTILOCALE &&
 export L10NBASEDIR &&
+export TARGET_HVGA_ENABLE &&
 . build/envsetup.sh &&
 lunch $LUNCH
 echo rm -rf gaia/profile

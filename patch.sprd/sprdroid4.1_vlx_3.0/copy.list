@@ -1,1 +1,2 @@
 external/junit : Common.mk
+vendor/sprd/operator/cucc/specA/res/boot/xhdpi : bootanimation.zip
