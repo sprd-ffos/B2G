@@ -117,6 +117,12 @@ case "$1" in
 	repo_sync mozilla_update_temp
 	;;
 
+"sp8810eabase_mozilla_update_512x256_hvga")
+	echo DEVICE=sp8810ea_512x256_hvga>> .tmp-config &&
+	echo LUNCH=sp8810eabase_512x256_hvga-eng >> .tmp-config &&
+	repo_sync mozilla_update_temp
+	;;
+
 "sp8810eabase")
 	echo DEVICE=sp8810ea >> .tmp-config &&
 	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
@@ -255,6 +261,7 @@ case "$1" in
 	echo - sp8810eabase_4.0.3_vlx_3.0_track ======= Debug gonk bugs, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.0.3 ANY revision
 	echo - sp8810eabase_gonk_update =============== Upgrade only, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.0.3 LATEST revision
 	echo - sp8810eabase_mozilla_update ============ Upgrade only, gecko/gaia@mozilla weekly stable revision, gonk@sprdroid4.0.3 LATEST revision
+       echo - sp8810eabase_mozilla_update_512x256_hvga Upgrade only, gecko/gaia@mozilla weekly stable revision, gonk@sprdroid4.0.3 LATEST revision, use HVAG and 256 RAM
 	echo - sp8810eabase =========================== MAIN BRANCH, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use WVAG and 512 RAM
 	echo - sp8810eaplus =========================== Debug multi-sim
        echo - sp8810eabase_512x256_wvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use WVAG and 256 RAM
