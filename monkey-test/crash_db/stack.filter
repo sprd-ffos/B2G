@@ -1,1 +1,4 @@
-libxul.so
+libxul.so!mozalloc_abort
+libc.so!__libc_android_abort
+libxul.so!NS_DebugBreak_P
+liblog.so!__android_log_assert
