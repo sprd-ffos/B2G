@@ -109,4 +109,6 @@ $ADB shell rm -r $TOMBSTONES
 tar -caf ${tag}.tar.bz2 ${tag}/*
 
 rm -rf $tag
+$ADB shell rm -rf $DMPDIR/Crash Reports/pending/*.dmp
+$ADB shell rm -rf $DMPDIR/Crash Reports/pending/*.extra
 
