@@ -13,6 +13,15 @@
 #4 abstract the simplest stact of crashed thread to a file which named 
 # follow the report. We will take all the stack in a folder
 
+#exit code
+#1 - common error
+#2 - error tar file
+#3 - no dmp file
+#4 - size of dmp file is 0
+#5 - dmp file is incomplete
+
+trap 'rm -rf $report_name' EXIT
+
 #usage, if exit with error then use "usage 1", or "usage 0"
 usage()
 {
@@ -75,15 +84,18 @@ report_name=$(echo $pf_name | awk -F/ '{print $1}')
 tar -xaf $report $pf_name
 [ $? -eq 0 ] || exit 1
 
+[ -s $pf_name ] || exit 4
+
 reason=$(grep -P '^Crash reason:' $pf_name | awk -F: '{print $2}' | sed 's/ //g')
+[ -n "$reason" ] || exit 5
 address=$(grep -P '^Crash address:' $pf_name | awk -F: '{print $2}' | sed 's/ //g')
+[ -n "$address" ] || exit 5
 thread=$(grep -P '^Thread \d+ \(crashed\)' $pf_name | grep -Po '\d+')
+[ -n "$thread" ] || exit 5
 
 #abstract the stack to stack folder
 sed -nE '/^Thread [0-9]+ \(crashed\)$/,/^Thread [0-9]+$/ {/^ *[0-9]+/p}' $pf_name |\
     sed 's/^ *//' | awk '{print $2}' > ${STACK_FOLDER}/${report_name}
-
-rm -rf $report_name
 
 #output the feature
 echo "$report_name:$reason:$address:$thread"

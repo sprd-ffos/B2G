@@ -24,6 +24,7 @@ readme               - this
 rebase.sh            - 修改配置后重建数据库，根据原始数据：feature&stack
 report.sh            - 生成当前数据库的报告
 same.sh              - 判定两个cr是否类似
+stack.filter         - 栈tips的过滤部分，需100%匹配，可根据需要添加
 
 通常用法：
 1 ./now_report.sh

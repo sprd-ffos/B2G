@@ -59,6 +59,8 @@ done
 [[ "$from" == *[!0-9]* ]] && usage 1
 [[ "$to" == *[!0-9]* ]] && usage 1
 
+[ -f $STACK_FILTER_CONFIG ] || > $STACK_FILTER_CONFIG
+
 report=$CRASH_REPORT
 
 last_is_sim=n
@@ -117,7 +119,16 @@ do
         [[ "$line" == "│"* ]] && echo '<br>'$last_sim >> $report
     fi
 
-    echo '<br>'$line >> $report
+    #get cr tips
+    for stack in $(cat $(find $DB_FOLDER -name "$cr"))
+    do
+        foo=$(grep -F $stack $STACK_FILTER_CONFIG)
+        [ $? -eq 0 ] && continue
+        tip=$stack
+        break
+    done
+
+    echo '<br>'$line [$tip] >> $report
 
     last_is_sim=n
 done

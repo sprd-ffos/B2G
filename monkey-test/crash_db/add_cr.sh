@@ -19,6 +19,8 @@ report=$1
 > $NEW_FEATURE_FILE
 > $NEW_WRONG_FILE
 > $NEW_NO_DMP
+> $NEW_DMP_SIZE_0
+> $NEW_DMP_INCOMPLETE
 
 feature=$(./extract.sh --report $report)
 
@@ -31,6 +33,12 @@ case "$?" in
     ;;
 "3")
     echo $report > $NEW_NO_DMP 
+    ;;
+"4")
+    echo $report > $NEW_DMP_SIZE_0
+    ;;
+"5")
+    echo $report > $NEW_DMP_INCOMPLETE 
     ;;
 *)
     exit 1

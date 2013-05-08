@@ -12,3 +12,4 @@ rebase.sh
 report.sh
 same.sh
 server.config
+stack.filter

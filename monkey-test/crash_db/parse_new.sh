@@ -45,6 +45,20 @@ then
     cat $NEW_NO_DMP >> $NO_DMP
 fi
 
+if [ -f $NEW_DMP_SIZE_0 ]
+then
+    echo -- size of dmp file is 0 -- >> $NEW_REPORT
+    cat $NEW_DMP_SIZE_0 >> $NEW_REPORT
+    cat $NEW_DMP_SIZE_0 >> $DMP_SIZE_0
+fi
+
+if [ -f $NEW_DMP_INCOMPLETE ]
+then
+    echo -- dmp file incomplete -- >> $NEW_REPORT
+    cat $NEW_DMP_INCOMPLETE >> $NEW_REPORT
+    cat $NEW_DMP_INCOMPLETE >> $DMP_INCOMPLETE
+fi
+
 if [ -f $NEW_WRONG_FILE ]
 then
     echo -- tar file wrong -- >> $NEW_REPORT

@@ -57,10 +57,16 @@ do
         echo $feature >> $NEW_FEATURE_FILE
         ;;
     "2")
-        echo $cr >> $NEW_WRONG_FILE 
+        echo ${cr##*/} >> $NEW_WRONG_FILE 
         ;;
     "3")
-        echo $cr >> $NEW_NO_DMP 
+        echo ${cr##*/} >> $NEW_NO_DMP 
+        ;;
+    "4")
+        echo ${cr##*/} >> $NEW_DMP_SIZE_0
+        ;;
+    "5")
+        echo ${cr##*/} >> $NEW_DMP_INCOMPLETE 
         ;;
     *)
         ;;
