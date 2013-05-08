@@ -1,3 +1,4 @@
 #gonk-misc : add_log.patch
 hardware/libhardware_legacy : vibrator.patch
-gaia/apps/settings:remote-debugging.patch
+#gaia : remote-debugging.patch
+gaia : remove_lockscreen.patch
