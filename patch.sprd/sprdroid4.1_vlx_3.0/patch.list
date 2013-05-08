@@ -1,4 +1,3 @@
 build       : build.patch
 gecko       : gecko.patch
 rilproxy    : rilproxy.patch
-system/core : system_core.patch
