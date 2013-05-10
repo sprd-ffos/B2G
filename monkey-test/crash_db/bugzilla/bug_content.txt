@@ -1,0 +1,33 @@
+{
+    product     => "B2G", 
+    component   => "Gecko",
+    assigned_to => "weixian.kong\@spreadtrum.com",
+    version     => "unspecified",
+    op_sys      => "Windows",
+    platform    => "All",	
+    priority    => "4-Low Priority",
+    severity    => "5-Improved",
+    cf_come_from    => "Development_Area",
+    cf_base_on_ver  => "Mocorhtml5_w13.17",
+    cf_change_type  => "Defect",
+    cf_probability  => "1-Always Recurrence",
+    cf_processanalysis	=> "Others",
+    cf_comprefphone	=> "No Reference Information",
+    cf_occurence_count  => "1/10",
+    summary     => "[monkey test] crash in xxx function(测试linux下自动提交脚本)",
+    description => "
+[1.Hardware Version ]:
+[2.Project Build    ]:
+[3.Storage Card     ]:
+[4.SIM Card         ]:
+[5.Testing Location ]:
+[6.Testing Steps    ]:
+[7.Testing Result   ]:
+[8.Expected Result  ]:
+[9.Tester Contact   ]:
+[10.Logpath         ]:
+smb://10.0.0.166/public_folder/T2I/B2G_Log/weixiankong/
+[11.Analysis        ]:
+测试linux下自动提交脚本能否正常运行
+    "
+};

@@ -1,0 +1,12 @@
+解压两个压缩包SOAP-Lite-0.715.tar.gz，Class-Inspector-1.28.tar.gz
+使用命令行分别进入解压后的文件夹，逐步执行以下命令
+perl ./Makefile.PL
+make
+sudo make install
+
+装上perl的这两个模块后
+修改bug_content.txt中里面的assigned_to后面的信息和后面的summary、description等信息
+修改submit_bug.pl里面24，25行的bugzilla用户名和密码
+perl ./submit_bug.pl就可以提交bug到bugzilla了
+
+如果遇到问题请随时与weixian.kong联系
