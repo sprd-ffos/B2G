@@ -1,3 +1,4 @@
 build       : build.patch
 gecko       : gecko.patch
 rilproxy    : rilproxy.patch
+frameworks/av : av.patch

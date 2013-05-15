@@ -1,0 +1,85 @@
+diff --git a/include/media/AudioSystem.h b/include/media/AudioSystem.h
+index e2662f2..20f69e2 100644
+--- a/include/media/AudioSystem.h
++++ b/include/media/AudioSystem.h
+@@ -234,6 +234,9 @@ public:
+ 
+     static const sp<IAudioPolicyService>& get_audio_policy_service();
+ 
++    //fake funciton to avoid gecko reference fail
++    static status_t setFmVolume(float volume);
++
+     // ----------------------------------------------------------------------------
+ 
+ private:
+@@ -286,6 +289,8 @@ private:
+     // list of output descriptors containing cached parameters
+     // (sampling rate, framecount, channel count...)
+     static DefaultKeyedVector<audio_io_handle_t, OutputDescriptor *> gOutputs;
++
++    static status_t setFmVolumeIndex(int index);
+ };
+ 
+ };  // namespace android
+diff --git a/media/libmedia/AudioSystem.cpp b/media/libmedia/AudioSystem.cpp
+index 4c41ba5..e037055 100644
+--- a/media/libmedia/AudioSystem.cpp
++++ b/media/libmedia/AudioSystem.cpp
+@@ -25,6 +25,9 @@
+ 
+ #include <system/audio.h>
+ 
++#include<unistd.h>
++#include<fcntl.h>
++#define FMFIFO "/data/fmpseudopipe"
+ // ----------------------------------------------------------------------------
+ 
+ namespace android {
+@@ -669,6 +672,8 @@ status_t AudioSystem::setStreamVolumeIndex(audio_stream_type_t stream,
+ {
+     const sp<IAudioPolicyService>& aps = AudioSystem::get_audio_policy_service();
+     if (aps == 0) return PERMISSION_DENIED;
++    if (stream == AUDIO_STREAM_FM ) return AudioSystem::setFmVolumeIndex(index);
++    ALOGE("AudioSystem::setStreamVolumeIndex stream %d index %d device %d \n",stream,index,device);
+     return aps->setStreamVolumeIndex(stream, index, device);
+ }
+ 
+@@ -678,6 +683,7 @@ status_t AudioSystem::getStreamVolumeIndex(audio_stream_type_t stream,
+ {
+     const sp<IAudioPolicyService>& aps = AudioSystem::get_audio_policy_service();
+     if (aps == 0) return PERMISSION_DENIED;
++    ALOGE("AudioSystem::getStreamVolumeIndex stream %d index %d device %d \n",stream,index,device);
+     return aps->getStreamVolumeIndex(stream, index, device);
+ }
+ 
+@@ -744,6 +750,30 @@ void AudioSystem::clearAudioConfigCache()
+     gOutputs.clear();
+ }
+ 
++status_t AudioSystem::setFmVolumeIndex(int index)
++{
++    int result = INVALID_OPERATION;
++
++    int fifo_id = open( FMFIFO ,O_WRONLY|O_NONBLOCK);
++    if(fifo_id != -1) {
++	int buff = index;
++	result = write(fifo_id,&buff,sizeof(int));
++    } else {
++	ALOGE("open FM FIFO error\n");
++    }
++    close(fifo_id);
++
++    ALOGE("AudioSystem::setFmVolumeIndex index %d result %d \n",index,result);
++    return result;
++}
++
++//fake funciton to avoid gecko reference fail
++status_t AudioSystem::setFmVolume(float volume)
++{
++    ALOGE("%s\n volume %f\n",__FUNCTION__,volume);
++    return 0;
++}
++
+ // ---------------------------------------------------------------------------
+ 
+ void AudioSystem::AudioPolicyServiceClient::binderDied(const wp<IBinder>& who) {
