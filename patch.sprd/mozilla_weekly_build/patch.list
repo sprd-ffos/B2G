@@ -5,5 +5,6 @@ gecko     : crash_report.patch
 gecko     : gecko.patch
 gecko     : incoming_call.patch
 gecko     : fm.patch
-gecko     : OmxDecoder.patch
-external/moztt : no_chinese.patch
+#gecko     : OmxDecoder.patch
+gecko     : revert_bug860760.patch
+#external/moztt : no_chinese.patch

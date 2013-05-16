@@ -1,0 +1,154 @@
+diff --git a/content/media/nsBuiltinDecoderReader.h b/content/media/nsBuiltinDecoderReader.h
+index 962a6ba..142f92a 100644
+--- a/content/media/nsBuiltinDecoderReader.h
++++ b/content/media/nsBuiltinDecoderReader.h
+@@ -425,17 +425,6 @@ public:
+                         int64_t aEndTime,
+                         int64_t aCurrentTime) = 0;
+ 
+-  // Called when the decode thread is started, before calling any other
+-  // decode, read metadata, or seek functions. Do any thread local setup
+-  // in this function.
+-  virtual void OnDecodeThreadStart() {}
+-
+-  // Called when the decode thread is about to finish, after all calls to
+-  // any other decode, read metadata, or seek functions. Any backend specific
+-  // thread local tear down must be done in this function. Note that another
+-  // decode thread could start up and run in future.
+-  virtual void OnDecodeThreadFinish() {}
+-
+ protected:
+   // Queue of audio frames. This queue is threadsafe, and is accessed from
+   // the audio, decoder, state machine, and main threads.
+diff --git a/content/media/nsBuiltinDecoderStateMachine.cpp b/content/media/nsBuiltinDecoderStateMachine.cpp
+index 7b70dab4..eb67f1f 100644
+--- a/content/media/nsBuiltinDecoderStateMachine.cpp
++++ b/content/media/nsBuiltinDecoderStateMachine.cpp
+@@ -485,8 +485,6 @@ int64_t nsBuiltinDecoderStateMachine::GetDecodedAudioDuration() {
+ void nsBuiltinDecoderStateMachine::DecodeThreadRun()
+ {
+   NS_ASSERTION(OnDecodeThread(), "Should be on decode thread.");
+-  mReader->OnDecodeThreadStart();
+-
+   ReentrantMonitorAutoEnter mon(mDecoder->GetReentrantMonitor());
+ 
+   if (mState == DECODER_STATE_DECODING_METADATA) {
+@@ -509,10 +507,7 @@ void nsBuiltinDecoderStateMachine::DecodeThreadRun()
+   }
+ 
+   mDecodeThreadIdle = true;
+-
+   LOG(PR_LOG_DEBUG, ("%p Decode thread finished", mDecoder.get()));
+-
+-  mReader->OnDecodeThreadFinish();
+ }
+ 
+ void nsBuiltinDecoderStateMachine::SendStreamAudio(AudioData* aAudio,
+diff --git a/content/media/omx/OmxDecoder.cpp b/content/media/omx/OmxDecoder.cpp
+index e928d3d..55c8e0a 100644
+--- a/content/media/omx/OmxDecoder.cpp
++++ b/content/media/omx/OmxDecoder.cpp
+@@ -141,7 +141,6 @@ OmxDecoder::OmxDecoder(MediaResource *aResource,
+   mVideoBuffer(nullptr),
+   mAudioBuffer(nullptr),
+   mIsVideoSeeking(false),
+-  mPaused(false),
+   mAudioMetadataRead(false)
+ {
+ }
+@@ -689,32 +688,3 @@ void OmxDecoder::ReleaseAllPendingVideoBuffersLocked()
+   }
+   mPendingVideoBuffers.clear();
+ }
+-
+-nsresult OmxDecoder::Play() {
+-  if (!mPaused) {
+-    return NS_OK;
+-  }
+-  if (mVideoSource.get() && mVideoSource->start() != OK) {
+-    return NS_ERROR_UNEXPECTED;
+-  }
+-
+-  if (mAudioSource.get()&& mAudioSource->start() != OK) {
+-    return NS_ERROR_UNEXPECTED;
+-  }
+-  mPaused = false;
+-  return NS_OK;
+-}
+-
+-void OmxDecoder::Pause() {
+-  if (mPaused) {
+-    return;
+-  }
+-  if (mVideoSource.get()) {
+-    mVideoSource->pause();
+-  }
+-
+-  if (mAudioSource.get()) {
+-    mAudioSource->pause();
+-  }
+-  mPaused = true;
+-}
+diff --git a/content/media/omx/OmxDecoder.h b/content/media/omx/OmxDecoder.h
+index 0d17c66..e132194 100644
+--- a/content/media/omx/OmxDecoder.h
++++ b/content/media/omx/OmxDecoder.h
+@@ -130,10 +130,6 @@ class OmxDecoder : public RefBase {
+   bool ToVideoFrame(VideoFrame *aFrame, int64_t aTimeUs, void *aData, size_t aSize, bool aKeyFrame);
+   bool ToAudioFrame(AudioFrame *aFrame, int64_t aTimeUs, void *aData, size_t aDataOffset, size_t aSize,
+                     int32_t aAudioChannels, int32_t aAudioSampleRate);
+-
+-  //True if decoder is in a paused state
+-  bool mPaused;
+-
+ public:
+   OmxDecoder(MediaResource *aResource, nsBuiltinDecoder *aDecoder);
+   ~OmxDecoder();
+@@ -174,12 +170,6 @@ public:
+   }
+ 
+   bool ReleaseVideoBuffer(MediaBuffer *aBuffer);
+-
+-  //Change decoder into a playing state
+-  nsresult Play();
+-
+-  //Change decoder into a paused state
+-  void Pause();
+ };
+ 
+ }
+diff --git a/content/media/omx/nsMediaOmxReader.cpp b/content/media/omx/nsMediaOmxReader.cpp
+index e45cb2d..170ab01 100644
+--- a/content/media/omx/nsMediaOmxReader.cpp
++++ b/content/media/omx/nsMediaOmxReader.cpp
+@@ -325,16 +325,3 @@ nsresult nsMediaOmxReader::GetBuffered(nsTimeRanges* aBuffered, int64_t aStartTi
+   }
+   return NS_OK;
+ }
+-
+-void nsMediaOmxReader::OnDecodeThreadFinish() {
+-  if (mOmxDecoder.get()) {
+-    mOmxDecoder->Pause();
+-  }
+-}
+-
+-void nsMediaOmxReader::OnDecodeThreadStart() {
+-  if (mOmxDecoder.get()) {
+-    nsresult result = mOmxDecoder->Play();
+-    NS_ASSERTION(result == NS_OK, "OmxDecoder should be in play state to continue decoding");
+-  }
+-}
+diff --git a/content/media/omx/nsMediaOmxReader.h b/content/media/omx/nsMediaOmxReader.h
+index 7995c0a..41f657c 100644
+--- a/content/media/omx/nsMediaOmxReader.h
++++ b/content/media/omx/nsMediaOmxReader.h
+@@ -54,9 +54,6 @@ public:
+     return true;
+   }
+ 
+-  virtual void OnDecodeThreadStart() MOZ_OVERRIDE;
+-
+-  virtual void OnDecodeThreadFinish() MOZ_OVERRIDE;
+ };
+ 
+ #endif
