@@ -144,12 +144,14 @@ case "$1" in
 "sp8810eabase_512x256_wvga")
 	echo DEVICE=sp8810ea_512x256_wvga>> .tmp-config &&
 	echo LUNCH=sp8810eabase_512x256_wvga-eng >> .tmp-config &&
+	echo GONK_VERSION=4.0.3_VLX_3.0_W13.03.1_MP_W13.11.2 >> .tmp-config &&
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g_master
 	;;
 
 "sp8810eabase_512x256_hvga")
 	echo DEVICE=sp8810ea_512x256_hvga>> .tmp-config &&
 	echo LUNCH=sp8810eabase_512x256_hvga-eng >> .tmp-config &&
+	echo GONK_VERSION=4.0.3_VLX_3.0_W13.03.1_MP_W13.11.2 >> .tmp-config &&
 	repo_sync sprdroid4.0.3_vlx_3.0_b2g
 	;;
 
@@ -174,6 +176,7 @@ case "$1" in
 "sp7710ga_512x256_fwvga")
        echo DEVICE=sp7710ga >> .tmp-config &&
        echo LUNCH=sp7710ga-eng >> .tmp-config &&
+       echo GONK_VERSION=4.1_3.0_SP7710_dualsim_W13.19.1 >> .tmp-config &&
        repo_sync sprdroid4.1_vlx_3.0_b2g_master
        ;;
 
