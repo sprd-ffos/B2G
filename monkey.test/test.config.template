@@ -1,0 +1,9 @@
+IS_LOCAL_TEST=n
+
+DEVICE_CONFIG="tara.config"
+
+#if is local version, the follow config is unnecessary
+NEED_GET_IMAGE=y
+NEED_FLASH=y
+IMAGE_SERVER_CONFIG="image_server.config"
+

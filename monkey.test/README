@@ -1,0 +1,66 @@
+*** 为了方便git clean的测试，所以先将改修改推送到服务器。
+*** 该工程未完善！！！
+
+
+一、简要使用说明：
+1 编辑test.config
+2 run ./test_main.sh
+
+二、test.config详细说明
+
+三、
+
+文件清单及详细说明：
+├── bin
+│   ├── adb
+│   ├── busybox
+│   ├── fastboot
+│   ├── gsnap
+│   ├── minidump_stackwalk
+│   └── orng
+├── build_symb.sh
+├── check_adb.sh
+├── check_local_file.sh
+├── crash-database
+│   ├── add_cr.sh
+│   ├── add_folder.sh
+│   ├── crdb.config
+│   ├── extract_folder.sh
+│   ├── extract.sh
+│   ├── _list
+│   ├── now_report.sh
+│   ├── parse_cr.sh
+│   ├── parse_new.sh
+│   ├── readme
+│   ├── rebase.sh
+│   ├── report.sh
+│   ├── same.sh
+│   ├── server.config
+│   └── stack.filter
+├── crash_report.sh
+├── device.config
+├── env_pre.sh
+├── flash.sh
+├── gen_script.sh
+├── get_image.sh
+├── image_server.config
+├── keep_test.sh
+├── keep_unlock.sh
+├── kill_orng.sh
+├── kill_unlock.sh
+├── local_file.config
+├── local_image.config
+├── log_server.config
+├── orangutan.tar.bz2
+├── pscp.sh
+├── push_report.sh
+├── push_test_files.sh
+├── README
+├── sc
+│   └── unlock_hvga.sc
+├── system.config
+├── test.config
+├── test_loop.sh
+├── test_main.sh
+├── test_once.sh
+└── tick_collect_info.sh
