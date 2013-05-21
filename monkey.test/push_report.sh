@@ -6,6 +6,9 @@
 . $DEVICE_CONFIG
 . ./log_server.config
 
+#if local test, do not push crash report
+[ $TEST_VERSION = "local" ] && exit 0
+
 #push to server
 push_files=*log-*.tar.bz2
 

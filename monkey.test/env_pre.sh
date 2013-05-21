@@ -5,7 +5,6 @@
 . ./system.config
 . ./test.config
 . $DEVICE_CONFIG
-. ./local_image.config
 
 usage()
 {

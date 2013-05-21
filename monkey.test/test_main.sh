@@ -25,11 +25,8 @@ error_test $? $0 $LINENO
 ./check_adb.sh $passwd
 error_test $? $0 $LINENO
 
-if [ "$IS_LOCAL_TEST" = "y" ]
-then
-    [ "$NEED_REBUILD_ALL" = "y" ] && ./env_pre.sh --passwd $passwd
-    ./build_symb.sh
-else
+case "$TEST_VERSION" in
+"release")
     if [ $NEED_GET_IMAGE = "y" ]
     then
         ./get_image.sh
@@ -42,7 +39,17 @@ else
         error_test $? $0 $LINENO
         sudo -K
     fi
-fi
+    ;;
+"daily")
+    [ "$NEED_REBUILD_ALL" = "y" ] && ./env_pre.sh --passwd $passwd
+    ./build_symb.sh
+    ;;
+"local")
+    ./build_symb.sh
+    ;;
+*)
+    ;;
+esac
 
 #after flash, we need to make sure that adb is job well
 ./check_adb.sh $passwd

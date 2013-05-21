@@ -10,7 +10,6 @@
 . $DEVICE_CONFIG
 
 DMPDIR=/data/b2g/mozilla
-TOMBSTONES=/data/tombstones
 DUMPTOOL=./bin/minidump_stackwalk
 
 file_cnt=$($FIND $DMPDIR -name "*.dmp" -o -name "*.extra" | wc -l)
@@ -23,17 +22,15 @@ fi
 
 ./kill_orng.sh
 
-if [ "$IS_LOCAL_TEST" = "y" ]
+if [ "$TEST_VERSION" = "release" ]
 then
-    VERSION="local"
-    SYMBDIR=../objdir-gecko/dist/crashreporter-symbols
+    SYMBDIR=./$IMAGE_FOLDER/crashreporter-symbols
 else
-    VERSION="release"
-    SYMBDIR=./crashreporter-symbols
+    SYMBDIR=../objdir-gecko/dist/crashreporter-symbols
 fi
 
 #gen time tag
-tag=${LOGHEAD}-${DEV_NAME}-${VERSION}-$(cat /etc/hostname)-$(date +%y%m%d%H%M$S)
+tag=${LOGHEAD}-${DEV_NAME}-${TEST_VERSION}-$(cat /etc/hostname)-$(date +%y%m%d%H%M$S)
 
 mkdir $tag
 
@@ -66,7 +63,7 @@ fi
 #manifest.xml
 cp ${IMAGE_FOLDER}/manifest.xml ${tag}/
 
-if [ $IS_LOCAL_TEST = "y" ]
+if [ $TEST_VERSION = "daily" ]
 then
     #cp .config and .userconfig
     cp ../.config ${tag}/config
@@ -76,6 +73,9 @@ fi
 #tombstones
 $ADB pull $TOMBSTONES $tag
 $ADB shell rm -r $TOMBSTONES
+
+#slog
+$ADB pull $SLOGDIR $tag
 
 #tar files
 tar -caf ${tag}.tar.bz2 ${tag}/*

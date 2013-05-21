@@ -10,13 +10,18 @@
 TICK=10
 HOME_TICK=120
 POWER_TICK=180
+SLOG_TICK=300
 
 hometick=$HOME_TICK
 powertick=$POWER_TICK
+slogtick=$SLOG_TICK
 
 trap './kill_unlock.sh' EXIT
 
 echo "["$(date)"] Begin a new test."
+
+#clear slog
+$ADB shell rm -r $SLOGDIR 
 
 while true
 do
@@ -47,6 +52,14 @@ do
     else
         powertick=$POWER_TICK
         $ADB shell /data/orng $DEV_TOUCHSCREEN_EVENT /data/unlock_${DEV_RESOLUTION}.sc
+    fi
+
+    if [ $slogtick -gt 0 ]
+    then
+        slogtick=$(( slogtick - TICK ))
+    else
+        slogtick=$SLOG_TICK
+        $ADB shell rm -r $SLOGDIR 
     fi
 
     #keep running unlock, include keep lcd on

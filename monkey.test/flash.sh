@@ -4,7 +4,6 @@
 
 . ./system.config
 . ./test.config
-. ./local_image.config
 
 trap 'exit 1' ERR
 
