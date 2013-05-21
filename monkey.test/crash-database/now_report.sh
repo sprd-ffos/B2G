@@ -16,8 +16,7 @@ set timeout -1
 expect {
     \"*@*'s password:\" {send \"$spasswd\r\"; exp_continue}
     \"Are you sure you want to continue connecting *?\" {send \"yes\r\"; exp_continue}
-}
-expect eof"
+}"
 
 ./add_folder.sh $cpfolder
 

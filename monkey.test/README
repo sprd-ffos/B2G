@@ -7,10 +7,37 @@
 2 run ./test_main.sh
 
 二、test.config详细说明
+test.config是我们的测试基本配置，可以通过配置这个文件来支配我们的测试行为。
+我们来看一看一般的test.config的形式：
+---- 分割线 ----
+IS_LOCAL_TEST=y
 
-三、
+DEVICE_CONFIG="tara.config"
+
+#for release version
+NEED_GET_IMAGE=""
+NEED_FLASH=""
+IMAGE_SERVER_CONFIG=""
+
+#for local version
+NEED_REBUILD_ALL=y
+DEV_PROJECT=sp8810eabase_512x256_hvga
+---- 分割线 ----
+我们可以看到——
+1，需要配置的是“IS_LOCAL_TEST（是否本地测试）”，通常本地测试是为程序员测试本地版本准备的。本地配置会下载和编译代码，需要有代码环境才可以。同时，如果是本地配置，我们会本地编译crashrepoter的符号表。
+2，我们需要配置我们测试设备的配置，这个配置应该是跟发布版本想对应的，理论上应该是从获取版本的地方获取（LOCAL TEST由程序员编写，RELEASE TEST则发布release版本的时候一并发布），目前尚未成熟，我们暂且先提供相应的配置。
+3，我们需要配置release版本测试的时候下载版本相关的参数，是否需要获取版本，因为版本可以自行复制到测试目录，也可以从服务器获取，如果需要从服务器获取，还需要给出相关的服务器配置。以及是否需要下载版本，因为版本也是可以手动下载的。
+4，我们需要配置本地测试是否需要重新下载版本编译，我们并不总是需要用最新版本测试的，可能会测试我们的当前版本。
+
+三、快捷的测试，兼容之前的monkey test版本
+1，./run-tara-auto.sh
+2, ./run-unagi-auto.sh
+以上对应全自动测试tara和unagi。
+
+四、可以通过配置test.config及相应的子config来配置所需要的测试。
 
 文件清单及详细说明：
+.
 ├── bin
 │   ├── adb
 │   ├── busybox
@@ -38,8 +65,9 @@
 │   ├── server.config
 │   └── stack.filter
 ├── crash_report.sh
-├── device.config
+├── device.config.template
 ├── env_pre.sh
+├── exception_report.sh
 ├── flash.sh
 ├── gen_script.sh
 ├── get_image.sh
@@ -56,11 +84,19 @@
 ├── push_report.sh
 ├── push_test_files.sh
 ├── README
+├── run-tara-auto.sh
+├── run-unagi-auto.sh
 ├── sc
 │   └── unlock_hvga.sc
 ├── system.config
+├── tara.config
+├── tara.test.config
 ├── test.config
+├── test.config.template
 ├── test_loop.sh
 ├── test_main.sh
 ├── test_once.sh
-└── tick_collect_info.sh
+├── tick_collect_info.sh
+├── unagi.config
+└── unagi.test.config
+
