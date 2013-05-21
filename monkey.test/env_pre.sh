@@ -2,6 +2,9 @@
 
 #prepare the clean run environment for test
 
+. ./system.config
+. ./test.config
+. $DEVICE_CONFIG
 . ./local_image.config
 
 usage()
@@ -41,17 +44,16 @@ git reset --hard HEAD
 git fetch origin
 git checkout origin/sprdroid4.0.3_vlx_3.0_b2g
 
-#./config.sh $dev
+#./config.sh $DEV_PROJECT
 expect -c "
 
-spawn ./config.sh $dev
+spawn ./config.sh $DEV_PROJECT
 set timeout -1 
 expect {
     \"Your Name *:\" {send \"\r\"; exp_continue}
     \"Your Email *:\" {send \"\r\"; exp_continue}
     \"is this correct *?\" {send \"y\r\"; exp_continue}
-}
-expect eof"
+}"
 
 repo forall -c 'git clean -df && git reset --hard HEAD'
 
@@ -64,15 +66,12 @@ repo manifest -o ${IMAGE_FOLDER}/manifest.xml -r
 auto_patch=./patch.sprd/auto_patch.sh
 if [ -f $auto_patch ]
 then
-    $auto_patch $dev
+    $auto_patch $DEV_PROJECT
 fi
 
 rm -rf ./out
 rm -rf ./objdir-gecko
 ./build.sh
-
-#build symbols
-. load-config.sh && . setup.sh && make buildsymbols
 
 #sudo ./flash.sh
 echo $passwd | sudo -S ./flash.sh 

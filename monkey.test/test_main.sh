@@ -27,7 +27,8 @@ error_test $? $0 $LINENO
 
 if [ "$IS_LOCAL_TEST" = "y" ]
 then
-    ./env_pre.sh --passwd $passwd
+    [ "$NEED_REBUILD_ALL" = "y" ] && ./env_pre.sh --passwd $passwd
+    ./build_symb.sh
 else
     if [ $NEED_GET_IMAGE = "y" ]
     then

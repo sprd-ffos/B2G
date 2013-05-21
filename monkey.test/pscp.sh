@@ -52,6 +52,5 @@ set timeout -1
 expect {
     \"*@*'s password:\" {send \"$passwd\r\"; exp_continue}
     \"Are you sure you want to continue connecting *?\" {send \"yes\r\"; exp_continue}
-}
-expect eof"
+}"
 
