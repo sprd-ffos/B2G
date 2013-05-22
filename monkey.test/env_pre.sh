@@ -36,6 +36,8 @@ done
 
 trap 'exit 1' ERR
 
+TESTDIR=$(cd "$(dirname "$0")"; pwd)
+
 #clean, get, build and flash
 cd ..
 git clean -df
@@ -57,9 +59,9 @@ expect {
 repo forall -c 'git clean -df && git reset --hard HEAD'
 
 #save manifest.xml 
-[ -d $IMAGE_FOLDER ] && rm -rf $IMAGE_FOLDER
-mkdir $IMAGE_FOLDER
-repo manifest -o ${IMAGE_FOLDER}/manifest.xml -r
+[ -d ${TESTDIR}/$IMAGE_FOLDER ] && rm -rf ${TESTDIR}/$IMAGE_FOLDER
+mkdir ${TESTDIR}/$IMAGE_FOLDER
+repo manifest -o ${TESTDIR}/${IMAGE_FOLDER}/manifest.xml -r
 
 #auto patch
 auto_patch=./patch.sprd/auto_patch.sh
