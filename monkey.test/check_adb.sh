@@ -17,8 +17,11 @@ try_cnt=0
 echo $passwd | sudo -S echo -n 
 error_test $? $0 $LINENO
 
-sudo chown root:root $ADB
-sudo chmod u+s $ADB
+if [ $ADB = "bin/adb" ]
+then
+    sudo chown root:root $ADB
+    sudo chmod u+s $ADB
+fi
 
 while ! $ADB shell echo -n
 do
