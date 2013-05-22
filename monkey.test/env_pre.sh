@@ -34,8 +34,6 @@ do
     shift
 done
 
-trap 'exit 1' ERR
-
 TESTDIR=$(cd "$(dirname "$0")"; pwd)
 
 #clean, get, build and flash
@@ -44,6 +42,8 @@ git clean -df
 git reset --hard HEAD
 git fetch origin
 git checkout origin/sprdroid4.0.3_vlx_3.0_b2g
+
+repo forall -c 'git clean -df && git reset --hard HEAD'
 
 #./config.sh $DEV_PROJECT
 expect -c "
@@ -56,13 +56,6 @@ expect {
     \"is this correct *?\" {send \"y\r\"; exp_continue}
 }"
 
-repo forall -c 'git clean -df && git reset --hard HEAD'
-
-#save manifest.xml 
-[ -d ${TESTDIR}/$IMAGE_FOLDER ] && rm -rf ${TESTDIR}/$IMAGE_FOLDER
-mkdir ${TESTDIR}/$IMAGE_FOLDER
-repo manifest -o ${TESTDIR}/${IMAGE_FOLDER}/manifest.xml -r
-
 #auto patch
 auto_patch=./patch.sprd/auto_patch.sh
 if [ -f $auto_patch ]
@@ -73,7 +66,15 @@ fi
 rm -rf ./out
 rm -rf ./objdir-gecko
 ./build.sh
+error_test $? $0 $LINENO
 
 #sudo ./flash.sh
 echo $passwd | sudo -S ./flash.sh 
+error_test $? $0 $LINENO
 sudo -K
+
+#save manifest.xml 
+[ -d ${TESTDIR}/$IMAGE_FOLDER ] && rm -rf ${TESTDIR}/$IMAGE_FOLDER
+mkdir ${TESTDIR}/$IMAGE_FOLDER
+repo manifest -o ${TESTDIR}/${IMAGE_FOLDER}/manifest.xml -r
+

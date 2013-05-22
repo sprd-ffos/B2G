@@ -42,6 +42,7 @@ case "$TEST_VERSION" in
     ;;
 "daily")
     [ "$NEED_REBUILD_ALL" = "y" ] && ./env_pre.sh --passwd $passwd
+    error_test $? $0 $LINENO
     ./build_symb.sh
     ;;
 "local")
