@@ -75,6 +75,7 @@ $ADB pull $TOMBSTONES $tag
 $ADB shell rm -r $TOMBSTONES
 
 #slog
+$ADB pull ${SLOGDIR}_bak $tag
 $ADB pull $SLOGDIR $tag
 
 #tar files

@@ -1,0 +1,15 @@
+一、概述
+
+daily测试脚本会完成一下事情：
+1 下载、更新代码
+2 编译代码
+3 将编译的image下载到手机
+4 根据制定的test.config运行monkey test
+
+二、用法
+
+1 我们需要做的就是提供test.config，在这个配置文件中，我们需要指明是daily测试，并且指明测试的device配置文件及测试设备。详细的，可以参照test.config.template，将其中daily测试相关的部分配置好。
+2 运行test_main.sh
+3 也可以参照已有的daily测试脚本来写快捷脚本，比如run-tara-daily.sh
+
+特别提示：test.config的配置详细说明见文档 readme-for-config

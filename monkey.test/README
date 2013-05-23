@@ -1,54 +1,50 @@
-*** 为了方便git clean的测试，所以先将改修改推送到服务器。
-*** 该工程未完善！！！
+一、概述
 
+本文档阐述该工具的设计思路及部分实现方法。
 
-一、简要使用说明：
-1 编辑test.config
-2 run ./test_main.sh
+二、用户说明
 
-二、test.config详细说明
-test.config是我们的测试基本配置，可以通过配置这个文件来支配我们的测试行为。
-我们来看一看一般的test.config的形式：
----- 分割线 ----
-IS_LOCAL_TEST=y
+该测试脚本面对的用户有以下四类：
+1 pm，pm就是工程管理者
+2 release版本测试人员，release版本是指从服务器上获取的版本
+3 daily版本测试人员，daily版本是指实时更新的当前的版本
+4 local版本测试人员，local版本是指本地的版本，可以是进行过特别修改的。特别的，local版本需要自行编译、下载。
 
-DEVICE_CONFIG="tara.config"
+pm，请参考readme-for-pm
+release版本测试人员，请参考readme-for-release
+daily版本测试人员，请参考readme-for-daily
+local版本测试人员，请参考readme-for-local
 
-#for release version
-NEED_GET_IMAGE=""
-NEED_FLASH=""
-IMAGE_SERVER_CONFIG=""
+三、基本架构
 
-#for local version
-NEED_REBUILD_ALL=y
-DEV_PROJECT=sp8810eabase_512x256_hvga
----- 分割线 ----
-我们可以看到——
-1，需要配置的是“IS_LOCAL_TEST（是否本地测试）”，通常本地测试是为程序员测试本地版本准备的。本地配置会下载和编译代码，需要有代码环境才可以。同时，如果是本地配置，我们会本地编译crashrepoter的符号表。
-2，我们需要配置我们测试设备的配置，这个配置应该是跟发布版本想对应的，理论上应该是从获取版本的地方获取（LOCAL TEST由程序员编写，RELEASE TEST则发布release版本的时候一并发布），目前尚未成熟，我们暂且先提供相应的配置。
-3，我们需要配置release版本测试的时候下载版本相关的参数，是否需要获取版本，因为版本可以自行复制到测试目录，也可以从服务器获取，如果需要从服务器获取，还需要给出相关的服务器配置。以及是否需要下载版本，因为版本也是可以手动下载的。
-4，我们需要配置本地测试是否需要重新下载版本编译，我们并不总是需要用最新版本测试的，可能会测试我们的当前版本。
+1 这是一组脚本，以 test_main.sh 启动。
+2 test_main.sh 根据 test.config 配置来启动测试。
+3 不同的测试其差别仅在于 test.config。
+4 我们采用个性化 test.config 的方式来启动测试。
+5 对于预置的常用测试，我们会编辑好对应的配置文件，在测试的时候将其复制为 test.config，然后启动测试。
+6 我们会在 test.config 中指明 device 的配置。
+7 如果需要，我们会在 test.config 中指明其他相关的配置，比如 image 服务器的配置。
+8 详细的 test.config 配置，可以参考 test.config.template
+9 在 test_main.sh 中会调用一系列脚本完成可能需要的编译、远程复制image、下载image、编译符号表等。并且调用 test_loop.sh。
+10 test_loop.sh 是重复运行测试的脚本，在该脚本中调用 test_once.sh。
+11 test_once.sh 用于完成一次测试。会在测试用调用检测、打包和推送 crash 对应的脚本。
+12 这次我们采用全程配置的方式来避免传递参数，以简化脚本，我们主要的配置文件是 system.config。
+13 对于测试中遇到的所有异常，我们都采用检测异常、处理异常的思路来处理。异常都是单独处理的。
+14 crash report的汇总报告部分，仍沿用之前的脚本。
 
-三、快捷的测试，兼容之前的monkey test版本
-1，./run-tara-auto.sh
-2, ./run-unagi-auto.sh
-以上对应全自动测试tara和unagi。
-
-四、可以通过配置test.config及相应的子config来配置所需要的测试。
-
-文件清单及详细说明：
+四、文件列表
 .
-├── bin
+├── bin                              - bin 文件夹，是我们测试中可能需要的 bin 文件
 │   ├── adb
 │   ├── busybox
 │   ├── fastboot
 │   ├── gsnap
 │   ├── minidump_stackwalk
 │   └── orng
-├── build_symb.sh
-├── check_adb.sh
-├── check_local_file.sh
-├── crash-database
+├── build_symb.sh                    - crash reporter 所需要的符号表编译脚本
+├── check_adb.sh                     - 检查 adb，并保证 adb 可用
+├── check_local_file.sh              - 检查本地文件的完整（非完备，部分检查）
+├── crash-database                   - 报告数据
 │   ├── add_cr.sh
 │   ├── add_folder.sh
 │   ├── crdb.config
@@ -64,39 +60,51 @@ DEV_PROJECT=sp8810eabase_512x256_hvga
 │   ├── same.sh
 │   ├── server.config
 │   └── stack.filter
-├── crash_report.sh
-├── device.config.template
-├── env_pre.sh
-├── exception_report.sh
-├── flash.sh
-├── gen_script.sh
-├── get_image.sh
-├── image_server.config
-├── keep_test.sh
-├── keep_unlock.sh
-├── kill_orng.sh
-├── kill_unlock.sh
-├── local_file.config
-├── local_image.config
-├── log_server.config
-├── orangutan.tar.bz2
-├── pscp.sh
-├── push_report.sh
-├── push_test_files.sh
-├── README
-├── run-tara-auto.sh
-├── run-unagi-auto.sh
-├── sc
-│   └── unlock_hvga.sc
-├── system.config
-├── tara.config
-├── tara.test.config
-├── test.config
-├── test.config.template
-├── test_loop.sh
-├── test_main.sh
-├── test_once.sh
-├── tick_collect_info.sh
-├── unagi.config
-└── unagi.test.config
+├── crash_report.sh                  - 检查是否 crash，并在 crash 之后打包 report
+├── device.config.template           - 设备配置模版
+├── env_pre.sh                       - daily test，准备测试环境
+├── exception_report.sh              - 异常报告，即出现异常 reboot 之后的报告保存
+├── flash.sh                         - 下载远程获取的 image 文件
+├── gen_script.sh                    - 生成 orng 的动作序列
+├── get_image.sh                     - 从远程服务器获取 image
+├── image_server.config              - 远程服务器配置（示例，实际应用可用任何命名）
+├── image_server.config.template     - 远程服务器配置模版
+├── keep_test.sh                     - 保证测试进行
+├── keep_unlock.sh                   - 保证处于可测试状态
+├── kill_orng.sh                     - kill orng 进程
+├── kill_unlock.sh                   - kill unlock 脚本进程
+├── local_file.config                - 本地校验文件列表
+├── log_server.config                - log 服务器配置，用于推送文件
+├── orangutan.tar.bz2                - 打包的 orng 源码
+├── package_release.sh               - 打包当前版本中测试需要的文件，并推送至服务器
+├── pscp.sh                          - 远程复制
+├── push_report.sh                   - 推送报告
+├── push_test_files.sh               - 将 device 推送测试文件
+├── README                           - 本文档
+├── readme-for-config
+├── readme-for-daily
+├── readme-for-local
+├── readme-for-pm
+├── readme-for-release
+├── run-tara-daily.sh                - 快捷脚本
+├── run-tara-local.sh                - 快捷脚本
+├── run-tara-release.sh              - 快捷脚本
+├── run-unagi-daily.sh               - 快捷脚本
+├── sc                               - 脚本文件夹
+│   └── unlock_hvga.sc               - 解锁脚本
+├── system.config                    - 系统配置
+├── tara.config                      - 设备配置
+├── tara.daily.config                - 设备测试配置
+├── tara.local.config                - 设备测试配置
+├── tara.release.config              - 设备测试配置
+├── test.config                      - 测试配置
+├── test.config.template             - 测试配置模版
+├── test_loop.sh                     - 循环测试
+├── test_main.sh                     - 测试主脚本
+├── test_once.sh                     - 一次测试
+├── tick_collect_info.sh             - 每 tick 需要执行的动作集合
+├── unagi.config                     - 设备配置
+└── unagi.daily.config               - 设备测试配置
+
+上面是全部的文件列表及简要说明。
 

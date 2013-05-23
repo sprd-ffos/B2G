@@ -1,0 +1,9 @@
+一、概述
+
+local的测试仅仅是启动monkey test，并在crash之后将报告放在本地，特别的：不会推送到log服务器。
+
+二、用法
+
+1 要编辑test.config，这个可以是用自己常用的来覆盖test.config，一般local test只需要在test.config中指明是local test，及相应的device.config即可，可参照test.config.template来配置。
+2 运行test_main.sh
+3 也可以参照已有的local测试脚本来写快捷脚本，比如run-tara-local.sh

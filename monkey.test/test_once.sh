@@ -59,7 +59,9 @@ do
         slogtick=$(( slogtick - TICK ))
     else
         slogtick=$SLOG_TICK
-        $ADB shell rm -r $SLOGDIR 
+        $ADB shell rm -r ${SLOGDIR}_bak >/dev/null 2>&1 
+        $ADB shell mv $SLOGDIR ${SLOGDIR}_bak >/dev/null 2>&1 
+        $ADB shell rm -r $SLOGDIR >/dev/null 2>&1 
     fi
 
     #keep running unlock, include keep lcd on
