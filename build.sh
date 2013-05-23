@@ -57,6 +57,9 @@ unset CDPATH
 if [ -f patches/patch.sh ] ; then
     . patches/patch.sh
 fi &&
+if [ -f sprd_patch/auto_patch.sh ] ; then
+    sprd_patch/auto_patch.sh $DEVICE_NAME
+fi &&
 configure_device &&
 time nice -n19 make $MAKE_FLAGS $@
 

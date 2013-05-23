@@ -1,3 +1,0 @@
-gecko : gecko.patch
-build : build.patch
-gonk-misc : gonk_misc.patch

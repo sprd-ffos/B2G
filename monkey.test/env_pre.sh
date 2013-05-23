@@ -57,7 +57,7 @@ expect {
 }"
 
 #auto patch
-auto_patch=./patch.sprd/auto_patch.sh
+auto_patch=./sprd_patch/auto_patch.sh
 if [ -f $auto_patch ]
 then
     $auto_patch $DEV_PROJECT

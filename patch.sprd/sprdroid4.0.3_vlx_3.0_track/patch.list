@@ -1,2 +1,0 @@
-kernel     : kernel.patch
-device/sprd : device_sprd.patch

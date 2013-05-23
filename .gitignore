@@ -34,6 +34,7 @@ prebuilt/
 prebuilts/
 rilproxy/
 sdk/
+sprd_patch/
 system/
 vendor/
 u-boot/
