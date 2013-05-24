@@ -89,31 +89,39 @@ do
         continue
     fi
 
-    cr=$(echo $line | grep -Po '\b'$LOGHEAD'-\w+-\w+(-\w+)?-\d+\b')
+    cr=$(echo $line | grep -Po '\b'$LOGHEAD'-\w+-\w+-\w+-\d+\b')
 
-    cdev=$(echo $cr | awk -F- '{print $2}')
+    if [ -n "$cr" ]
+    then
+        cdev=$(echo $cr | awk -F- '{print $2}')
+        cver=$(echo $cr | awk -F- '{print $3}')
+        cusr=$(echo $cr | awk -F- '{print $4}')
+        ctime=$(echo $cr | awk -F- '{print $5}')
+    else
+        cr=$(echo $line | grep -Po '\b'$LOGHEAD'-\w+-\w+-\d+\b')
+        [ -n "$cr" ] || continue
+        cdev=$(echo $cr | awk -F- '{print $2}')
+        cver=
+        cusr=$(echo $cr | awk -F- '{print $3}')
+        ctime=$(echo $cr | awk -F- '{print $4}')
+    fi
     
     if [ -n "$dev" ]
     then
         [ "$cdev" = "$dev" ] || continue
     fi
 
-    cver=$(echo $cr | awk -F- '{print $3}')
-    
     if [ -n "$ver" ]
     then
+        [ -n "$cver" ] || continue
         [ "$cver" = "$ver" ] || continue
     fi
-
-    cusr=$(echo $cr | awk -F- '{print $4}')
     
     if [ -n "$usr" ]
     then
         foo=$(echo $cusr | grep -i "$usr") 
         [ $? -eq 0 ] || continue
     fi
-
-    ctime=$(echo $cr | awk -F- '{print $5}')
     
     if [ -n "$from" ]
     then
@@ -152,7 +160,7 @@ echo '</p>
 </body>
 </html>' >> $CRASH_REPORT
 
-perl -i -pe 's#('$LOGHEAD'-\w+-\w+(-\w+)?-\d+)#<a href="'$STACK_FOLDER'/$1">$1</a>[<a href="'$TAR_FOLDER'/$1.tar.bz2">Detail</a>]#' $CRASH_REPORT
+perl -i -pe 's#('$LOGHEAD'-\w+(-\w+)?-\w+-\d+)#<a href="'$STACK_FOLDER'/$1">$1</a>[<a href="'$TAR_FOLDER'/$1.tar.bz2">Detail</a>]#' $CRASH_REPORT
 
 firefox $CRASH_REPORT
 
