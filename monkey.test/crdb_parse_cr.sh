@@ -17,7 +17,7 @@ cr_exist=$(find $DB_FOLDER -name "$cr" | wc -l)
 
 find $DB_FOLDER -maxdepth 1 -type f | while read contrast
 do
-    same=$(./same.sh $contrast $STACK_FOLDER/$cr)
+    same=$(./crdb_same.sh $contrast $STACK_FOLDER/$cr)
 
     if [ $same -ge $CAMPARE_THRESHOLD ]
     then

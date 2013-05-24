@@ -20,6 +20,8 @@
 #4 - size of dmp file is 0
 #5 - dmp file is incomplete
 
+. ./crdb.config
+
 trap 'rm -rf $report_name' EXIT
 
 #usage, if exit with error then use "usage 1", or "usage 0"
@@ -65,11 +67,7 @@ then
     exit 2 
 fi
 
-. ./crdb.config
-
-#backup any valid tar.bz2 to host
-[ -d $TAR_FOLDER ] || mkdir $TAR_FOLDER
-cp -n $report $TAR_FOLDER
+[ -d $STACK_FOLDER ] || mkdir -p $STACK_FOLDER
 
 pf_name=$(tar -tf $report | grep dump_parse)
 

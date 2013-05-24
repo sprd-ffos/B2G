@@ -90,7 +90,7 @@ do
         continue
     fi
 
-    cr=$(echo $line | grep -Po '\bmtlog-\w+-\w+-\w+-\d+\b')
+    cr=$(echo $line | grep -Po '\bmtlog-\w+-\w+(-\w+)?-\d+\b')
 
     cdev=$(echo $cr | awk -F- '{print $2}')
     
@@ -140,7 +140,11 @@ do
         break
     done
 
-    echo '<br>'$line [$tip] >> $report
+    #get rid of special characters
+    tip=$(echo $tip | sed 's/</_/g')
+    tip=$(echo $tip | sed 's/>/_/g')
+
+    echo '<br>'$line "["$tip"]" >> $report
 
     last_is_sim=n
 done
@@ -149,7 +153,7 @@ echo '</p>
 </body>
 </html>' >> $report
 
-perl -i -pe 's#(mtlog-\w+-\w+-\d+)#<a href="'$STACK_FOLDER'/$1">$1</a>[<a href="'$TAR_FOLDER'/$1.tar.bz2">Detail</a>]#' $report
+perl -i -pe 's#(mtlog-\w+-\w+(-\w+)?-\d+)#<a href="'$STACK_FOLDER'/$1">$1</a>[<a href="'$TAR_FOLDER'/$1.tar.bz2">Detail</a>]#' $report
 
 firefox $report
 
