@@ -65,31 +65,19 @@ done
 [[ "$from" == *[!0-9]* ]] && usage 1
 [[ "$to" == *[!0-9]* ]] && usage 1
 
-[ -f $STACK_FILTER_CONFIG ] || > $STACK_FILTER_CONFIG
-
-last_is_sim=n
-last_sim=
-
-#clean report
->$CRASH_REPORT
+#clean EXCEPTION_REPORT
+>$EXCEPTION_REPORT
 
 echo '<html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<head><title>crash report</title></head>
+<head><title>exception report</title></head>
 <body>
-<h3>'Crash report $options'</h3>
-<p>' >> $CRASH_REPORT
+<h3>'Exception report $options'</h3>
+<p>' >> $EXCEPTION_REPORT
 
-tree $DB_FOLDER | grep "${LOGHEAD}-" | while read line
+ls -1 $EXLOG_TAR_FOLDER | while read line
 do
-    if [[ "$line" == *-sim ]]
-    then
-        last_is_sim=y
-        last_sim=$line
-        continue
-    fi
-
-    cr=$(echo $line | grep -Po '\b'$LOGHEAD'-\w+-\w+(-\w+)?-\d+\b')
+    cr=$(echo $line | grep -Po '\b'$EXLOGHEAD'-\w+-\w+-\w+-\d+\b')
 
     cdev=$(echo $cr | awk -F- '{print $2}')
     
@@ -125,34 +113,14 @@ do
         [ "$ctime" -le "$to" ] || continue
     fi
 
-    if [ "$last_is_sim" = "y" ]
-    then
-        [[ "$line" == "│"* ]] && echo '<br>'$last_sim >> $CRASH_REPORT
-    fi
-
-    #get cr tips
-    for stack in $(cat $(find $DB_FOLDER -name "$cr"))
-    do
-        foo=$(grep -F $stack $STACK_FILTER_CONFIG)
-        [ $? -eq 0 ] && continue
-        tip=$stack
-        break
-    done
-
-    #get rid of special characters
-    tip=$(echo $tip | sed 's/</_/g')
-    tip=$(echo $tip | sed 's/>/_/g')
-
-    echo '<br>'$line "["$tip"]" >> $CRASH_REPORT
-
-    last_is_sim=n
+    echo '<br>'$cr >> $EXCEPTION_REPORT
 done
 
 echo '</p>
 </body>
-</html>' >> $CRASH_REPORT
+</html>' >> $EXCEPTION_REPORT
 
-perl -i -pe 's#('$LOGHEAD'-\w+-\w+(-\w+)?-\d+)#<a href="'$STACK_FOLDER'/$1">$1</a>[<a href="'$TAR_FOLDER'/$1.tar.bz2">Detail</a>]#' $CRASH_REPORT
+perl -i -pe 's#('$EXLOGHEAD'-\w+-\w+-\w+-\d+)#<a href="'$EXLOG_TAR_FOLDER'/$1.tar.bz2">$1</a>#' $EXCEPTION_REPORT
 
-firefox $CRASH_REPORT
+firefox $EXCEPTION_REPORT
 

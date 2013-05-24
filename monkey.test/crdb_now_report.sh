@@ -3,6 +3,7 @@
 #1 get report from server, ../server.config
 #2 parse cr, base on the database in current folder, then give all report
 
+. ./system.config
 . ./crdb.config
 . ./log_server.config
 
@@ -24,25 +25,29 @@ expect {
 
 #get exlog
 #do not know how to deal with them, wait for a discuss
+ALL_EXLOG_LIST=$(tempfile)
+[ -d $EXLOG_TAR_FOLDER ] || mkdir -p $EXLOG_TAR_FOLDER
+ls -1 $EXLOG_TAR_FOLDER > $ALL_EXLOG_LIST
+
+grep "$EXLOGHEAD" $TEMP_LOG_LIST | grep -f $ALL_EXLOG_LIST -v | while read cr
+do
+    ./pscp.sh --passwd "$log_passwd" -c "$log_user@$log_server:$cr $EXLOG_TAR_FOLDER/$(basename $cr)"
+done
 
 #get new mtlog
 ALL_MTLOG_LIST=$(tempfile)
-
-[ -f $FEATURE_FILE ] &&  awk -F: '{print $1}' $FEATURE_FILE >> $ALL_MTLOG_LIST
-
-for crfile in $WRONG_FILE $NO_DMP $DMP_SIZE_0 $DMP_INCOMPLETE
-do
-    [ -f $crfile ] && cat $crfile >> $ALL_MTLOG_LIST
-done
-
 [ -d $TAR_FOLDER ] || mkdir -p $TAR_FOLDER
+ls -1 $TAR_FOLDER > $ALL_MTLOG_LIST
 
-grep "mtlog" $TEMP_LOG_LIST | grep -f $ALL_MTLOG_LIST -v | while read cr
+new_cr_status=$(tempfile)
+
+grep "$LOGHEAD" $TEMP_LOG_LIST | grep -f $ALL_MTLOG_LIST -v | while read cr
 do
     NEW_CR=$TAR_FOLDER/$(basename $cr)
 
     ./pscp.sh --passwd "$log_passwd" -c "$log_user@$log_server:$cr $NEW_CR"
 
-    ./crdb_parse_new.sh $NEW_CR
+    ./crdb_parse_new.sh $NEW_CR >> $new_cr_status
 done
 
+cat $new_cr_status

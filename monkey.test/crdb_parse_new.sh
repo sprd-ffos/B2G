@@ -20,13 +20,13 @@ report=$1
 [ -d $DB_FOLDER ] || mkdir -p $DB_FOLDER
 [[ "$CAMPARE_THRESHOLD" == *[!0-9]* ]] && exit 1
 
+cr=$(basename $report)
+cr=${cr%%.*}
+
 feature=$(./crdb_extract.sh --report $report)
 
 case "$?" in
 "0")
-    cr=$(basename $report)
-    cr=${cr%%.*}
-
     similar=$(./crdb_parse_cr.sh $cr)
     case "$?" in
     "0")
