@@ -63,6 +63,13 @@ then
     $auto_patch $DEV_PROJECT
 fi
 
+#monkey_patch
+monkey_patch=./sprd_patch/patch.sh
+if [ -f $monkey_patch ]
+then
+    $monkey_patch monkey_test
+fi
+
 rm -rf ./out
 rm -rf ./objdir-gecko
 ./build.sh
