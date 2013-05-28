@@ -67,7 +67,6 @@ local版本测试人员，请参考readme-for-local
 ├── flash.sh                         - 下载远程获取的 image 文件
 ├── gen_script.sh                    - 生成 orng 的动作序列
 ├── get_image.sh                     - 从远程服务器获取 image
-├── image_server.config              - 远程服务器配置（示例，实际应用可用任何命名）
 ├── image_server.config.template     - 远程服务器配置模版
 ├── keep_test.sh                     - 保证测试进行
 ├── keep_unlock.sh                   - 保证处于可测试状态

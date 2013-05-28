@@ -10,7 +10,7 @@ STEPS=100000
 
 usage()
 {
-    echo "Usage: $(basename $0) [wvga|hvga(default)|qvga] [--steps num] [--help]"
+    echo "Usage: $(basename $0) [fwvga|wvga|hvga(default)|qvga] [--steps num] [--help]"
     exit $1
 }
 
@@ -19,6 +19,10 @@ do
     case $1 in
     hvga)
         #default, do nothing
+        ;;
+    fwvga)
+        MAXW=480
+        MAXH=854
         ;;
     wvga)
         MAXW=480
