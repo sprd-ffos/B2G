@@ -14,6 +14,14 @@ mkdir $tag
 
 $ADB pull /proc/last_kmsg $tag
 
+kmsg_parse=$(tempfile)
+
+grep -f crdb.exception.filter ${tag}/last_kmsg > $kmsg_parse
+#if no keyword find, then abandon the report
+[ $? -eq 0 ] || exit 1
+
+cp $kmsg_parse ${tag}/kmsg_parse
+
 #manifest.xml
 cp ${IMAGE_FOLDER}/manifest.xml ${tag}/
 

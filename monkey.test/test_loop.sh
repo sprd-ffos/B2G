@@ -24,6 +24,6 @@ do
         $ADB wait-for-device
 
         ./exception_report.sh
-        ./push_report.sh
+        [ $? -eq 0 ] && ./push_report.sh
     fi
 done
