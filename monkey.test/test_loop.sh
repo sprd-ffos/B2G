@@ -14,6 +14,19 @@ do
     $ADB reboot
     $ADB wait-for-device
 
+    #wait for system run stable...
+    tick=120
+    echo -n "Wait for system run stable ."
+    while [ $tick -gt 0 ]
+    do
+        echo -n "."
+        tick_part=3
+        sleep $tick_part
+        tick=$(( tick - tick_part ))
+    done
+    #give a newline
+    echo
+
     #test once
     #if test completed, enter next test
     #if test error, try to fix it, and go on test
