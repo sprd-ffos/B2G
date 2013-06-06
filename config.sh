@@ -248,6 +248,11 @@ case "$1" in
 	repo_sync $1
 	;;
 
+"unagi_sprd_version")
+        echo DEVICE=unagi >> .tmp-config &&
+        repo_sync unagi_sprd_version
+        ;;
+
 "pandaboard")
 	echo DEVICE=panda >> .tmp-config &&
 	repo_sync $1
@@ -287,13 +292,14 @@ case "$1" in
        echo - sp7710ga_512x256_fwvga ================= Sprdroid4.1_vlx_3.0, gecko@sprdroid4.0.3_vlx_3.0_b2g, gaia@master, gonk@sprdroid4.1 and sprdlinux3.0
        echo - sp7710ga_512x256_hvga ================== Sprdroid4.1_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.1 and sprdlinux3.0
        echo - sp8810eabase_weekly_build ============== Sprd weekly build, gecko/gaia/gonk@sprd weekly revision
-       echo - sp6820gbplus_wvga  ===================== sprdroid4.0.3_vlx_3.0_12b_w13.09.5_pxx, gecko@sprdroid4.0.3_vlx_3.0_b2g, gaia@master
+       echo - sp6820gbplus_wvga ====================== sprdroid4.0.3_vlx_3.0_12b_w13.09.5_pxx, gecko@sprdroid4.0.3_vlx_3.0_b2g, gaia@master
 	echo - galaxy-s2
 	echo - galaxy-nexus
 	echo - nexus-s
 	echo - nexus-s-4g
 	echo - otoro
 	echo - unagi ================================== Qcom refernce phone, gecko/gaia@mozilla weekly stable revision, gonk@qcom
+        echo - unagi_sprd_version ===================== Qcom 0502 stable refernce phone, gecko/gaia@mozilla weekly stable revision, gonk@qcom
 	echo - inari
 	echo - keon
 	echo - leo
