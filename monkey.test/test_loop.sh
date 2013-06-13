@@ -8,6 +8,17 @@
 ./push_test_files.sh
 error_test $? $0 $LINENO
 
+#double check -
+#adb
+$ADB shell echo >/dev/null 2>&1
+error_test $? $0 $LINENO
+#busybox
+foo=$($ADB shell $BUSYBOX | grep ': not found' | wc -l)
+[ $foo -eq 1 ] && error_test 1 $0 $LINENO
+#gsnap
+foo=$($ADB shell $GSNAP | grep ': not found' | wc -l)
+[ $foo -eq 1 ] && error_test 1 $0 $LINENO
+
 while true
 do
     #reboot firt, make a clean env
