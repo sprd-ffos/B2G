@@ -218,6 +218,11 @@ case "$1" in
        repo_sync sp8825eabase_android
        ;;
 
+"android-4.1.2_r1"|"android-4.2.2_r1")
+	echo DEVICE=$1 >> .tmp-config &&
+	repo_sync $1
+	;;
+
 "galaxy-s2")
 	echo DEVICE=galaxys2 >> .tmp-config &&
 	repo_sync $1
@@ -299,7 +304,7 @@ case "$1" in
 	echo - nexus-s-4g
 	echo - otoro
 	echo - unagi ================================== Qcom refernce phone, gecko/gaia@mozilla weekly stable revision, gonk@qcom
-        echo - unagi_sprd_version ===================== Qcom 0502 stable refernce phone, gecko/gaia@mozilla weekly stable revision, gonk@qcom
+       echo - unagi_sprd_version ===================== Qcom 0502 stable refernce phone, gecko/gaia@mozilla weekly stable revision, gonk@qcom
 	echo - inari
 	echo - keon
 	echo - leo
@@ -310,6 +315,8 @@ case "$1" in
        echo - sp8810eabase_android =================== Gonk refernce verison, MocorDroid4.0.3_VLX_3.0_W13.03.1_MP_W13.11.2
        echo - sp7710ga_android ======================= Gonk refernce verison, MOCORDROID4.1_3.0_SP7710_dualsim_W13.15.3
        echo - sp8825eabase_android =================== Gonk refernce verison
+       echo - android-4.1.2_r1
+       echo - android-4.2.2_r1
 	exit -1
 	;;
 esac
