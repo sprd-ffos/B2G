@@ -187,6 +187,13 @@ case "$1" in
         repo_sync sprdroid4.1_vlx_3.0_b2g
         ;;
 
+"sp7710ga_gonk4.0")
+       echo DEVICE=sp7710ga >> .tmp-config &&
+       echo LUNCH=sp7710ga-eng >> .tmp-config &&
+       echo GONK_VERSION=4.1_3.0_SP7710_dualsim_W13.19.1 >> .tmp-config &&
+       repo_sync sprdroid4.0.3_vlx_3.0_b2g_7710.xml
+       ;;
+
 "sp6820gbplus_wvga")
 	echo DEVICE=sp6820gb >> .tmp-config &&
 	echo LUNCH=sp6820gbplus-eng >> .tmp-config &&
@@ -296,6 +303,7 @@ case "$1" in
 	echo - sp8810eabase_512x128_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 128 RAM
        echo - sp7710ga_512x256_fwvga ================= Sprdroid4.1_vlx_3.0, gecko@sprdroid4.0.3_vlx_3.0_b2g, gaia@master, gonk@sprdroid4.1 and sprdlinux3.0
        echo - sp7710ga_512x256_hvga ================== Sprdroid4.1_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.1 and sprdlinux3.0
+       echo - sp7710ga_gonk4.0 ======================= Sprdroid4.0_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.0 and sprdlinux3.0
        echo - sp8810eabase_weekly_build ============== Sprd weekly build, gecko/gaia/gonk@sprd weekly revision
        echo - sp6820gbplus_wvga ====================== sprdroid4.0.3_vlx_3.0_12b_w13.09.5_pxx, gecko@sprdroid4.0.3_vlx_3.0_b2g, gaia@master
 	echo - galaxy-s2
