@@ -191,7 +191,7 @@ case "$1" in
        echo DEVICE=sp7710ga >> .tmp-config &&
        echo LUNCH=sp7710ga-eng >> .tmp-config &&
        echo GONK_VERSION=4.1_3.0_SP7710_dualsim_W13.19.1 >> .tmp-config &&
-       repo_sync sprdroid4.0.3_vlx_3.0_b2g_7710.xml
+       repo_sync sprdroid4.0.3_vlx_3.0_b2g_7710
        ;;
 
 "sp6820gbplus_wvga")
