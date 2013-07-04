@@ -194,6 +194,14 @@ case "$1" in
        repo_sync sprdroid4.0.3_vlx_3.0_b2g_7710
        ;;
 
+"sp7710ga_sprdroid4.2.2")
+       echo DEVICE=sp7710ga >> .tmp-config &&
+       echo LUNCH=sp7710ga-eng >> .tmp-config &&
+       echo GONK_VERSION=android4.2.2_r1 >> .tmp-config &&
+       repo_sync sprdroid4.2.2_b2g
+       ;;
+
+
 "sp8825ea_gonk4.0")
        echo DEVICE=sp8825ea >> .tmp-config &&
        echo LUNCH=sp8825eabase-eng >> .tmp-config &&
@@ -294,42 +302,43 @@ case "$1" in
 	echo Valid devices to configure are:
 	echo - tara =================================== Mozilla main branch, gecko/gaia@master, gonk@sprdroid4.0.3_vlx_3.0_b2g, use WVAG and 512 RAM
 	echo - tara_512x256_hvga ====================== The same as tara, use HVAG and 256 RAM
-       echo - tara_512x128_hvga ====================== The same as tara, use HVAG and 128 RAM
+	echo - tara_512x128_hvga ====================== The same as tara, use HVAG and 128 RAM
 	echo - mozilla_weekly_build =================== Mozilla weekly build, gecko/gaia@mozilla weekly stable revision, gonk@sprdroid4.0.3_vlx_3.0_b2g
 	echo - mozilla_weekly_build_512x256_hvga ====== The same as mozilla_weekly_build, use HVGA
 	echo - sp8810eabase_mozilla_update ============ Upgrade only, gecko/gaia@mozilla weekly stable revision, gonk@sprdroid4.0.3 LATEST revision
-       echo - sp8810eabase_mozilla_update_512x256_hvga Upgrade only, gecko/gaia@mozilla weekly stable revision, gonk@sprdroid4.0.3 LATEST revision, use HVAG and 256 RAM
+	echo - sp8810eabase_mozilla_update_512x256_hvga Upgrade only, gecko/gaia@mozilla weekly stable revision, gonk@sprdroid4.0.3 LATEST revision, use HVAG and 256 RAM
 	echo - sp8810eabase =========================== MAIN BRANCH, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use WVAG and 512 RAM
 	echo - sp8810eaplus =========================== Debug multi-sim
-       echo - sp8810eabase_512x256_wvga ============== *MAIN BRANCH*, gecko/gonk@sprdroid4.0.3_vlx_3.0_b2g, gaia@master, use WVAG and 256 RAM
+	echo - sp8810eabase_512x256_wvga ============== *MAIN BRANCH*, gecko/gonk@sprdroid4.0.3_vlx_3.0_b2g, gaia@master, use WVAG and 256 RAM
 	echo - sp8810eabase_512x256_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 256 RAM
 	echo - sp8810eabase_512x128_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 128 RAM
-       echo - sp7710ga_512x256_fwvga ================= Sprdroid4.1_vlx_3.0, gecko@sprdroid4.0.3_vlx_3.0_b2g, gaia@master, gonk@sprdroid4.1 and sprdlinux3.0
-       echo - sp7710ga_512x256_hvga ================== Sprdroid4.1_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.1 and sprdlinux3.0
-       echo - sp7710ga_gonk4.0 ======================= Sprdroid4.0_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.0 and sprdlinux3.0
-       echo - sp8825ea_gonk4.0 ======================= Sprdroid4.0_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.0 and sprdlinux3.0
-       echo - sp8810eabase_weekly_build ============== Sprd weekly build, gecko/gaia/gonk@sprd weekly revision
-       echo - sp6820gbplus_wvga ====================== sprdroid4.0.3_vlx_3.0_12b_w13.09.5_pxx, gecko@sprdroid4.0.3_vlx_3.0_b2g, gaia@master
+	echo - sp7710ga_512x256_fwvga ================= Sprdroid4.1_vlx_3.0, gecko@sprdroid4.0.3_vlx_3.0_b2g, gaia@master, gonk@sprdroid4.1 and sprdlinux3.0
+	echo - sp7710ga_512x256_hvga ================== Sprdroid4.1_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.1 and sprdlinux3.0
+	echo - sp7710ga_gonk4.0 ======================= Sprdroid4.0_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.0 and sprdlinux3.0
+	echo - sp7710ga_sprdroid4.2.2 ================= Sprdroid4.2.2_r1, gecko/gaia@master, gonk@sprdroid4.2.2_r1 and sprdlinux3.0
+	echo - sp8825ea_gonk4.0 ======================= Sprdroid4.0_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.0 and sprdlinux3.0
+	echo - sp8810eabase_weekly_build ============== Sprd weekly build, gecko/gaia/gonk@sprd weekly revision
+	echo - sp6820gbplus_wvga ====================== sprdroid4.0.3_vlx_3.0_12b_w13.09.5_pxx, gecko@sprdroid4.0.3_vlx_3.0_b2g, gaia@master
 	echo - galaxy-s2
 	echo - galaxy-nexus
 	echo - nexus-s
 	echo - nexus-s-4g
 	echo - otoro
 	echo - unagi ================================== Qcom refernce phone, gecko/gaia@mozilla weekly stable revision, gonk@qcom
-       echo - unagi_sprd_version ===================== Qcom 0502 stable refernce phone, gecko/gaia@mozilla weekly stable revision, gonk@qcom
+	echo - unagi_sprd_version ===================== Qcom 0502 stable refernce phone, gecko/gaia@mozilla weekly stable revision, gonk@qcom
 	echo - inari
 	echo - keon
 	echo - leo
 	echo - pandaboard
 	echo - emulator
 	echo - emulator-x86
-       echo - sprdroid refernce code as below
-       echo - sp8810eabase_android =================== Gonk refernce verison, MocorDroid4.0.3_VLX_3.0_W13.03.1_MP_W13.11.2
-       echo - sp7710ga_android ======================= Gonk refernce verison, MOCORDROID4.1_3.0_SP7710_dualsim_W13.15.3
-       echo - sp8825eabase_android =================== Gonk refernce verison
-       echo - android-4.0.3_r1
-       echo - android-4.1.2_r1
-       echo - android-4.2.2_r1
+	echo - sprdroid refernce code as below
+	echo - sp8810eabase_android =================== Gonk refernce verison, MocorDroid4.0.3_VLX_3.0_W13.03.1_MP_W13.11.2
+	echo - sp7710ga_android ======================= Gonk refernce verison, MOCORDROID4.1_3.0_SP7710_dualsim_W13.15.3
+	echo - sp8825eabase_android =================== Gonk refernce verison
+	echo - android-4.0.3_r1
+	echo - android-4.1.2_r1
+	echo - android-4.2.2_r1
 	exit -1
 	;;
 esac
