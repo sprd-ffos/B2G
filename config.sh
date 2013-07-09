@@ -181,18 +181,20 @@ case "$1" in
        ;;
 
 "sp7710ga_512x256_hvga")
-        echo DEVICE=sp7710ga >> .tmp-config &&
-        echo LUNCH=sp7710ga-eng >> .tmp-config &&
-        echo TARGET_HVGA_ENABLE=true >> .tmp-config &&
-        repo_sync sprdroid4.1_vlx_3.0_b2g
-        ;;
+	echo DEVICE=sp7710ga >> .tmp-config &&
+	echo LUNCH=sp7710ga-eng >> .tmp-config &&
+	echo TARGET_HVGA_ENABLE=true >> .tmp-config &&
+	echo GONK_VERSION=4.1_3.0_SP7710_dualsim_W13.19.1 >> .tmp-config &&
+	repo_sync sprdroid4.1_vlx_3.0_b2g
+	;;
 
 "sp7710ga_gonk4.0")
-       echo DEVICE=sp7710ga >> .tmp-config &&
-       echo LUNCH=sp7710ga-eng >> .tmp-config &&
-       echo GONK_VERSION=4.1_3.0_SP7710_dualsim_W13.19.1 >> .tmp-config &&
-       repo_sync sprdroid4.0.3_vlx_3.0_b2g_7710
-       ;;
+	echo DEVICE=sp7710ga >> .tmp-config &&
+	echo LUNCH=sp7710ga-eng >> .tmp-config &&
+	echo TARGET_HVGA_ENABLE=true >> .tmp-config &&
+	echo GONK_VERSION=4.1_3.0_SP7710_dualsim_W13.19.1 >> .tmp-config &&
+	repo_sync sprdroid4.0.3_vlx_3.0_b2g_7710
+	;;
 
 "sp7710ga_sprdroid4.2.2")
        echo DEVICE=sp7710ga >> .tmp-config &&
