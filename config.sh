@@ -264,6 +264,11 @@ case "$1" in
 	repo_sync $1
 	;;
 
+"nexus-4")
+	echo DEVICE=mako >> .tmp-config &&
+	repo_sync nexus-4
+	;;
+
 "optimus-l5")
 	echo DEVICE=m4 >> .tmp-config &&
 	repo_sync $1
@@ -332,6 +337,7 @@ case "$1" in
 	echo - sp6820gbplus_wvga ====================== sprdroid4.0.3_vlx_3.0_12b_w13.09.5_pxx, gecko@sprdroid4.0.3_vlx_3.0_b2g, gaia@master
 	echo - galaxy-s2
 	echo - galaxy-nexus
+	echo - nexus-4
 	echo - nexus-s
 	echo - nexus-s-4g
 	echo - otoro
