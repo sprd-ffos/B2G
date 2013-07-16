@@ -1,12 +1,12 @@
 #!/bin/bash
 
 REPO=`which repo`
-#REPO=./repo
+sync_flags=""
 
 repo_sync() {
 	rm -rf .repo/manifest* &&
 	$REPO init -u $GITREPO -b $BRANCH -m $1.xml &&
-	$REPO sync
+	$REPO sync $sync_flags
 	ret=$?
 	if [ "$GITREPO" = "$GIT_TEMP_REPO" ]; then
 		rm -rf $GIT_TEMP_REPO
@@ -19,7 +19,8 @@ repo_sync() {
 
 case `uname` in
 "Darwin")
-	CORE_COUNT=`system_profiler SPHardwareDataType | grep "Cores:" | sed -e 's/[ a-zA-Z:]*\([0-9]*\)/\1/'`
+	# Should also work on other BSDs
+	CORE_COUNT=`sysctl -n hw.ncpu`
 	;;
 "Linux")
 	CORE_COUNT=`grep processor /proc/cpuinfo | wc -l`
@@ -32,6 +33,26 @@ esac
 #GITREPO=${GITREPO:-"git://github.com/mozilla-b2g/b2g-manifest"}
 BRANCH=${BRANCH:-sprdroid4.0.3_vlx_3.0_b2g}
 GITREPO="gitb2g@sprdroid.git.spreadtrum.com.cn:b2g/b2g-manifest"
+
+while [ $# -ge 1 ]; do
+	case $1 in
+	-d|-l|-f|-n|-c|-q)
+		sync_flags="$sync_flags $1"
+		shift
+		;;
+	--help|-h)
+		# The main case statement will give a usage message.
+		break
+		;;
+	-*)
+		echo "$0: unrecognized option $1" >&2
+		exit 1
+		;;
+	*)
+		break
+		;;
+	esac
+done
 
 GIT_TEMP_REPO="tmp_manifest_repo"
 if [ -n "$2" ]; then
@@ -285,7 +306,7 @@ case "$1" in
 	repo_sync $1
 	;;
 
-"otoro"|"unagi"|"keon"|"inari"|"leo"|"hamachi")
+"otoro"|"unagi"|"keon"|"inari"|"leo"|"hamachi"|"peak"|"helix")
 	echo DEVICE=$1 >> .tmp-config &&
 	repo_sync $1
 	;;
@@ -300,20 +321,21 @@ case "$1" in
 	repo_sync $1
 	;;
 
-"emulator")
+"emulator"|"emulator-jb")
 	echo DEVICE=generic >> .tmp-config &&
 	echo LUNCH=full-eng >> .tmp-config &&
 	repo_sync $1
 	;;
 
-"emulator-x86")
+"emulator-x86"|"emulator-x86-jb")
 	echo DEVICE=generic_x86 >> .tmp-config &&
 	echo LUNCH=full_x86-eng >> .tmp-config &&
 	repo_sync emulator
 	;;
 
 *)
-	echo Usage: $0 \(device name\)
+	echo "Usage: $0 [-cdflnq] (device name)"
+	echo "Flags are passed through to |./repo sync|."
 	echo
 	echo Valid devices to configure are:
 	echo - tara =================================== Mozilla main branch, gecko/gaia@master, gonk@sprdroid4.0.3_vlx_3.0_b2g, use WVAG and 512 RAM
@@ -346,9 +368,14 @@ case "$1" in
 	echo - unagi_sprd_version ===================== Qcom 0502 stable refernce phone, gecko/gaia@mozilla weekly stable revision, gonk@qcom
 	echo - inari
 	echo - keon
+	echo - peak
 	echo - leo
+	echo - hamachi
+	echo - helix
 	echo - pandaboard
 	echo - emulator
+	echo - emulator-jb
+	echo - emulator-x86-jb
 	echo - emulator-x86
 	echo - sprdroid refernce code as below
 	echo - sp8810eabase_android =================== Gonk refernce verison, MocorDroid4.0.3_VLX_3.0_W13.03.1_MP_W13.11.2
