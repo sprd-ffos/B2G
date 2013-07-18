@@ -89,7 +89,7 @@ flash_fastboot()
 
 	*)
 		# helix doesn't support erase command in fastboot mode.
-		if [[ "$DEVICE" != "helix" && "$DEVICE" != "sp"* ]]; then
+		if [[ "$DEVICE" != "helix" && "$DEVICE" != "sp"* && "$DEVICE" != "mako" ]]; then
 			run_fastboot erase cache &&
 			run_fastboot erase userdata
 			if [ $? -ne 0 ]; then
