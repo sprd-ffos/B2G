@@ -271,8 +271,13 @@ case "$1" in
        repo_sync sp8825eabase_android
        ;;
 
-"android-4.1.2_r1"|"android-4.2.2_r1"|"android-4.0.3_r1")
+"android-4.1.2_r1"|"android-4.0.3_r1")
 	echo DEVICE=$1 >> .tmp-config &&
+	repo_sync $1
+	;;
+
+"android-4.2.2_r1")
+	echo DEVICE=mako >> .tmp-config &&
 	repo_sync $1
 	;;
 
