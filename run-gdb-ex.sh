@@ -6,6 +6,7 @@ SCRIPT_NAME=$(basename $0)
 ADB=adb
 GDB=${GDB:-prebuilt/$(uname -s | tr "[[:upper:]]" "[[:lower:]]")-x86/toolchain/arm-linux-androideabi-4.4.x/bin/arm-linux-androideabi-gdb}
 [ -f GDB ] || GDB=prebuilt/$(uname -s | tr "[[:upper:]]" "[[:lower:]]")-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-gdb
+[ -f GDB ] || GDB=prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.6/bin/arm-linux-androideabi-gdb
 B2G_BIN=/system/b2g/b2g
 GDBINIT=/tmp/b2g.gdbinit.$(whoami)
 
