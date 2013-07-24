@@ -259,7 +259,13 @@ case "$1" in
 	repo_sync $1
 	;;
 
-"sp7710ga_android")
+"sp7710ga_android4.1")
+       echo DEVICE=sp7710ga >> .tmp-config &&
+       echo LUNCH=sp7710ga-eng >> .tmp-config &&
+       repo_sync $1
+       ;;
+
+"sp7710ga_android4.2")
        echo DEVICE=sp7710ga >> .tmp-config &&
        echo LUNCH=sp7710ga-eng >> .tmp-config &&
        repo_sync $1
@@ -384,7 +390,8 @@ case "$1" in
 	echo - emulator-x86
 	echo - sprdroid refernce code as below
 	echo - sp8810eabase_android =================== Gonk refernce verison, MocorDroid4.0.3_VLX_3.0_W13.03.1_MP_W13.11.2
-	echo - sp7710ga_android ======================= Gonk refernce verison, MOCORDROID4.1_3.0_SP7710_dualsim_W13.15.3
+	echo - sp7710ga_android4.1 ==================== Gonk refernce verison, MOCORDROID4.1_3.0_SP7710_dualsim_W13.19.1
+	echo - sp7710ga_android4.2 ==================== Gonk refernce verison, MOCORDROID4.1_3.0_SP7710_dualsim_W13.19.1
 	echo - sp8825eabase_android =================== Gonk refernce verison
 	echo - android-4.0.3_r1
 	echo - android-4.1.2_r1
