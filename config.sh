@@ -255,19 +255,19 @@ case "$1" in
 
 "sp8810eabase_android")
 	echo DEVICE=sp8810ea >> .tmp-config &&
-	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
+	echo LUNCH=sp8810eabase-userdebug >> .tmp-config &&
 	repo_sync $1
 	;;
 
 "sp7710ga_android4.1")
        echo DEVICE=sp7710ga >> .tmp-config &&
-       echo LUNCH=sp7710ga-eng >> .tmp-config &&
+       echo LUNCH=sp7710ga-userdebug >> .tmp-config &&
        repo_sync $1
        ;;
 
 "sp7710ga_android4.2")
        echo DEVICE=sp7710ga >> .tmp-config &&
-       echo LUNCH=sp7710ga-eng >> .tmp-config &&
+       echo LUNCH=sp7710ga-userdebug >> .tmp-config &&
        repo_sync $1
        ;;
 
