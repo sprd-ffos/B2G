@@ -287,6 +287,11 @@ case "$1" in
 	repo_sync $1
 	;;
 
+"android-4.3_r2.1")
+        echo DEVICE=mako >> .tmp-config &&
+        repo_sync $1
+        ;;
+
 "galaxy-s2")
 	echo DEVICE=galaxys2 >> .tmp-config &&
 	repo_sync $1
@@ -396,6 +401,7 @@ case "$1" in
 	echo - android-4.0.3_r1
 	echo - android-4.1.2_r1
 	echo - android-4.2.2_r1
+	echo - android-4.3_r2.1
 	exit -1
 	;;
 esac
