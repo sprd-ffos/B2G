@@ -271,6 +271,12 @@ case "$1" in
        repo_sync sp8825eabase_android
        ;;
 
+"sp8835ebbase_android")
+       echo DEVICE=sp8830eb >> .tmp-config &&
+       echo LUNCH=sp8835ebbase-userdebug >> .tmp-config &&
+       repo_sync sprdroid4.3_3.4
+       ;;
+
 "android-4.1.2_r1"|"android-4.0.3_r1")
 	echo DEVICE=$1 >> .tmp-config &&
 	repo_sync $1
@@ -393,6 +399,7 @@ case "$1" in
 	echo - sp7710ga_android4.2 ==================== Gonk refernce verison, MOCORDROID4.1_3.0_SP7710_dualsim_W13.19.1
 	echo - sp7710ga_android4.3 ==================== Gonk refernce verison, MOCORDROID4.1_3.0_SP7710_dualsim_W13.19.1
 	echo - sp8825eabase_android =================== Gonk refernce verison
+	echo - sp8835ebbase_android =================== Gonk refernce verison
 	echo - android-4.0.3_r1
 	echo - android-4.1.2_r1
 	echo - android-4.2.2_r1
