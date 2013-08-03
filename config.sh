@@ -233,11 +233,16 @@ case "$1" in
 	repo_sync sprdroid4.2.2_b2g
 	;;
 
-
 "sp8825ea_gonk4.0")
        echo DEVICE=sp8825ea >> .tmp-config &&
        echo LUNCH=sp8825eabase-eng >> .tmp-config &&
        repo_sync sprdroid4.0.3_vlx_3.0_b2g_8825
+       ;;
+
+"sp8835eb_gonk4.3")
+       echo DEVICE=sp8830eb >> .tmp-config &&
+       echo LUNCH=sp8835ebbase-eng >> .tmp-config &&
+       repo_sync sprdroid4.3_3.4_b2g
        ;;
 
 "sp6820gbplus_wvga")
@@ -360,9 +365,6 @@ case "$1" in
 	echo - mozilla_weekly_build =================== Mozilla weekly build, gecko/gaia@mozilla weekly stable revision, gonk@sprdroid4.0.3_vlx_3.0_b2g
 	echo - mozilla_weekly_build_512x256_hvga ====== The same as mozilla_weekly_build, use HVGA
 	echo - sp8810eabase_mozilla_update ============ Upgrade only, gecko/gaia@mozilla weekly stable revision, gonk@sprdroid4.0.3 LATEST revision
-	echo - sp8810eabase_mozilla_update_512x256_hvga Upgrade only, gecko/gaia@mozilla weekly stable revision, gonk@sprdroid4.0.3 LATEST revision, use HVAG and 256 RAM
-	echo - sp8810eabase =========================== MAIN BRANCH, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use WVAG and 512 RAM
-	echo - sp8810eaplus =========================== Debug multi-sim
 	echo - sp8810eabase_512x256_wvga ============== *MAIN BRANCH*, gecko/gonk@sprdroid4.0.3_vlx_3.0_b2g, gaia@master, use WVAG and 256 RAM
 	echo - sp8810eabase_512x256_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 256 RAM
 	echo - sp8810eabase_512x128_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 128 RAM
@@ -371,9 +373,7 @@ case "$1" in
 	echo - sp7710ga_gonk4.0 ======================= Sprdroid4.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.0 and sprdlinux3.0
 	echo - sp7710ga_gonk4.1 ======================= Sprdroid4.1, gecko/gaia@master, gonk@sprdroid4.1 and sprdlinux3.0
 	echo - sp7710ga_gonk4.2 ======================= Sprdroid4.2.2_r1, gecko/gaia@master, gonk@sprdroid4.2.2_r1 and sprdlinux3.0
-	echo - sp8825ea_gonk4.0 ======================= Sprdroid4.0_vlx_3.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.0 and sprdlinux3.0
-	echo - sp8810eabase_weekly_build ============== Sprd weekly build, gecko/gaia/gonk@sprd weekly revision
-	echo - sp6820gbplus_wvga ====================== sprdroid4.0.3_vlx_3.0_12b_w13.09.5_pxx, gecko@sprdroid4.0.3_vlx_3.0_b2g, gaia@master
+	echo - sp8835eb_gonk4.3 ======================= Sprdroid4.3, gecko/gaia@master, gonk@sprdroid4.3 and sprdlinux3.4
 	echo - galaxy-s2
 	echo - galaxy-nexus
 	echo - nexus-4
