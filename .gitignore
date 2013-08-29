@@ -1,5 +1,6 @@
 .config
 .repo/
+.userconfig
 .var.profile
 *.swp
 *.pyc
@@ -38,4 +39,3 @@ system/
 vendor/
 u-boot/
 orangutan/
-test.config

@@ -322,7 +322,7 @@ case "$1" in
 	repo_sync $1
 	;;
 
-"otoro"|"unagi"|"keon"|"inari"|"leo"|"hamachi"|"peak"|"helix")
+"otoro"|"unagi"|"keon"|"inari"|"leo"|"hamachi"|"peak"|"helix"|"wasabi")
 	echo DEVICE=$1 >> .tmp-config &&
 	repo_sync $1
 	;;
@@ -346,7 +346,7 @@ case "$1" in
 "emulator-x86"|"emulator-x86-jb")
 	echo DEVICE=generic_x86 >> .tmp-config &&
 	echo LUNCH=full_x86-eng >> .tmp-config &&
-	repo_sync emulator
+	repo_sync $1
 	;;
 
 *)
@@ -383,11 +383,13 @@ case "$1" in
 	echo - leo
 	echo - hamachi
 	echo - helix
+	echo - wasabi
+	echo - tara
 	echo - pandaboard
 	echo - emulator
 	echo - emulator-jb
-	echo - emulator-x86-jb
 	echo - emulator-x86
+	echo - emulator-x86-jb
 	echo - sprdroid refernce code as below
 	echo - sp8810eabase_android =================== Gonk refernce verison, MocorDroid4.0.3_VLX_3.0_W13.03.1_MP_W13.11.2
 	echo - sp7710ga_android4.1 ==================== Gonk refernce verison, MOCORDROID4.1_3.0_SP7710_dualsim_W13.19.1
