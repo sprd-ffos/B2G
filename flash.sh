@@ -89,13 +89,9 @@ flash_fastboot()
 
 	*)
 		# helix doesn't support erase command in fastboot mode.
-		VERB="erase"
-		if [ "$DEVICE" == "mako" ]; then
-			VERB="format"
-		fi
-		if [ "$DEVICE" != "helix" ]; then
-			run_fastboot $VERB cache &&
-			run_fastboot $VERB userdata
+		if [[ "$DEVICE" != "helix" && "$DEVICE" != "sp"* && "$DEVICE" != "mako" ]]; then
+			run_fastboot erase cache &&
+			run_fastboot erase userdata
 			if [ $? -ne 0 ]; then
 				return $?
 			fi
@@ -231,7 +227,9 @@ case "$PROJECT" in
 		# Gaia's build takes care of remounting /system for production builds
 		GAIA_MAKE_FLAGS+=" PRODUCTION=1"
 	fi
+
 	make -C gaia install-gaia $GAIA_MAKE_FLAGS
+#	make -C gaia install-media-samples $GAIA_MAKE_FLAGS
 	exit $?
 	;;
 
@@ -242,7 +240,7 @@ case "$PROJECT" in
 esac
 
 case "$DEVICE" in
-"otoro"|"unagi"|"keon"|"peak"|"inari"|"leo"|"hamachi"|"sp8810ea"|"helix"|"wasabi")
+"otoro"|"unagi"|"keon"|"peak"|"inari"|"leo"|"hamachi"|"sp"*|"helix"|"wasabi")
 	flash_fastboot nounlock $PROJECT
 	;;
 
