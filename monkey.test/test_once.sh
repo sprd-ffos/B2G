@@ -42,6 +42,15 @@ do
     then
         hometick=$(( hometick - TICK ))
     else
+        #press home key
+        if [ $DEV_HOME_KEY ]
+        then
+            $ADB shell sendevent $DEV_KEYPAD_EVENT 1 $DEV_HOME_KEY 1 >/dev/null 2>&1
+            $ADB shell sendevent $DEV_KEYPAD_EVENT 0 0 0 >/dev/null 2>&1
+            $ADB shell sendevent $DEV_KEYPAD_EVENT 1 $DEV_HOME_KEY 0 >/dev/null 2>&1
+            $ADB shell sendevent $DEV_KEYPAD_EVENT 0 0 0 >/dev/null 2>&1
+        fi
+
         hometick=$HOME_TICK
         $ADB shell /data/orng $DEV_TOUCHSCREEN_EVENT /data/home.sc
     fi

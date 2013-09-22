@@ -16,6 +16,8 @@ do
     $ADB shell sendevent $DEV_KEYPAD_EVENT 1 $DEV_POWER_KEY 0 >/dev/null 2>&1 
     $ADB shell sendevent $DEV_KEYPAD_EVENT 0 0 0 >/dev/null 2>&1 
 
+    $ADB shell cat /sys/power/wait_for_fb_wake >/dev/null 2>&1
+
     #simulator a unlock tap
     for((i=0;i<2;i++))
     do

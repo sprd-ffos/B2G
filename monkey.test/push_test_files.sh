@@ -7,6 +7,8 @@
 
 trap 'exit 1' ERR
 
+$ADB root
+$ADB remount
 MTFILE=(./bin/orng ./bin/busybox ./bin/gsnap)
 
 for file in ${MTFILE[@]} 
