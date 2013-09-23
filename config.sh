@@ -240,10 +240,10 @@ case "$1" in
        ;;
 
 "sp8835eb_gonk4.3")
-       echo DEVICE=sp8830eb >> .tmp-config &&
-       echo LUNCH=sp8835ebbase-eng >> .tmp-config &&
-       repo_sync sprdroid4.3_3.4_b2g
-       ;;
+	echo DEVICE=sp8830eb_bsp >> .tmp-config &&
+	echo LUNCH=sp8835eb_bsp-eng >> .tmp-config &&
+	repo_sync sprdroid4.3_3.4_b2g
+	;;
 
 "sp6820gbplus_wvga")
 	echo DEVICE=sp6820gb >> .tmp-config &&
@@ -368,7 +368,7 @@ case "$1" in
 	echo - sp7710ga_gonk4.0 ======================= Sprdroid4.0, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.0 and sprdlinux3.0
 	echo - sp7710ga_gonk4.1 ======================= Sprdroid4.1, gecko/gaia@master, gonk@sprdroid4.1 and sprdlinux3.0
 	echo - sp7710ga_gonk4.2 ======================= Sprdroid4.2.2_r1, gecko/gaia@master, gonk@sprdroid4.2.2_r1 and sprdlinux3.0
-	echo - sp8835eb_gonk4.3 ======================= Sprdroid4.3, gecko/gaia@master, gonk@sprdroid4.3 and sprdlinux3.4
+	echo - sp8835eb_gonk4.3 ======================= Sprdroid4.3, gecko/gaia@master, gonk@sprdroid4.3 and sprdlinux3.4, frameworks@android-4.3_r2.1
 	echo - galaxy-s2
 	echo - galaxy-nexus
 	echo - nexus-4
