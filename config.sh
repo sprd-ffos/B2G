@@ -240,7 +240,7 @@ case "$1" in
        ;;
 
 "sp8835eb_gonk4.3")
-	echo DEVICE=sp8830eb_bsp >> .tmp-config &&
+	echo DEVICE=sp8830ebbsp >> .tmp-config &&
 	echo LUNCH=sp8835eb_bsp-eng >> .tmp-config &&
 	repo_sync sprdroid4.3_3.4_b2g
 	;;
