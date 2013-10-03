@@ -210,11 +210,11 @@ case "$1" in
 	;;
 
 "sp7710ga_gonk4.0")
-	echo DEVICE=sp7710ga >> .tmp-config &&
-	echo LUNCH=sp7710ga-eng >> .tmp-config &&
+	echo DEVICE=sp7710ga_gonk >> .tmp-config &&
+	echo LUNCH=sp7710ga_gonk-eng >> .tmp-config &&
 	echo TARGET_HVGA_ENABLE=true >> .tmp-config &&
-	echo GONK_VERSION=4.1_3.0_SP7710_dualsim_W13.19.1 >> .tmp-config &&
-	repo_sync sprdroid4.0.3_vlx_3.0_b2g_7710
+	echo GONK_VERSION=SP7710_13A_W13.39.7 >> .tmp-config &&
+	repo_sync $1
 	;;
 
 "sp7710ga_gonk4.1")
