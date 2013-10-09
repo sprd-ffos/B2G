@@ -23,13 +23,25 @@ update_time()
 $ADB reboot bootloader
 $FASTBOOT devices
 
-$FASTBOOT erase cache && $FASTBOOT erase userdata
+#not necesarry to erase
+#$FASTBOOT erase cache && $FASTBOOT erase userdata
 
 image_list=("boot" "system" "2ndbl" "vmjaluna" "userdata")
 
 for partition in ${image_list[*]}
 do
-    image=$IMAGE_FOLDER/${partition}.img
+    case "$partition" in
+    "2ndbl")
+        image=$IMAGE_FOLDER/u-boot.bin
+        ;;
+    "vmjaluna")
+        image=$IMAGE_FOLDER/vmjaluna.image
+        ;;
+    *)
+        image=$IMAGE_FOLDER/${partition}.img
+        ;;
+    esac
+
     if [ -e $image ]
     then
         $FASTBOOT flash $partition $image

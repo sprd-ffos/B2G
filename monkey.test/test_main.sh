@@ -48,6 +48,15 @@ case "$TEST_VERSION" in
 "local")
     ./build_symb.sh
     ;;
+"custom"*)
+    [ -f "$CUSTOM_IMG_SC" ] || error_test 1 $0 $LINENO
+    bash $CUSTOM_IMG_SC
+    error_test $? $0 $LINENO
+
+    [ -f "$CUSTOM_FLASH_SC" ] || error_test 1 $0 $LINENO
+    echo $passwd | sudo -S bash $CUSTOM_FLASH_SC
+    error_test $? $0 $LINENO
+    ;;
 *)
     ;;
 esac

@@ -25,6 +25,9 @@ fi
 if [ "$TEST_VERSION" = "release" ]
 then
     SYMBDIR=./$IMAGE_FOLDER/crashreporter-symbols
+elif [[ "$TEST_VERSION" == custom* ]]
+then
+    SYMBDIR=./$IMAGE_FOLDER/objdir-gecko/dist/crashreporter-symbols
 else
     SYMBDIR=../objdir-gecko/dist/crashreporter-symbols
 fi
