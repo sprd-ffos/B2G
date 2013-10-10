@@ -35,7 +35,7 @@ case "$TEST_VERSION" in
     
     if [ $NEED_FLASH = "y" ]
     then
-        echo $passwd | sudo -S ./flash.sh 
+        echo $passwd | sudo -S env PATH=$PATH ./flash.sh
         error_test $? $0 $LINENO
         sudo -K
     fi
@@ -54,7 +54,7 @@ case "$TEST_VERSION" in
     error_test $? $0 $LINENO
 
     [ -f "$CUSTOM_FLASH_SC" ] || error_test 1 $0 $LINENO
-    echo $passwd | sudo -S bash $CUSTOM_FLASH_SC
+    echo $passwd | sudo -S env PATH=$PATH bash $CUSTOM_FLASH_SC
     error_test $? $0 $LINENO
     ;;
 *)
