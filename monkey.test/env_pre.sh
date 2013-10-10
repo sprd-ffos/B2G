@@ -76,7 +76,7 @@ rm -rf ./objdir-gecko
 error_test $? $0 $LINENO
 
 #sudo ./flash.sh
-echo $passwd | sudo -S ./flash.sh 
+echo $passwd | sudo -S env PATH=$PATH ./flash.sh
 error_test $? $0 $LINENO
 sudo -K
 
