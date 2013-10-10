@@ -50,11 +50,11 @@ case "$TEST_VERSION" in
     ;;
 "custom"*)
     [ -f "$CUSTOM_IMG_SC" ] || error_test 1 $0 $LINENO
-    bash $CUSTOM_IMG_SC
+    ./$CUSTOM_IMG_SC
     error_test $? $0 $LINENO
 
     [ -f "$CUSTOM_FLASH_SC" ] || error_test 1 $0 $LINENO
-    echo $passwd | sudo -S env PATH=$PATH bash $CUSTOM_FLASH_SC
+    echo $passwd | sudo -S env PATH=$PATH ./$CUSTOM_FLASH_SC
     error_test $? $0 $LINENO
     ;;
 *)
