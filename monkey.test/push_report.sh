@@ -20,7 +20,7 @@ push_folder=${srv_folder}/${DEV_NAME}/
 #if no folder, create it
 expect -c "
 
-spawn ssh $log_user@$log_server \"\[ -d ${log_folder}/${DEV} \] || mkdir ${log_folder}/${DEV}\"
+spawn ssh $log_user@$log_server \"\[ -d ${log_folder}/${DEV_NAME} \] || mkdir ${log_folder}/${DEV_NAME}\"
 set timeout -1
 expect {
     \"*@*'s password:\" {send \"$log_passwd\r\"; exp_continue}
