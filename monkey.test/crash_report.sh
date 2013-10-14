@@ -33,7 +33,7 @@ else
 fi
 
 #gen time tag
-tag=${LOGHEAD}-${DEV_NAME}-${TEST_VERSION}-$(cat /etc/hostname)-$(date +%y%m%d%H%M$S)
+tag=${LOGHEAD}-$(echo ${DEV_NAME} | sed 's/-/_/g')-$(echo ${TEST_VERSION} | sed 's/-/_/g')-$(cat /etc/hostname | sed 's/-/_/g')-$(date +%y%m%d%H%M$S)
 
 mkdir $tag
 
