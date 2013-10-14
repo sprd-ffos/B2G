@@ -81,6 +81,9 @@ $ADB shell rm -r $TOMBSTONES
 $ADB pull ${SLOGDIR}_bak $tag
 $ADB pull $SLOGDIR $tag
 
+#build_number
+[ -f "${IMAGE_FOLDER}/build_number" ] && cp ${IMAGE_FOLDER}/build_number $tag/
+
 #tar files
 tar -caf ${tag}.tar.bz2 ${tag}/*
 
