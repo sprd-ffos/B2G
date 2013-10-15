@@ -8,7 +8,7 @@
 ./kill_orng.sh
 
 #gen time tag
-tag=${EXLOGHEAD}-$(echo ${DEV_NAME} | sed 's/-/_/g')-$(echo ${TEST_VERSION} | sed 's/-/_/g')-$(cat /etc/hostname | sed 's/-/_/g')-$(date +%y%m%d%H%M$S)
+tag=${EXLOGHEAD}-$(echo ${DEV_NAME} | sed 's/-/_/g')-$(echo ${TEST_VERSION} | sed 's/-/_/g')-$(cat /etc/hostname | sed 's/-/_/g')-$(date +%y%m%d%H%M)
 
 mkdir $tag
 
@@ -17,10 +17,7 @@ $ADB pull /proc/last_kmsg $tag
 kmsg_parse=$(tempfile)
 
 grep -f crdb.exception.filter ${tag}/last_kmsg > $kmsg_parse
-#if no keyword find, then abandon the report
-[ $? -eq 0 ] || exit 1
-
-cp $kmsg_parse ${tag}/kmsg_parse
+[ $? -eq 0 ] && cp $kmsg_parse ${tag}/kmsg_parse
 
 #tombstones
 $ADB pull $TOMBSTONES $tag
