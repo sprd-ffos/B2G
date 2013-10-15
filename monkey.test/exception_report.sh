@@ -8,7 +8,7 @@
 ./kill_orng.sh
 
 #gen time tag
-tag=${EXLOGHEAD}-${DEV_NAME}-${TEST_VERSION}-$(cat /etc/hostname)-$(date +%y%m%d%H%M$S)
+tag=${EXLOGHEAD}-$(echo ${DEV_NAME} | sed 's/-/_/g')-$(echo ${TEST_VERSION} | sed 's/-/_/g')-$(cat /etc/hostname | sed 's/-/_/g')-$(date +%y%m%d%H%M$S)
 
 mkdir $tag
 
@@ -22,8 +22,19 @@ grep -f crdb.exception.filter ${tag}/last_kmsg > $kmsg_parse
 
 cp $kmsg_parse ${tag}/kmsg_parse
 
+#tombstones
+$ADB pull $TOMBSTONES $tag
+$ADB shell rm -r $TOMBSTONES
+
+#slog
+$ADB pull ${SLOGDIR}_bak $tag
+$ADB pull $SLOGDIR $tag
+
 #manifest.xml
 cp ${IMAGE_FOLDER}/manifest.xml ${tag}/
+
+#build_number
+[ -f "${IMAGE_FOLDER}/build_number" ] && cp ${IMAGE_FOLDER}/build_number $tag/
 
 if [ $TEST_VERSION = "daily" ]
 then
