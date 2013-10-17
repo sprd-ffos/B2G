@@ -45,3 +45,4 @@ tar -caf ${tag}.tar.bz2 ${tag}/*
 
 rm -rf $tag
 
+exit 0
