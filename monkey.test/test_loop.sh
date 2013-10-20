@@ -4,6 +4,12 @@
 . ./system.config
 . ./test.config
 
+$ADB wait-for-device	
+$ADB root
+sleep 10
+$ADB remount
+sleep 10
+
 #push files before test
 ./push_test_files.sh
 error_test $? $0 $LINENO
@@ -24,9 +30,13 @@ do
     #reboot firt, make a clean env
     $ADB reboot
     $ADB wait-for-device
+    $ADB root
+    sleep 10
+	$ADB remount
+    sleep 10
 
     #wait for system run stable...
-    tick=120
+    tick=60
     echo -n "Wait for system run stable ."
     while [ $tick -gt 0 ]
     do
