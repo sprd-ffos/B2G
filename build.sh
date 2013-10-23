@@ -7,7 +7,7 @@
 # If the hashes differ, we use a per-device script to redo
 # the firmware extraction
 function configure_device() {
-    hash_file="$OUT/firmware.hash"
+    hash_file="out/target/product/$DEVICE/firmware.hash"
 
     # Make sure that our assumption that device codenames are unique
     # across vendors is true
