@@ -11,8 +11,12 @@ update_time()
 {
 	TIMEZONE=`date +%Z%:::z|tr +- -+`
 	echo Attempting to set the time on the device
-	$ADB wait-for-device &&
-	$ADB shell toolbox date `date +%s` &&
+	$ADB wait-for-device
+	$ADB root
+	sleep 10
+	$ADB remount
+	sleep 10
+	$ADB shell toolbox date `date +%s`
 	$ADB shell setprop persist.sys.timezone $TIMEZONE
 }
 
