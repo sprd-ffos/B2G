@@ -3,7 +3,7 @@
 #flash image to device
 
 . ./system.config
-. ./test.config
+. $TEST_CONFIG
 
 trap 'exit 1' ERR
 
@@ -11,12 +11,9 @@ update_time()
 {
 	TIMEZONE=`date +%Z%:::z|tr +- -+`
 	echo Attempting to set the time on the device
-	$ADB wait-for-device
-	$ADB root
-	sleep 10
-	$ADB remount
-	sleep 10
-	$ADB shell toolbox date `date +%s`
+	$ADB wait-for-device && sleep 10 && $ADB root &&
+    sleep 10 && $ADB remount && sleep 10 &&
+	$ADB shell toolbox date `date +%s` &&
 	$ADB shell setprop persist.sys.timezone $TIMEZONE
 }
 
@@ -26,9 +23,6 @@ update_time()
 #flash_fastboot nounlock $PROJECT
 $ADB reboot bootloader
 $FASTBOOT devices
-
-#not necesarry to erase
-#$FASTBOOT erase cache && $FASTBOOT erase userdata
 
 image_list=("boot" "system" "2ndbl" "vmjaluna" "userdata")
 

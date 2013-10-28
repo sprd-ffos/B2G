@@ -2,7 +2,7 @@
 
 #push all files those need in test
 . ./system.config
-. ./test.config
+. $TEST_CONFIG
 . $DEVICE_CONFIG
 
 trap 'exit 1' ERR

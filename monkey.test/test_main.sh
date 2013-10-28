@@ -11,18 +11,28 @@
 #8 pull report & log
 #9 reboot and start next test
 
+if [ ! -f "$TEST_CONFIG" ]
+then
+    echo "You must set the evn $TEST_CONFIG"
+    echo "example: TEST_CONFIG=test-config/test.config ./test_main.sh"
+    exit 1
+fi
+
 . ./system.config
-. ./test.config
+. $TEST_CONFIG
 
 #get passwd
 echo -n "Enter your password:"
 read -s passwd
 echo
 
-./check_local_file.sh
+# check passwd
+echo $passwd | sudo -S echo 
 error_test $? $0 $LINENO
 
-./check_adb.sh $passwd
+export passwd
+
+./check_adb.sh
 error_test $? $0 $LINENO
 
 case "$TEST_VERSION" in
@@ -35,7 +45,7 @@ case "$TEST_VERSION" in
     
     if [ $NEED_FLASH = "y" ]
     then
-        echo $passwd | sudo -S env PATH=$PATH ./flash.sh
+        echo $passwd | sudo -S env PATH=$PATH TEST_CONFIG=$TEST_CONFIG ./flash.sh
         error_test $? $0 $LINENO
         sudo -K
     fi
@@ -54,7 +64,7 @@ case "$TEST_VERSION" in
     error_test $? $0 $LINENO
 
     [ -f "$CUSTOM_FLASH_SC" ] || error_test 1 $0 $LINENO
-    echo $passwd | sudo -S env PATH=$PATH ./$CUSTOM_FLASH_SC
+    echo $passwd | sudo -S env PATH=$PATH TEST_CONFIG=$TEST_CONFIG ./$CUSTOM_FLASH_SC
     error_test $? $0 $LINENO
     ;;
 *)
@@ -62,7 +72,7 @@ case "$TEST_VERSION" in
 esac
 
 #after flash, we need to make sure that adb is job well
-./check_adb.sh $passwd
+./check_adb.sh
 error_test $? $0 $LINENO
 
 #test

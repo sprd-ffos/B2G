@@ -3,7 +3,7 @@
 #monitor the device, if fb sleeping, wake it and unlock the screen
 #we have only hvga now~
 . ./system.config
-. ./test.config
+. $TEST_CONFIG
 . $DEVICE_CONFIG
 
 trap 'exit 1' ERR

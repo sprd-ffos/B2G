@@ -1,109 +1,25 @@
-一、概述
+Monkey test script - HOW TO USE?
 
-本文档阐述该工具的设计思路及部分实现方法。
+零、有了问题找谁？
+lianxiang.zhou
 
-二、用户说明
+一、配置测试
 
-该测试脚本面对的用户有以下四类：
-1 pm，pm就是工程管理者
-2 release版本测试人员，release版本是指从服务器上获取的版本
-3 daily版本测试人员，daily版本是指实时更新的当前的版本
-4 local版本测试人员，local版本是指本地的版本，可以是进行过特别修改的。特别的，local版本需要自行编译、下载。
+测试的配置在test-config目录下。
+请参考目录test-config/下的template.*文件进行相应的配置。
 
-pm，请参考readme-for-pm
-release版本测试人员，请参考readme-for-release
-daily版本测试人员，请参考readme-for-daily
-local版本测试人员，请参考readme-for-local
+测试的快捷运行脚本在run-test目录下。
+请参考目录run-test/下的template.rum.sh文件进行相应的配置。
 
-三、基本架构
+二、运行测试
 
-1 这是一组脚本，以 test_main.sh 启动。
-2 test_main.sh 根据 test.config 配置来启动测试。
-3 不同的测试其差别仅在于 test.config。
-4 我们采用个性化 test.config 的方式来启动测试。
-5 对于预置的常用测试，我们会编辑好对应的配置文件，在测试的时候将其复制为 test.config，然后启动测试。
-6 我们会在 test.config 中指明 device 的配置。
-7 如果需要，我们会在 test.config 中指明其他相关的配置，比如 image 服务器的配置。
-8 详细的 test.config 配置，可以参考 test.config.template
-9 在 test_main.sh 中会调用一系列脚本完成可能需要的编译、远程复制image、下载image、编译符号表等。并且调用 test_loop.sh。
-10 test_loop.sh 是重复运行测试的脚本，在该脚本中调用 test_once.sh。
-11 test_once.sh 用于完成一次测试。会在测试用调用检测、打包和推送 crash 对应的脚本。
-12 这次我们采用全程配置的方式来避免传递参数，以简化脚本，我们主要的配置文件是 system.config。
-13 对于测试中遇到的所有异常，我们都采用检测异常、处理异常的思路来处理。异常都是单独处理的。
-14 crash report的汇总报告部分，仍沿用之前的脚本。
+大部分时候，我们都是运行已经配置好的测试。
+进入B2G/monkey.test目录中，运行
+run-test/<your-test-script>
 
-四、文件列表
-.
-├── bin                              - bin 文件夹，是我们测试中可能需要的 bin 文件
-│   ├── adb
-│   ├── busybox
-│   ├── fastboot
-│   ├── gsnap
-│   ├── minidump_stackwalk
-│   └── orng
-├── build_symb.sh                    - crash reporter 所需要的符号表编译脚本
-├── check_adb.sh                     - 检查 adb，并保证 adb 可用
-├── check_local_file.sh              - 检查本地文件的完整（非完备，部分检查）
-├── crash-database                   - 报告数据
-│   ├── add_cr.sh
-│   ├── add_folder.sh
-│   ├── crdb.config
-│   ├── extract_folder.sh
-│   ├── extract.sh
-│   ├── _list
-│   ├── now_report.sh
-│   ├── parse_cr.sh
-│   ├── parse_new.sh
-│   ├── readme
-│   ├── rebase.sh
-│   ├── report.sh
-│   ├── same.sh
-│   ├── server.config
-│   └── stack.filter
-├── crash_report.sh                  - 检查是否 crash，并在 crash 之后打包 report
-├── device.config.template           - 设备配置模版
-├── env_pre.sh                       - daily test，准备测试环境
-├── exception_report.sh              - 异常报告，即出现异常 reboot 之后的报告保存
-├── flash.sh                         - 下载远程获取的 image 文件
-├── gen_script.sh                    - 生成 orng 的动作序列
-├── get_image.sh                     - 从远程服务器获取 image
-├── image_server.config.template     - 远程服务器配置模版
-├── keep_test.sh                     - 保证测试进行
-├── keep_unlock.sh                   - 保证处于可测试状态
-├── kill_orng.sh                     - kill orng 进程
-├── kill_unlock.sh                   - kill unlock 脚本进程
-├── local_file.config                - 本地校验文件列表
-├── log_server.config                - log 服务器配置，用于推送文件
-├── orangutan.tar.bz2                - 打包的 orng 源码
-├── package_release.sh               - 打包当前版本中测试需要的文件，并推送至服务器
-├── pscp.sh                          - 远程复制
-├── push_report.sh                   - 推送报告
-├── push_test_files.sh               - 将 device 推送测试文件
-├── README                           - 本文档
-├── readme-for-config
-├── readme-for-daily
-├── readme-for-local
-├── readme-for-pm
-├── readme-for-release
-├── run-tara-daily.sh                - 快捷脚本
-├── run-tara-local.sh                - 快捷脚本
-├── run-tara-release.sh              - 快捷脚本
-├── run-unagi-daily.sh               - 快捷脚本
-├── sc                               - 脚本文件夹
-│   └── unlock_hvga.sc               - 解锁脚本
-├── system.config                    - 系统配置
-├── tara.config                      - 设备配置
-├── tara.daily.config                - 设备测试配置
-├── tara.local.config                - 设备测试配置
-├── tara.release.config              - 设备测试配置
-├── test.config                      - 测试配置
-├── test.config.template             - 测试配置模版
-├── test_loop.sh                     - 循环测试
-├── test_main.sh                     - 测试主脚本
-├── test_once.sh                     - 一次测试
-├── tick_collect_info.sh             - 每 tick 需要执行的动作集合
-├── unagi.config                     - 设备配置
-└── unagi.daily.config               - 设备测试配置
+三、结果分析
 
-上面是全部的文件列表及简要说明。
+测试出现异常后，我们会将生成的log按照配置发送到服务器，并在本地的log_backup目录下做一个备份。
+在服务器会有log分析程序。通过本地脚本运行服务器分析程序，并获得分析结果到本地。
+（脚本完成中……）
 

@@ -3,7 +3,7 @@
 #prepare the clean run environment for test
 
 . ./system.config
-. ./test.config
+. $TEST_CONFIG
 . $DEVICE_CONFIG
 
 usage()
@@ -22,12 +22,9 @@ do
     --help | -h)
         usage 0
         ;;
-    -*)
+    *)
         echo "Unrecognized option $1"
         usage 1
-        ;;
-    *)
-        break
         ;;
     esac
 
@@ -76,7 +73,7 @@ rm -rf ./objdir-gecko
 error_test $? $0 $LINENO
 
 #sudo ./flash.sh
-echo $passwd | sudo -S env PATH=$PATH ./flash.sh
+echo $passwd | sudo -S env PATH=$PATH TEST_CONFIG=$TEST_CONFIG ./flash.sh
 error_test $? $0 $LINENO
 sudo -K
 

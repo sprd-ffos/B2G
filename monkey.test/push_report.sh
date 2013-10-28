@@ -2,25 +2,24 @@
 
 #push report
 . ./system.config
-. ./test.config
-. $DEVICE_CONFIG
-. ./log_server.config
+. $TEST_CONFIG
+. $LOG_SERVER_CONFIG
 
 #if local test, do not push crash report
 [ $TEST_VERSION = "local" ] && exit 0
 
 #push to server
-push_files=*log-*.tar.bz2
+push_files=mtlog-*.tar.bz2
 
 srv_folder=$log_user@$log_server:$log_folder
 
 #use device name as the folder name on server
-push_folder=${srv_folder}/${DEV_NAME}/
+push_folder=${srv_folder}/
 
 #if no folder, create it
 expect -c "
 
-spawn ssh $log_user@$log_server \"\[ -d ${log_folder}/${DEV_NAME} \] || mkdir ${log_folder}/${DEV_NAME}\"
+spawn ssh $log_user@$log_server \"\[ -d $log_folder \] || mkdir $log_folder}\"
 set timeout -1
 expect {
     \"*@*'s password:\" {send \"$log_passwd\r\"; exp_continue}
@@ -34,8 +33,7 @@ do
 done
 
 #mv to backup folder
-BACKUP=crash_report_backup
-[ ! -d $BACKUP ] && mkdir $BACKUP
-mv $push_files $BACKUP
+[ ! -d $LOGBACKUP ] && mkdir $LOGBACKUP
+mv $push_files $LOGBACKUP
 
-
+exit 0

@@ -2,13 +2,15 @@
 
 #call test once script to run test
 . ./system.config
-. ./test.config
+. $TEST_CONFIG
 
-$ADB wait-for-device	
-$ADB root
-sleep 10
-$ADB remount
-sleep 10
+#check passw
+echo $passwd | sudo -S echo 
+error_test $? $0 $LINENO
+
+$ADB wait-for-device && sleep 10 && $ADB root
+$ADB wait-for-device && sleep 10 && $ADB remount
+$ADB wait-for-device
 
 #push files before test
 ./push_test_files.sh
@@ -28,12 +30,10 @@ foo=$($ADB shell $GSNAP | grep ': not found' | wc -l)
 while true
 do
     #reboot firt, make a clean env
-    $ADB reboot
+    $ADB wait-for-device && $ADB reboot
+    $ADB wait-for-device && sleep 10 && $ADB root
+    $ADB wait-for-device && sleep 10 && $ADB remount
     $ADB wait-for-device
-    $ADB root
-    sleep 10
-	$ADB remount
-    sleep 10
 
     #wait for system run stable...
     tick=60
@@ -48,16 +48,15 @@ do
     #give a newline
     echo
 
+    #coredump path set
+    coredump_path=$($ADB shell mount|awk '{if($2!="/mnt/secure/asec" && $3=="vfat") print $2}'|head -n 1)/coredump
+    export coredump_path
+    $ADB shell mkdir -p $coredump_path
+    $ADB shell "echo $coredump_path/core.%e.%p > /proc/sys/kernel/core_pattern"
+
     #test once
     #if test completed, enter next test
-    #if test error, try to fix it, and go on test
+    #if test error, stop test. There must be bugs we can't deal...
     ./test_once.sh
-    #if exception, we get demsg
-    if [ $? -ne 0 ]
-    then
-        $ADB wait-for-device
-
-        ./exception_report.sh
-        [ $? -eq 0 ] && ./push_report.sh
-    fi
+    error_test $? $0 $LINENO
 done

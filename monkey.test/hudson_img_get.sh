@@ -1,7 +1,7 @@
 #!/bin/bash
 
 . ./system.config
-. ./test.config
+. $TEST_CONFIG
 #1 get img from hunson
 #2 follow the tar file struct to extract the files
 #3 put the files to the image folder, use flash.sh to flash them
@@ -42,3 +42,5 @@ tar -xaf $pac_file -C $IMAGE_FOLDER
 [ $? -eq 0 ] || exit 1
 
 rm $pac_file
+
+exit 0
