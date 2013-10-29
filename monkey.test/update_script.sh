@@ -1,5 +1,5 @@
 #!/bin/bash
-./system.config
+. ./system.config
 
 log_file "Update test script"
 
