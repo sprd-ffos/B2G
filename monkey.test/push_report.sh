@@ -29,6 +29,7 @@ expect {
 #there is something wrong with wildcard characters in expect, so use find
 for file in $push_files
 do
+    log_file "log path: ${push_folder}$file (user: $log_user, passwd: $log_passwd)"
     ./pscp.sh --passwd "$log_passwd" -c "$file $push_folder"
 done
 

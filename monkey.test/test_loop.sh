@@ -4,6 +4,9 @@
 . ./system.config
 . $TEST_CONFIG
 
+trap 'log_file "End looping test."' EXIT
+log_file "Begin looping test."
+
 #check passw
 echo $passwd | sudo -S echo 
 error_test $? $0 $LINENO

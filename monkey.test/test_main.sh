@@ -21,6 +21,9 @@ fi
 . ./system.config
 . $TEST_CONFIG
 
+trap 'log_file "End test."' EXIT
+log_file "Begin test."
+
 #get passwd
 echo -n "Enter your password:"
 read -s passwd
@@ -34,6 +37,8 @@ export passwd
 
 ./check_adb.sh
 error_test $? $0 $LINENO
+
+log_file "Prepare the test version."
 
 case "$TEST_VERSION" in
 "release")
@@ -74,6 +79,8 @@ esac
 #after flash, we need to make sure that adb is job well
 ./check_adb.sh
 error_test $? $0 $LINENO
+
+log_file "[Device Info] $($ADB shell getprop ro.build.fingerprint)"
 
 #test
 ./test_loop.sh

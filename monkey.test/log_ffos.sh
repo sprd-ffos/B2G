@@ -2,7 +2,7 @@
 
 #log_ffos.sh log_dir symbol_dir
 . ./system.config
-. $TEST_CONFIG
+[ -n "$TEST_CONFIG" ] && . $TEST_CONFIG
 
 [ $# -ge 1 ] || exit 1
 
@@ -31,15 +31,18 @@ then
     echo "[LOGGING] ffos: dump parse..."
     $DUMPTOOL ${log}/*.dmp $symbol > ${log}/dump_parse
 fi
-set +x
-echo "[LOGGING] ffos: manifest.xml"
-cp ${IMAGE_FOLDER}/manifest.xml ${log}/
 
-if [ $TEST_VERSION = "daily" ]
+if [ -n "$TEST_CONFIG" ]
 then
-    echo "[LOGGING] ffos: .config .userconfig"
-    cp ../.config ${log}/config
-    cp ../.userconfig ${log}/userconfig
+    echo "[LOGGING] ffos: manifest.xml"
+    cp ${IMAGE_FOLDER}/manifest.xml ${log}/
+
+    if [ $TEST_VERSION = "daily" ]
+    then
+        echo "[LOGGING] ffos: .config .userconfig"
+        cp ../.config ${log}/config
+        cp ../.userconfig ${log}/userconfig
+    fi
 fi
 
 exit 0

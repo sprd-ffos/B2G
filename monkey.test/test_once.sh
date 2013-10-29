@@ -6,6 +6,9 @@
 . $TEST_CONFIG
 . $DEVICE_CONFIG
 
+trap 'log_file "---- End current test ----" && ./kill_unlock.sh' EXIT
+log_file "---- Begin a test round ----"
+
 #check passw
 echo $passwd | sudo -S echo 
 error_test $? $0 $LINENO
@@ -23,34 +26,43 @@ slogtick=$SLOG_TICK
 last_uptime=0
 uptime=0
 
-trap './kill_unlock.sh' EXIT
-
 echo "["$(date)"] Begin a new test."
 
 while true
 do
     $ADB wait-for-device
 
-    #status check
+    #reboot check
     uptime=$($ADB shell cat /proc/uptime | cut -d'.' -f1)
+    [ -n "$uptime" ] || exit 1
     [[ "$uptime" == *[!0-9]* ]] && exit 1
     if [ $uptime -gt $last_uptime ]
     then
         last_uptime=$uptime
     else
+        log_file "Device is reboot, logging..."
         echo "[LOGGING] Test stopped, catch the last log."
         ./kill_orng.sh
         ./kill_unlock.sh
-        ./log4last.sh $passwd
+        sleep 10 && $ADB root
+        $ADB wait-for-device && sleep 10 && $ADB remount
+        $ADB wait-for-device && sleep 10
+        ./log4last.sh
         ./push_report.sh
         exit 0
     fi
 
-    minidump_file_cnt=$($FIND $DMPDIR -name "*.dmp" -o -name "*.extra" | wc -l)
-    coredump_file_cnt=$($ADB shell ls $coredump_path | wc -l)
+    #idle check
+    #how to?
+
+    #coredump file check
+    minidump_file_cnt=$($FIND $DMPDIR -name "*.dmp" -o -name "*.extra" | grep -v 'No such file or directory' | wc -l)
+    coredump_file_cnt=$($ADB shell ls $coredump_path | grep -v 'No such file or directory' | wc -l)
     #if has dmp file, catch log, and enter next test
     if [ $minidump_file_cnt -gt 0 ] || [ $coredump_file_cnt -gt 0 ]
     then
+        log_file "minidump: $minidump_file_cnt, coredump: $coredump_file_cnt. logging..."
+        echo "minidump: $minidump_file_cnt, coredump: $coredump_file_cnt"
         echo "[LOGGING] Test stopped, catch the current log."
         ./kill_orng.sh
         ./kill_unlock.sh
