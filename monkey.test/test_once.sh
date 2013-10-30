@@ -16,9 +16,9 @@ error_test $? $0 $LINENO
 DMPDIR=/data/b2g/mozilla
 #time define
 TICK=10
-HOME_TICK=120
+HOME_TICK=180
 POWER_TICK=180
-SLOG_TICK=900
+SLOG_TICK=3600
 
 hometick=$HOME_TICK
 powertick=$POWER_TICK
@@ -44,7 +44,8 @@ do
         echo "[LOGGING] Test stopped, catch the last log."
         ./kill_orng.sh
         ./kill_unlock.sh
-        sleep 10 && $ADB root
+        echo "[WAITING] wait for device run stable to root"
+        sleep 120 && $ADB root
         $ADB wait-for-device && sleep 10 && $ADB remount
         $ADB wait-for-device && sleep 10
         ./log4last.sh

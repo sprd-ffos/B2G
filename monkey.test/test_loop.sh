@@ -40,11 +40,11 @@ do
 
     #wait for system run stable...
     tick=60
+    tick_part=3
     echo -n "Wait for system run stable ."
     while [ $tick -gt 0 ]
     do
         echo -n "."
-        tick_part=3
         sleep $tick_part
         tick=$(( tick - tick_part ))
     done
@@ -56,6 +56,9 @@ do
     export coredump_path
     $ADB shell mkdir -p $coredump_path
     $ADB shell "echo $coredump_path/core.%e.%p > /proc/sys/kernel/core_pattern"
+
+    #make sure that the slog is open
+    $ADB shell slogctl enable
 
     #test once
     #if test completed, enter next test

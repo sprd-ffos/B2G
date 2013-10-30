@@ -13,8 +13,7 @@ mkdir $log
 
 ./log_ffos.sh $log $SYMBOL_FOLDER
 ./log_common.sh $log
-./log_info.sh $log
-./log_slog_last.sh $log
+./log_info_last.sh $log
 
 #tar files
 tar -caf ${log}.tar.bz2 ${log}/*

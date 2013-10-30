@@ -12,22 +12,33 @@ ADB=$(which adb)
 [ $? -eq 0 ] || ADB=bin/adb
 
 # here can add any info about device if need
-echo "[LOGGING] info: uptime ps procrank b2g-ps b2g-procrank df..."
-$ADB shell uptime >${log}/uptime
-$ADB shell ps > ${log}/ps
-$ADB shell procrank > ${log}/procrank
-$ADB shell b2g-ps > ${log}/b2g-ps
-$ADB shell b2g-procrank > ${log}/b2g-procrank
-$ADB shell df > ${log}/df
+echo "[LOGGING] info: cmd"
+for cmd in uptime b2g-ps b2g-procrank ps df dumpsys procrank dmesg
+do
+    $ADB shell $cmd > ${log}/$cmd
+done
 
-echo "[LOGGING] info: logcat"
-$ADB logcat -d > ${log}/logcat
+echo "[LOGGING] info: file"
+for file in /proc/meminfo /proc/cmdline /proc/buddyinfo /proc/yaffs /proc/slabinfo
+do
+    $ADB pull $file ${log}/
+done
 
 #ganap
 $ADB shell $GSNAP ${DEVDIR}/${SNAPSHOT_NAME}3.jpg /dev/graphics/fb0 >/dev/null 2>&1 
 $ADB pull ${DEVDIR}/${SNAPSHOT_NAME}1.jpg $log
 $ADB pull ${DEVDIR}/${SNAPSHOT_NAME}2.jpg $log
 $ADB pull ${DEVDIR}/${SNAPSHOT_NAME}3.jpg $log
+
+echo "[LOGGING] info: logcat"
+#main system radio events
+for buffer in main system radio
+do
+    $ADB logcat -d -b $buffer > ${log}/logcat.$buffer
+done
+
+echo "[LOGGING] info: bugreport. This will take a while..."
+$ADB bugreport > ${log}/bugreport
 
 #coredump
 mkdir -p ${log}/coredump

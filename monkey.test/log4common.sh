@@ -10,10 +10,9 @@ rm -rf $log
 rm -rf ${log}.tar.bz2
 mkdir $log
 
+./log_ffos.sh $log
 ./log_common.sh $log
 ./log_info.sh $log
-./log_ffos.sh $log
-./log_slog.sh $log
 
 #tar files
 tar -caf ${log}.tar.bz2 ${log}/*
