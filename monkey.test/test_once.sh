@@ -112,12 +112,12 @@ do
     #keep running unlock, include keep lcd on
     pgrep keep_unlock.sh > /dev/null || ./keep_unlock.sh &
 
+    sleep $TICK
+
     #keep running orng, or other monkey tools
     ./keep_test.sh 
     error_test $? $0 $LINENO
 
     #collect device information inter-test, such as screenshot
     ./tick_collect_info.sh
-
-    sleep $TICK
 done

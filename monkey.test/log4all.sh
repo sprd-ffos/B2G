@@ -3,15 +3,16 @@
 . ./system.config
 . $TEST_CONFIG
 
-log=${LASTLOGHEAD}-$(./log_filename.sh $TEST_VERSION)
+log=${ALLLOGHEAD}-$(./log_filename.sh $TEST_VERSION)
 
-echo "[LOGGING] last log to $log."
+echo "[LOGGING] now log to $log."
 rm -rf $log
 rm -rf ${log}.tar.bz2
 mkdir $log
 
 ./log_ffos.sh $log $SYMBOL_FOLDER
 ./log_common.sh $log
+./log_info.sh $log
 ./log_info_last.sh $log
 
 #tar files

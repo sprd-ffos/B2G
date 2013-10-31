@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#common + info + ffos + slog
 . ./system.config
 . $TEST_CONFIG
 

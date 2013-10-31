@@ -64,5 +64,15 @@ do
     #if test completed, enter next test
     #if test error, stop test. There must be bugs we can't deal...
     ./test_once.sh
-    error_test $? $0 $LINENO
+    if [ $? -ne 0 ]
+    then
+        echo "[Unknown Error] catching log..."
+        log_file "UNKNOWN ERROR, logging..."
+        $ADB wait-for-device
+        sleep 10
+        ./kill_orng.sh
+        ./kill_unlock.sh
+        ./log4all.sh
+        ./push_report.sh
+    fi
 done
