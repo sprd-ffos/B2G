@@ -14,6 +14,8 @@ mkdir $log
 ./log_common.sh $log
 ./log_info.sh $log
 
+./log_parse.sh $log
+
 #tar files
 tar -caf ${log}.tar.bz2 ${log}/*
 

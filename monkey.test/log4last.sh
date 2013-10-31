@@ -14,13 +14,13 @@ mkdir $log
 ./log_common.sh $log
 ./log_info_last.sh $log
 
+./log_parse.sh $log
+
 #tar files
 tar -caf ${log}.tar.bz2 ${log}/*
 
 log_file "log to ${log}.tar.bz2"
 echo "[LOGGING] log file: ${log}.tar.bz2"
-
-./log_parse.sh $log
 
 echo $passwd | sudo -S rm -rf $log
 
