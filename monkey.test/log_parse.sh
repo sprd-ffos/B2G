@@ -36,6 +36,14 @@ do
     fi
 done
 
+if [ -f ${log}/dump_parse ]
+then
+    echo "[FFOS minidump: ${log}/dump_parse (the top 10 stack info)]" >> $parse_file
+    sed -nE '/^Thread [0-9]+ \(crashed\)$/,/^Thread [0-9]+$/ {/^ *[0-9]+/p}' ${log}/dump_parse |\
+        sed 's/^ *//' | head -n 10 >> $parse_file
+    echo >> $parse_file
+fi
+
 cat $parse_file >> $LOGFILE
 
 log_file "[LOG PARSE] <---- END"

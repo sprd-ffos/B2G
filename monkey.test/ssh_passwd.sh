@@ -1,16 +1,16 @@
 #!/bin/bash
 
-#give passwd to scp
+#give passwd to ssh cmd 
 #need install expect
 #sudo apt-get install expect
 
 #options
 passwd=
-scp=
+cmd=
 
 usage()
 {
-    echo "Usage: $(basename $0) --passwd passwd -c 'parameters of scp command' [--help]"
+    echo "Usage: $(basename $0) --passwd passwd -c 'parameters of ssh command' [--help]"
     exit $1
 }
 
@@ -23,7 +23,7 @@ do
         ;;
     -c)
         shift
-        scp=$1
+        cmd=$1
         ;;
     --help | -h)
         usage 0
@@ -40,14 +40,14 @@ do
     shift
 done
 
-if [ -z "$scp" ]
+if [ -z "$cmd" ]
 then
     usage 1
 fi
 
 expect -c "
 
-spawn scp $scp 
+spawn $cmd
 set timeout -1 
 expect {
     \"*@*'s password:\" {send \"$passwd\r\"; exp_continue}

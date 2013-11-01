@@ -54,7 +54,7 @@ if [ -n "$server" ] && [ -f "$server" ]
 then
     . $server
 
-    ./pscp.sh --passwd $image_passwd -c "$IMAGE_FOLDER.tar.bz2 $image_user@$image_server:${image_folder}/$image_package"
+    ./ssh_passwd.sh --passwd $image_passwd -c "scp $IMAGE_FOLDER.tar.bz2 $image_user@$image_server:${image_folder}/$image_package"
     rm $IMAGE_FOLDER.tar.bz2
 fi
 

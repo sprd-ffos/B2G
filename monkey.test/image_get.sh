@@ -8,7 +8,7 @@
 
 [ -d $IMAGE_FOLDER ] && rm -rf $IMAGE_FOLDER
 
-./pscp.sh --passwd $image_passwd -c "$image_user@$image_server:$image_folder/$image_package ./$IMAGE_FOLDER.tar.bz2"
+./ssh_passwd.sh --passwd $image_passwd -c "scp $image_user@$image_server:$image_folder/$image_package ./$IMAGE_FOLDER.tar.bz2"
 
 [ -f $IMAGE_FOLDER.tar.bz2 ] || exit 1
 

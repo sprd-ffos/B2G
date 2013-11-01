@@ -17,20 +17,13 @@ srv_folder=$log_user@$log_server:$log_folder
 push_folder=${srv_folder}/
 
 #if no folder, create it
-expect -c "
-
-spawn ssh $log_user@$log_server \"\[ -d $log_folder \] || mkdir $log_folder}\"
-set timeout -1
-expect {
-    \"*@*'s password:\" {send \"$log_passwd\r\"; exp_continue}
-    \"Are you sure you want to continue connecting *?\" {send \"yes\r\"; exp_continue}
-}"
+./ssh_passwd.sh --passwd "$log_passwd" -c "ssh $log_user@$log_server \"\[ -d $log_folder \] || mkdir $log_folder\""
 
 #there is something wrong with wildcard characters in expect, so use find
 for file in $push_files
 do
     log_file "log path: ${push_folder}$file (user: $log_user, passwd: $log_passwd)"
-    ./pscp.sh --passwd "$log_passwd" -c "$file $push_folder"
+    ./ssh_passwd.sh --passwd "$log_passwd" -c "scp $file $push_folder"
 done
 
 #mv to backup folder
