@@ -39,3 +39,5 @@ system/
 vendor/
 u-boot/
 orangutan/
+B2G/
+patch_result
