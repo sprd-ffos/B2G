@@ -21,13 +21,15 @@ fi
 . ./system.config
 . $TEST_CONFIG
 
-trap 'log_file "End test."' EXIT
+trap 'log_file "End test." && ./log2server.sh --server $LOG_SERVER_CONFIG -s "$(date +%y%m%d.%H:%M) ${USER}@$(cat /etc/hostname) end $TEST_CONFIG test."' EXIT
 log_file "Begin test."
 
 #get passwd
 echo -n "Enter your password:"
 read -s passwd
 echo
+
+./log2server.sh --server $LOG_SERVER_CONFIG -s "$(date +%y%m%d.%H:%M) ${USER}@$(cat /etc/hostname) begin $TEST_CONFIG test."
 
 # check passwd
 echo $passwd | sudo -S echo 

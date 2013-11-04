@@ -24,6 +24,7 @@ for file in $push_files
 do
     log_file "log path: ${push_folder}$file (user: $log_user, passwd: $log_passwd)"
     ./ssh_passwd.sh --passwd "$log_passwd" -c "scp $file $push_folder"
+    ./log2server.sh --server $LOG_SERVER_CONFIG -s "$(date +%y%m%d.%H:%M) ${USER}@$(cat /etc/hostname) push log: $file."
 done
 
 #mv to backup folder
