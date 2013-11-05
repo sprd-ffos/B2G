@@ -84,7 +84,7 @@ do
     shift
 done
 
-[ -n "$log_dir" ] || log_type="."
+[ -n "$log_dir" ] || log_dir="."
 [ -n "$log_type" ] || log_type="*"
 if [ -n "$dev" ]
 then
