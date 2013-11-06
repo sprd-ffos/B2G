@@ -19,10 +19,6 @@ $ADB wait-for-device
 ./push_test_files.sh
 error_test $? $0 $LINENO
 
-#We delete the command tcp because tcp cause a coredump whenever it is running 
-echo "[SPECIAL OPERATION] rm /system/bin/tcp - Because tcp has bug"
-$ADB shell rm /system/bin/tcp
-
 #double check -
 #adb
 $ADB shell echo >/dev/null 2>&1
