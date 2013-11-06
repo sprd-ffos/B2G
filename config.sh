@@ -217,6 +217,14 @@ case "$1" in
 	repo_sync $1
 	;;
 
+"sp7710gaplus_gonk4.0")
+    echo DEVICE=sp7710ga_gonk >> .tmp-config &&
+    echo LUNCH=sp7710gaplus_gonk-userdebug >> .tmp-config &&
+    echo TARGET_HVGA_ENABLE=true >> .tmp-config &&
+    echo GONK_VERSION=SP7710_13A_W13.39.7 >> .tmp-config &&
+    repo_sync sp7710ga_gonk4.0_v1.3
+    ;;
+
 "sp7710ga_gonk_monkey")
 	echo DEVICE=sp7710ga_gonk >> .tmp-config &&
 	echo LUNCH=sp7710ga_gonk-eng >> .tmp-config &&
@@ -395,6 +403,7 @@ case "$1" in
 #	echo - sp7710ga_gonk4.1 ======================= Sprdroid4.1, gecko/gaia@master, gonk@sprdroid4.1 and sprdlinux3.0
 #	echo - sp7710ga_gonk4.2 ======================= Sprdroid4.2.2_r1, gecko/gaia@master, gonk@sprdroid4.2.2_r1 and sprdlinux3.0
     echo - sp7710ga_gonk4.0_v1.3 ================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0
+    echo - sp7710gaplus_gonk4.0 =================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0
 	echo - sp8835eb_gonk4.3 ======================= Sprdroid4.3, gecko/gaia@FFOS v1.3, gonk@sprdroid4.3 and sprdlinux3.4, frameworks@android-4.3_r2.1
 	echo - galaxy-s2
 	echo - galaxy-nexus
