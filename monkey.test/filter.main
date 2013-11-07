@@ -7,3 +7,6 @@ Modem Assert
 WATCHDOG IS
 >>> system_server <<<
 Out of memory
+exception
+crash
+abort
