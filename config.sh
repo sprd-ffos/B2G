@@ -233,6 +233,13 @@ case "$1" in
 	repo_sync sp7710ga_gonk4.0
 	;;
 
+"sp7710ga_gonk4.0_fwvga")
+	echo DEVICE=sp7710ga_gonk >> .tmp-config &&
+	echo LUNCH=sp7710ga_gonk-userdebug >> .tmp-config &&
+	echo GONK_VERSION=SP7710_13A_W13.39.7 >> .tmp-config &&
+	repo_sync sp7710ga_gonk4.0
+    ;;
+
 "sp7710ga_gonk4.0_nokia")
 	echo DEVICE=sp7710ga_gonk >> .tmp-config &&
 	echo LUNCH=sp7710ga_gonk-userdebug >> .tmp-config &&
@@ -398,6 +405,7 @@ case "$1" in
 #	echo - sp7710ga_512x256_hvga ================== Sprdroid4.1, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.1 and sprdlinux3.0
 	echo - sp7710ga_gonk4.0 ======================= Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 and sprdlinux3.0
 	echo - sp7710ga_gonk_monkey =================== Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 and sprdlinux3.0, add debug option for monkey test
+	echo - sp7710ga_gonk4.0_fwvga ================= Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 , sprdlinux3.0 and fwvga resolution
 	echo - sp7710ga_gonk4.0_nokia ================= Sprdroid4.0, gecko/gaia@FFOS v1.2, nokia style homescreen and lockscreen, gonk@sprdroid4.0 and sprdlinux3.0
 	echo - sp7710lc_gonk4.0 ======================= Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
 #	echo - sp7710ga_gonk4.1 ======================= Sprdroid4.1, gecko/gaia@master, gonk@sprdroid4.1 and sprdlinux3.0
