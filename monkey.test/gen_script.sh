@@ -7,6 +7,9 @@
 MAXW=320
 MAXH=480
 STEPS=100000
+tap_dur=200
+drag_dur=50
+sleep_dur=50
 
 usage()
 {
@@ -72,8 +75,7 @@ do
         x=$(( $RANDOM % $MAXW ))
         y=$(( $RANDOM % $MAXH ))
         tap=$(( $RANDOM % 3 + 1 ))
-        dur=$(( $RANDOM % 500 + 100 ))
-        echo $cmd $x $y $tap $dur 
+        echo $cmd $x $y $tap $tap_dur 
         ;;
     drag)
         #drag x1 y1 x2 y2 step duration
@@ -82,8 +84,7 @@ do
         x2=$(( $RANDOM % $MAXW ))
         y2=$(( $RANDOM % $MAXH ))
         step=$(( $RANDOM % 10 + 10 ))
-        dur=$(( $RANDOM % 1000 + 50 ))
-        echo $cmd $x1 $y1 $x2 $y2 $step $dur 
+        echo $cmd $x1 $y1 $x2 $y2 $step $drag_dur 
         ;;
     pinch)
         #drag x1 y1 x2 y2 a1 b1 a2 b2 step duration
@@ -96,13 +97,12 @@ do
         a2=$(( $RANDOM % $MAXW ))
         b2=$(( $RANDOM % $MAXH ))
         step=$(( $RANDOM % 10 + 10 ))
-        dur=$(( $RANDOM % 1000 + 50 ))
-        echo $cmd $x1 $y1 $x2 $y2 $a1 $b1 $a2 $b2 $step $dur 
+        echo $cmd $x1 $y1 $x2 $y2 $a1 $b1 $a2 $b2 $step $drag_dur 
         ;;
     sleep)
         #sleep duration
         dur=$(( $RANDOM % 1000 + 1000 ))
-        echo $cmd $dur 
+        echo $cmd $sleep_dur 
         ;;
     *)
         break
