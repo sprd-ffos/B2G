@@ -31,7 +31,7 @@ do
     if [ -f ${log}/$file ]
     then
         echo "[logcat main: $file]" >> $parse_file
-        grep -i -f filter.kmsg ${log}/$file >> $parse_file
+        grep -i -f filter.main ${log}/$file | grep -v -f ignore.main >> $parse_file
         echo >> $parse_file
     fi
 done
