@@ -11,6 +11,8 @@
 #8 pull report & log
 #9 reboot and start next test
 
+TEST_SCRIPT=test_loop.sh
+
 if [ ! -f "$TEST_CONFIG" ]
 then
     echo "You must set the evn $TEST_CONFIG"
@@ -73,6 +75,11 @@ case "$TEST_VERSION" in
     [ -f "$CUSTOM_FLASH_SC" ] || error_test 1 $0 $LINENO
     echo $passwd | sudo -S env PATH=$PATH TEST_CONFIG=$TEST_CONFIG ./$CUSTOM_FLASH_SC
     error_test $? $0 $LINENO
+
+    if [ $TEST_VERSION = "custom-gaiauitest" ]
+    then
+        TEST_SCRIPT=gaia-ui-test.sh
+    fi
     ;;
 *)
     ;;
@@ -85,6 +92,7 @@ error_test $? $0 $LINENO
 log_file "[Device Info] $($ADB shell getprop ro.build.fingerprint)"
 
 #test
-./test_loop.sh
+echo $TEST_SCRIPT
+./$TEST_SCRIPT
 error_test $? $0 $LINENO
 
