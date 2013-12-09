@@ -256,6 +256,12 @@ case "$1" in
 	repo_sync sp7710ga_gonk4.0
 	;;
 
+"sp6821a_gonk4.0")
+	echo DEVICE=sp6821a_gonk >> .tmp-config &&
+	echo LUNCH=sp6821a_gonk-userdebug >> .tmp-config &&
+	repo_sync $1
+	;;
+
 "sp8825ea_gonk4.0")
        echo DEVICE=sp8825ea >> .tmp-config &&
        echo LUNCH=sp8825eabase-eng >> .tmp-config &&
@@ -399,6 +405,7 @@ case "$1" in
 #	echo - sp7710ga_gonk4.0_nokia ================= Sprdroid4.0, gecko/gaia@FFOS v1.2, nokia style homescreen and lockscreen, gonk@sprdroid4.0 and sprdlinux3.0
 	echo - sp7710lc_gonk4.0 ======================= Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
 	echo - sp7710ga_gonk4.0_user=================== Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 , sprdlinux3.0 and lunch = user option
+	echo - sp6821a_gonk4.0 ======================== Sprdroid4.0, gecko/gaia@FFOS v1.2f, gonk@sprdroid4.0 and sprdlinux3.0, u-boot2.3.5, 256M ROM, 128RAM
 #	echo - sp7710ga_gonk4.1 ======================= Sprdroid4.1, gecko/gaia@master, gonk@sprdroid4.1 and sprdlinux3.0
 #	echo - sp7710ga_gonk4.2 ======================= Sprdroid4.2.2_r1, gecko/gaia@master, gonk@sprdroid4.2.2_r1 and sprdlinux3.0
 #   echo - sp7710ga_gonk4.0_v1.3 ================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0
