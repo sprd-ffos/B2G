@@ -3,6 +3,7 @@
 . load-config.sh
 
 KHEADER=1
+VARIANT=userdebug
 VARIANT=${VARIANT:-eng}
 if [ ! $LUNCH ];then
 LUNCH=${LUNCH:-full_${DEVICE}-${VARIANT}}
