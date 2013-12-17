@@ -136,6 +136,15 @@ case "$1" in
 	repo_sync sp7710ga_gonk4.0
 	;;
 
+"sp7710lc_gonk4.0_v1.3")
+	echo DEVICE=sp7710lc_gonk >> .tmp-config &&
+	echo LUNCH=sp7710lc_gonk-userdebug >> .tmp-config &&
+	echo TARGET_HVGA_ENABLE=true >> .tmp-config &&
+	echo GONK_VERSION=SP7710_13A_W13.39.7 >> .tmp-config &&
+	repo_sync sp7710ga_gonk4.0_v1.3
+	;;
+
+
 "sp7710gaplus_gonk4.0")
 	echo DEVICE=sp7710gaplus_gonk >> .tmp-config &&
 	echo LUNCH=sp7710gaplus_gonk-userdebug >> .tmp-config &&
@@ -180,7 +189,8 @@ case "$1" in
 	echo - sp7710ga_gonk4.0 ======================= Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 and sprdlinux3.0
 	echo - sp7710ga_gonk4.0_fwvga ================= Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 , sprdlinux3.0 and fwvga resolution
 	echo - sp7710lc_gonk4.0 ======================= Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128M RAM	
-	echo - sp7710ga_gonk4.0_v1.3 ================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0
+#	echo - sp7710ga_gonk4.0_v1.3 ================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0
+	echo - sp7710lc_gonk4.0_v1.3 ================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0
 	echo - sp7710gaplus_gonk4.0 =================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0 and dual SIM cards
 	echo - galaxy-s2
 	echo - galaxy-nexus
