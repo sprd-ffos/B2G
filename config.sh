@@ -351,7 +351,7 @@ case "$1" in
 	repo_sync $1
 	;;
 
-"otoro"|"unagi"|"keon"|"inari"|"leo"|"hamachi"|"peak"|"helix"|"wasabi")
+"otoro"|"unagi"|"keon"|"inari"|"leo"|"hamachi"*|"peak"|"helix"|"wasabi")
 	echo DEVICE=$1 >> .tmp-config &&
 	repo_sync $1
 	;;
