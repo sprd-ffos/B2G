@@ -351,10 +351,15 @@ case "$1" in
 	repo_sync $1
 	;;
 
-"otoro"|"unagi"|"keon"|"inari"|"leo"|"hamachi"*|"peak"|"helix"|"wasabi")
+"otoro"|"unagi"|"keon"|"inari"|"leo"|"hamachi"|"peak"|"helix"|"wasabi")
 	echo DEVICE=$1 >> .tmp-config &&
 	repo_sync $1
 	;;
+
+"hamachi_v1.3")
+        echo DEVICE=hamachi >> .tmp-config &&
+        repo_sync $1
+        ;;
 
 "unagi_sprd_version")
         echo DEVICE=unagi >> .tmp-config &&
@@ -425,6 +430,7 @@ case "$1" in
 	echo - peak
 	echo - leo
 	echo - hamachi
+	echo - hamachi_v1.3
 	echo - helix
 	echo - wasabi
 	echo - tara
