@@ -202,14 +202,6 @@ case "$1" in
 	repo_sync $1
 	;;
 
-"sp7710lc_gonk4.0_v1.3")
-    echo DEVICE=sp7710lc_gonk >> .tmp-config &&
-    echo LUNCH=sp7710lc_gonk-userdebug >> .tmp-config &&
-    echo TARGET_HVGA_ENABLE=true >> .tmp-config &&
-    echo GONK_VERSION=SP7710_13A_W13.39.7 >> .tmp-config &&
-    repo_sync sp7710ga_gonk4.0_v1.3
-    ;;
-
 "sp7710gaplus_gonk4.0")
     echo DEVICE=sp7710gaplus_gonk >> .tmp-config &&
     echo LUNCH=sp7710gaplus_gonk-userdebug >> .tmp-config &&
@@ -245,7 +237,7 @@ case "$1" in
 	echo LUNCH=sp7710lc_gonk-userdebug >> .tmp-config &&
 	echo TARGET_HVGA_ENABLE=true >> .tmp-config &&
 	echo GONK_VERSION=SP7710_13A_W13.39.7 >> .tmp-config &&
-	repo_sync sp7710ga_gonk4.0
+	repo_sync sp7710ga_gonk4.0_v1.3
 	;;
 
 "sp7710ga_gonk4.0_user")
@@ -393,29 +385,13 @@ case "$1" in
 	echo "Flags are passed through to |./repo sync|."
 	echo
 	echo Valid devices to configure are:
-#	echo - tara =================================== Mozilla main branch, gecko/gaia@master, gonk@sprdroid4.0.3_vlx_3.0_b2g, use WVAG and 512 RAM
-#	echo - tara_512x256_hvga ====================== The same as tara, use HVAG and 256 RAM
-#	echo - tara_512x128_hvga ====================== The same as tara, use HVAG and 128 RAM
-#	echo - mozilla_weekly_build =================== Mozilla weekly build, gecko/gaia@mozilla weekly stable revision, gonk@sprdroid4.0.3_vlx_3.0_b2g
-#	echo - mozilla_weekly_build_512x256_hvga ====== The same as mozilla_weekly_build, use HVGA
-#	echo - sp8810eabase_mozilla_update ============ Upgrade only, gecko/gaia@mozilla weekly stable revision, gonk@sprdroid4.0.3 LATEST revision
-#	echo - sp8810eabase_512x256_wvga ============== *MAIN BRANCH*, gecko/gonk@sprdroid4.0.3_vlx_3.0_b2g, gaia@master, use WVAG and 256 RAM
-#	echo - sp8810eabase_512x256_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 256 RAM
-#	echo - sp8810eabase_512x128_hvga ============== *MAIN BRANCH*, gecko/gaia/gonk@sprdroid4.0.3_vlx_3.0_b2g, use HVAG and 128 RAM
-#	echo - sp7710ga_512x256_fwvga ================= Sprdroid4.1, gecko@sprdroid4.0.3_vlx_3.0_b2g, gaia@master, gonk@sprdroid4.1 and sprdlinux3.0
-#	echo - sp7710ga_512x256_hvga ================== Sprdroid4.1, gecko/gaia@sprdroid4.0.3_vlx_3.0_b2g, gonk@sprdroid4.1 and sprdlinux3.0
 	echo - sp7710ga_gonk4.0 ======================= Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 and sprdlinux3.0
 	echo - sp7710ga_gonk_monkey =================== Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 and sprdlinux3.0, add debug option for monkey test
 	echo - sp7710ga_gonk4.0_fwvga ================= Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 , sprdlinux3.0 and fwvga resolution
-#	echo - sp7710ga_gonk4.0_nokia ================= Sprdroid4.0, gecko/gaia@FFOS v1.2, nokia style homescreen and lockscreen, gonk@sprdroid4.0 and sprdlinux3.0
-	echo - sp7710lc_gonk4.0 ======================= Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
+	echo - sp7710lc_gonk4.0 ======================= Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
 	echo - sp7710ga_gonk4.0_user=================== Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 , sprdlinux3.0 and lunch = user option
-	echo - sp6821a_gonk4.0 ======================== Sprdroid4.0, gecko/gaia@FFOS v1.2f, gonk@sprdroid4.0 and sprdlinux3.0, u-boot2.3.5, 256M ROM, 128RAM
-#	echo - sp7710ga_gonk4.1 ======================= Sprdroid4.1, gecko/gaia@master, gonk@sprdroid4.1 and sprdlinux3.0
-#	echo - sp7710ga_gonk4.2 ======================= Sprdroid4.2.2_r1, gecko/gaia@master, gonk@sprdroid4.2.2_r1 and sprdlinux3.0
-#   echo - sp7710ga_gonk4.0_v1.3 ================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0
-    echo - sp7710lc_gonk4.0_v1.3 ================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0
-    echo - sp7710gaplus_gonk4.0 =================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0
+	echo - sp6821a_gonk4.0 ======================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
+	echo - sp7710gaplus_gonk4.0 =================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0
 #	echo - sp8835eb_gonk4.3 ======================= Sprdroid4.3, gecko/gaia@FFOS v1.3, gonk@sprdroid4.3 and sprdlinux3.4, frameworks@android-4.3_r2.1
 	echo - galaxy-s2
 	echo - galaxy-nexus
