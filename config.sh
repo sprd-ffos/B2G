@@ -1,5 +1,6 @@
 #!/bin/bash
 
+REPO=`which repo`
 REPO=${REPO:-./repo}
 sync_flags=""
 
