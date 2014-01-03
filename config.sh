@@ -109,7 +109,6 @@ case "$1" in
 
 "fugu")
 	echo LUNCH=sp7710ga_gonk-eng >> .tmp-config &&
-	echo TARGET_HVGA_ENABLE=true >> .tmp-config &&
 	echo GONK_VERSION=SP7710_13A_W13.39.7 >> .tmp-config &&
 	repo_sync $1
 	;;
@@ -117,7 +116,6 @@ case "$1" in
 "sp7710ga_gonk4.0"|"sp7710ga_gonk4.0_v1.3")
 	echo DEVICE=sp7710ga_gonk >> .tmp-config &&
 	echo LUNCH=sp7710ga_gonk-userdebug >> .tmp-config &&
-	echo TARGET_HVGA_ENABLE=true >> .tmp-config &&
 	echo GONK_VERSION=SP7710_13A_W13.39.7 >> .tmp-config &&
 	repo_sync $1
 	;;
@@ -132,7 +130,6 @@ case "$1" in
 "sp7710lc_gonk4.0")
 	echo DEVICE=sp7710lc_gonk >> .tmp-config &&
 	echo LUNCH=sp7710lc_gonk-userdebug >> .tmp-config &&
-	echo TARGET_HVGA_ENABLE=true >> .tmp-config &&
 	echo GONK_VERSION=SP7710_13A_W13.39.7 >> .tmp-config &&
 	repo_sync sp7710ga_gonk4.0_v1.3
 	;;
@@ -146,7 +143,6 @@ case "$1" in
 "sp7710gaplus_gonk4.0")
 	echo DEVICE=sp7710gaplus_gonk >> .tmp-config &&
 	echo LUNCH=sp7710gaplus_gonk-userdebug >> .tmp-config &&
-	echo TARGET_HVGA_ENABLE=true >> .tmp-config &&
 	echo GONK_VERSION=SP7710_13A_W13.39.7 >> .tmp-config &&
 	repo_sync sp7710ga_gonk4.0_v1.3
 ;;
@@ -185,7 +181,6 @@ case "$1" in
 	echo
 	echo Valid devices to configure are:
 	echo - sp7710ga_gonk4.0 ======================= Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 and sprdlinux3.0
-	echo - sp7710ga_gonk4.0_fwvga ================= Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 , sprdlinux3.0 and fwvga resolution
 	echo - sp7710lc_gonk4.0 ======================= Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128M RAM	
 	echo - sp6821a_gonk4.0 ======================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0, u-boot2.3.5, 256M ROM, 128RAM
 	echo - sp7710gaplus_gonk4.0 =================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0 and dual SIM cards
