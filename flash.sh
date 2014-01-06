@@ -95,7 +95,7 @@ flash_fastboot()
 		if [ "$DEVICE" == "mako" ] || [ "$DEVICE" == "flo" ]; then
 			VERB="format"
 		fi
-		if [ "$DEVICE" != "helix" && "$DEVICE" != "sp"* ]; then
+		if [ "$DEVICE" != "helix" ] && [ "$DEVICE" != "sp"* ]; then
 			run_fastboot $VERB cache &&
 			run_fastboot $VERB userdata
 			if [ $? -ne 0 ]; then
