@@ -263,6 +263,12 @@ case "$1" in
 	repo_sync $1
 	;;
 
+"sp6821a_gonk4.0_user")
+        echo DEVICE=sp6821a_gonk >> .tmp-config &&
+        echo LUNCH=sp6821a_gonk-user >> .tmp-config &&
+        repo_sync $1
+        ;;
+
 "sp6821a_gonk4.0_master")
         echo DEVICE=sp6821a_gonk >> .tmp-config &&
         echo LUNCH=sp6821a_gonk-userdebug >> .tmp-config &&
@@ -406,7 +412,8 @@ case "$1" in
 	echo - sp7710lc_gonk4.0 ======================= Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
 	echo - sp7710ga_gonk4.0_user=================== Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 , sprdlinux3.0 and lunch = user option
 	echo - sp6821a_gonk4.0 ======================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
-	echo - sp6821a_gonk4.0_master================== Sprdroid4.0, gecko/gaia@FFOS master, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
+	echo - sp6821a_gonk4.0_user =================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
+	echo - sp6821a_gonk4.0_master ================= Sprdroid4.0, gecko/gaia@FFOS master, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
 	echo - sp7710gaplus_gonk4.0 =================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0
 	echo - sp7710gaplus_gonk4.0_master ============ Sprdroid4.0, gecko/gaia@FFOS master, gonk@sprdroid4.0 and sprdlinux3.0
 #	echo - sp8835eb_gonk4.3 ======================= Sprdroid4.3, gecko/gaia@FFOS v1.3, gonk@sprdroid4.3 and sprdlinux3.4, frameworks@android-4.3_r2.1
