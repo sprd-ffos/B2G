@@ -266,7 +266,7 @@ case "$1" in
 "sp6821a_gonk4.0_user")
         echo DEVICE=sp6821a_gonk >> .tmp-config &&
         echo LUNCH=sp6821a_gonk-user >> .tmp-config &&
-        repo_sync $1
+        repo_sync sp6821a_gonk4.0
         ;;
 
 "sp6821a_gonk4.0_master")
