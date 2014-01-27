@@ -277,7 +277,7 @@ case "$1" in
 
 "sp6821a_gonk4.0_monkey")
         echo DEVICE=sp6821a_gonk >> .tmp-config &&
-        echo LUNCH=sp6821a_gonk-userdebug >> .tmp-config &&
+        echo LUNCH=sp6821a_gonk-user >> .tmp-config &&
         repo_sync sp6821a_gonk4.0
         ;;
 
@@ -422,7 +422,7 @@ case "$1" in
 	echo - sp6821a_gonk4.0 ======================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
 	echo - sp6821a_gonk4.0_user =================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
 	echo - sp6821a_gonk4.0_master ================= Sprdroid4.0, gecko/gaia@FFOS master, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
-	echo - sp6821a_gonk4.0_monkey ================= Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM, CONFIG_KERNEL_DEBUG=y for monkey test
+	echo - sp6821a_gonk4.0_monkey ================= Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM, user mode, CONFIG_KERNEL_DEBUG=y for monkey test
 #	echo - sp8835eb_gonk4.3 ======================= Sprdroid4.3, gecko/gaia@FFOS v1.3, gonk@sprdroid4.3 and sprdlinux3.4, frameworks@android-4.3_r2.1
 	echo - galaxy-s2
 	echo - galaxy-nexus
