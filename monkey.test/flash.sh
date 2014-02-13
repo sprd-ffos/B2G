@@ -19,10 +19,12 @@ update_time()
 
 #add a protect, for the reboot is so dangerouse
 [ -n "$ADB" ] || exit 1
-
 #flash_fastboot nounlock $PROJECT
 $ADB reboot bootloader
-$FASTBOOT devices
+while true
+do
+    [ $($FASTBOOT devices|wc -l) -gt 0 ] && break
+done
 
 image_list=("boot" "system" "2ndbl" "vmjaluna" "userdata")
 
