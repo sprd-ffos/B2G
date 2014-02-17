@@ -249,12 +249,11 @@ case "$1" in
 	repo_sync sp7710ga_gonk4.0_v1.3
 	;;
 
-"sp7710ga_gonk4.0_user")
-	echo DEVICE=sp7710ga_gonk >> .tmp-config &&
-	echo LUNCH=sp7710ga_gonk-user >> .tmp-config &&
-	echo TARGET_HVGA_ENABLE=true >> .tmp-config &&
+"sp7710gaplus_gonk4.0_user")
+	echo DEVICE=sp7710gaplus_gonk >> .tmp-config &&
+	echo LUNCH=sp7710gaplus_gonk-user >> .tmp-config &&
 	echo GONK_VERSION=SP7710_13A_W13.39.7 >> .tmp-config &&
-	repo_sync sp7710ga_gonk4.0
+	repo_sync sp7710ga_gonk4.0_v1.3
 	;;
 
 "sp6821a_gonk4.0")
@@ -416,7 +415,7 @@ case "$1" in
 	echo - sp7710ga_gonk_monkey =================== Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 and sprdlinux3.0, add debug option for monkey test
 	echo - sp7710ga_gonk4.0_fwvga ================= Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 , sprdlinux3.0 and fwvga resolution
 	echo - sp7710lc_gonk4.0 ======================= Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
-	echo - sp7710ga_gonk4.0_user=================== Sprdroid4.0, gecko/gaia@FFOS v1.2, gonk@sprdroid4.0 , sprdlinux3.0 and lunch = user option
+	echo - sp7710gaplus_gonk4.0_user ============== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 , sprdlinux3.0  lunch = user option ,dual SIM cards and fwvga resolution
 	echo - sp7710gaplus_gonk4.0 =================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0
 	echo - sp7710gaplus_gonk4.0_master ============ Sprdroid4.0, gecko/gaia@FFOS master, gonk@sprdroid4.0 and sprdlinux3.0
 	echo - sp6821a_gonk4.0 ======================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
