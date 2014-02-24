@@ -160,7 +160,13 @@ case "$1" in
 	echo GONK_VERSION=SP7710_13A_W13.39.7 >> .tmp-config &&
 	repo_sync sp7710ga_gonk4.0_master
 	;;
-    
+
+"sp7715ga_android4.4")
+        echo DEVICE=scx15_sp7715ga >> .tmp-config &&
+        echo LUNCH=scx15_sp7715gabase-userdebug >> .tmp-config &&
+        repo_sync $1
+        ;;
+
 "tara")
 	echo DEVICE=sp8810ea >> .tmp-config &&
 	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
@@ -200,6 +206,7 @@ case "$1" in
 	echo - sp6821a_gonk4.0_master================== Sprdroid4.0, gecko/gaia@FFOS master, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
 	echo - sp7710gaplus_gonk4.0 =================== Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0 and dual SIM cards
 	echo - sp7710gaplus_gonk4.0_master ============ Sprdroid4.0, gecko/gaia@FFOS master, gonk@sprdroid4.0 and sprdlinux3.0
+	echo - sp7715ga_android4.4 ==================== Android4.4, kernel linux3.10
 	echo - galaxy-s2
 	echo - galaxy-nexus
 	echo - nexus-4
