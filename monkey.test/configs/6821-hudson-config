@@ -1,0 +1,81 @@
+#Config source tag, all script depend on the configs
+export MTCFG_SOURCE_TAG=YES
+
+################################################################################
+#[Device.config]
+export MTCFG_DEV_NAME=6821
+export MTCFG_DEV_RESOLUTION=hvga
+export MTCFG_DEV_TOUCHSCREEN_EVENT=/dev/input/event1
+export MTCFG_DEV_KEYPAD_EVENT=/dev/input/event0
+export MTCFG_DEV_HOME_X=159
+export MTCFG_DEV_HOME_Y=529
+export MTCFG_DEV_POWER_KEY=116
+export MTCFG_DEV_MINIDUMP_FOLDER=/data/b2g/mozilla
+
+################################################################################
+#[Image.config]
+export MTCFG_IMG_FOLDER=images
+export MTCFG_IMG_GECKOSYMBOLS=${MTCFG_IMG_FOLDER}/objdir-gecko/dist/crashreporter-symbols
+
+#We support "img get" by the following method:
+#  * URL - a tar.bz2 file url
+#  * SSHFS - give id&passwd for a sshfs to get a tar.bz2
+#  * FS - a local tar.bz2 file
+#  * NONE - images already prepared
+export MTCFG_IMG_GET=URL
+
+#We only need config one of the following kindred image configs.
+#[Img.config.url]
+export MTCFG_IMG_URL="http://10.0.0.217:8080/hudson/job/sp6821a_gonk4.0/lastSuccessfulBuild/artifact/sp6821a_gonk4.0.tar.gz"
+
+#[Img.config.sshfs]
+#export MTCFG_IMG_SSHFS=
+#export MTCFG_IMG_SSHFS_PASSWD=
+
+#[Img.config.fs]
+#export MTCFG_IMG_FS=
+
+################################################################################
+#[Flash.config]
+export MTCFG_FLASH=YES
+export MTCFG_FLASH_IMGS=("2ndbl" "boot" "system" "userdata")
+
+################################################################################
+#[Test.config]
+export MTCFG_TEST_TAG="hudson"
+export MTCFG_TEST_NEED_SDCARD=YES
+export MTCFG_TEST_TIME_LIMIT=25
+export MTCFG_TEST_ASSIGN_APP=NO
+export MTCFG_TEST_BAN_SETTINGS=YES
+ADB=$(which adb) || ADB=bin/adb
+export ADB
+export BUSYBOX=/data/busybox
+export FIND="$ADB shell $BUSYBOX find"
+
+################################################################################
+#[log.config]
+export MTCFG_LOG=YES
+export MTCFG_LOG_HEAD=mtlog
+
+################################################################################
+#[log.parse.config]
+export MTCFG_LOG_PARSE=YES
+
+################################################################################
+#[log.tar.config]
+#[!!!]no tar, no push
+export MTCFG_LOG_TAR=YES
+export MTCFG_LOG_RM_ORIGIN=YES
+
+################################################################################
+#[log.push.config]
+export MTCFG_LOG_PUSH=YES
+export MTCFG_LOG_PUSH_SERVER="10.0.0.178"
+export MTCFG_LOG_PUSH_USER="mtlog"
+export MTCFG_LOG_PUSH_PASSWD="123456"
+export MTCFG_LOG_PUSH_FOLDER="/home/mtlog/monkey"
+
+################################################################################
+#[log.backup.config]
+export MTCFG_LOG_BACKUP=YES
+export MTCFG_LOG_BACKUP_FOLDER="log-backup"
