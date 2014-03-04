@@ -2,6 +2,8 @@
 
 . _source_config_check.sh
 
+[ "$MTCFG_IMG_GET" == "NONE" ] && exit 0
+
 trap 'exit 1' ERR
 
 case "$MTCFG_IMG_GET" in

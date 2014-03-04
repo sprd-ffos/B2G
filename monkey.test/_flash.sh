@@ -4,6 +4,8 @@
 
 . _source_config_check.sh
 
+[ "$MTCFG_FLASH" == "YES" ] || exit 0
+
 trap 'exit 1' ERR
 
 if [ ! -d $MTCFG_IMG_FOLDER ]
