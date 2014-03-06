@@ -20,11 +20,7 @@ FASTBOOT=bin/fastboot
 echo $passwd | sudo -S echo -n
 
 $ADB reboot-bootloader
-while true
-do
-    sudo $FASTBOOT devices | grep -P '^\d+\s+fastboot'  && break
-    sleep 1
-done
+sudo $FASTBOOT devices
 
 [ -n "$MTCFG_FLASH_IMGS" ] || MTCFG_FLASH_IMGS=("2ndbl" "boot" "system" "userdata")
 

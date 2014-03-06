@@ -33,3 +33,8 @@ then
     $ADB shell mkdir -p /data/ban-app
     $ADB shell mv /data/local/webapps/settings.gaiamobile.org /data/ban-app
 fi
+
+if [ "$MTCFG_TEST_REFERENCE_WORKLOAD" == "YES" ]
+then
+    reference-workload/makeReferenceWorkload.sh
+fi

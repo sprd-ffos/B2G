@@ -43,8 +43,9 @@ export MTCFG_FLASH_IMGS=("2ndbl" "boot" "system" "userdata")
 ################################################################################
 #[Test.config]
 export MTCFG_TEST_TAG="hudson"
+export MTCFG_TEST_REFERENCE_WORKLOAD=YES
 export MTCFG_TEST_NEED_SDCARD=YES
-export MTCFG_TEST_TIME_LIMIT=25
+export MTCFG_TEST_TIME_LIMIT=12
 export MTCFG_TEST_ASSIGN_APP=NO
 export MTCFG_TEST_BAN_SETTINGS=YES
 ADB=$(which adb) || ADB=bin/adb
