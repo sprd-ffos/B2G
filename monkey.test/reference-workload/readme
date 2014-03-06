@@ -1,5 +1,4 @@
 - copy from ../gaia/test_media/reference-workload 
 - modify list
     - [1:generateImages.sh][2:generateMusicFiles.sh][3:generateVideos.sh][4:makeReferenceWorkload.sh] adb -> adb or ../bin/adb
-    - generateMusicFiles.sh, mid3v2 -> ../bin/mid3v2
     - remove makeReferenceWorkload.sh options, keep tarako only

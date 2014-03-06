@@ -1,7 +1,5 @@
 #!/bin/bash
 
-trap "exit 1" ERR
-
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 ADB=$(which adb) || ADB=${SCRIPT_DIR}/../bin/adb
 

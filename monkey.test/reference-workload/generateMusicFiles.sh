@@ -8,10 +8,8 @@ if [ -z "$1" ]; then
   exit
 fi
 
-MID3V2=${SCRIPT_DIR}/../bin/mid3v2
-
-if ! type $MID3V2 > /dev/null 2>&1; then
-  echo "$MID3V2 required to load music - install with |sudo apt-get install python-mutagen|"
+if ! type mid3v2 > /dev/null 2>&1; then
+  echo "mid3v2 required to load music - install with |sudo apt-get install python-mutagen|"
   echo "No music loaded"
   exit
 fi
@@ -22,7 +20,7 @@ ARTIST=1
 SONG_NAME=MasterSong.mp3
 
 # remove all the ID3 tags from the song
-$MID3V2 -D ${SCRIPT_DIR}/${SONG_NAME}
+mid3v2 -D ${SCRIPT_DIR}/${SONG_NAME}
 
 # We start with 1 track per album, and increment that up to 10, and then cycle between 5 and 10
 TRACKS_PER_ALBUM=1
@@ -31,7 +29,7 @@ REMOTE_DIR="/sdcard/Music"
 for i in `seq -f '%04g' 2 $1` ; do
   FILENAME=SONG_$i.mp3
 
-  $MID3V2 -t "Song ${i}" -a "Artist ${ARTIST}" -A "Album ${ALBUM}" -T "${TRACK}" ${SCRIPT_DIR}/${SONG_NAME}
+  mid3v2 -t "Song ${i}" -a "Artist ${ARTIST}" -A "Album ${ALBUM}" -T "${TRACK}" ${SCRIPT_DIR}/${SONG_NAME}
   $ADB push ${SCRIPT_DIR}/${SONG_NAME} ${REMOTE_DIR}/${FILENAME}
 
   let TRACK=TRACK+1
@@ -47,4 +45,4 @@ for i in `seq -f '%04g' 2 $1` ; do
 done
 
 # remove all the ID3 tags from the song (again)
-$MID3V2 -D ${SCRIPT_DIR}/${SONG_NAME}
+mid3v2 -D ${SCRIPT_DIR}/${SONG_NAME}
