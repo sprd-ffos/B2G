@@ -163,7 +163,7 @@ case "$1" in
 
 "sp7715ga_android4.4"|"sp7715ga_android4.4_full")
         echo DEVICE=scx15_sp7715ga >> .tmp-config &&
-        echo LUNCH=scx15_sp7715gabase-userdebug >> .tmp-config &&
+        echo LUNCH=scx15_sp7715gaplus-userdebug >> .tmp-config &&
         repo_sync $1
         ;;
 
