@@ -115,6 +115,10 @@ SetScreenState1Count=$(grep -r "set_screen_state 1" ${log_folder}/android 2>/dev
 SetScreenState0Count=$(grep -r "set_screen_state 0" ${log_folder}/android 2>/dev/null | wc -l)
 #Kernel Warning Count                      : $KernelWarningCount
 KernelWarningCount=$(grep -r "WARNING: " ${log_folder}/kernel 2>/dev/null | wc -l)
+#Tombstones
+TombstonesFolder="${log_folder}/misc/tombstones"
+TombstonesCount=0
+[ -d $TombstonesFolder ] && TombstonesCount=$(find $TombstonesFolder -name "tombstone*.log" | wc -l)
 
 cat << EOF > ${log}/slog_report
 All Summery As Follow:
@@ -145,9 +149,7 @@ Kernel Binder Alloc No VMA Count          : $KernelBinderAllocBufnoVmaCount
 Frame Buffer WaitForCondition Count       : $WaitForConditionTimeOutCount
 Modem Assert Count                        : $ModemAssertCount
 --------------------------------------------------
-4 - Android Bug Informations:
---------------------------------------------------
-5 - Android Mark Informations:
+4 - Android Mark Informations:
 OOM-Killer Kill Count                     : $OomKillerCount
 Low Memory Killer Kill Count              : $LowMemoryKillerCount
 Print No More Background Process Count    : $LowMemoryCount
@@ -156,6 +158,26 @@ Unknown Permission Count                  : $UnknownPermissionCount
 Set Screen State 1 Count                  : $SetScreenState1Count
 Set Screen State 0 Count                  : $SetScreenState0Count
 Kernel Warning Count                      : $KernelWarningCount
+--------------------------------------------------
+5 - Tombstones Informations:
+--------------------------------------------------
+Tombstones files folder                   : ${TombstonesFolder#*/}
+Tombstones Count                          : $TombstonesCount
 EOF
+
+cat << EOF >> ${log}/slog_report
+
+--------------------------------------------------
+Tombstones Details:
+--------------------------------------------------
+EOF
+if [ $TombstonesCount -gt 0 ]
+then
+    find $TombstonesFolder -name "tombstone*.log" | while read file
+    do
+        echo ">>>> $(basename $file) <<<<" >> ${log}/slog_report
+        sed -n '3,8p' $file >> ${log}/slog_report
+    done
+fi
 
 exit 0
