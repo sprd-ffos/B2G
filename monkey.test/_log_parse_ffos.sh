@@ -24,9 +24,26 @@ mkdir -p ${log}/minidump
 
 find $log/mozilla -name "*.dmp" | sed 's/\r//'| while read file
 do
-    filename=$(basename "$file")
-    filename=${filename%%.dmp}
-    echo "$file" >> $log/minidump/summary
-    bin/minidump_stackwalk "$file" $MTCFG_IMG_GECKOSYMBOLS > ${log}/minidump/$filename
+    filename="${file%.dmp}"
+    extra_filename="${filename}.extra"
+    filename=$(basename "$filename")
+    parse_filename=${filename}.parse
+    bin/minidump_stackwalk "$file" $MTCFG_IMG_GECKOSYMBOLS 2>/dev/null > ${log}/minidump/$parse_filename
+    summary_filename=${filename}.sum
+    echo ">>>> ${file#*/} <<<<" > ${log}/minidump/$summary_filename
+    echo "---- extra ----" >> ${log}/minidump/$summary_filename
+    [ -f "$extra_filename" ] && cat "$extra_filename" >> ${log}/minidump/$summary_filename
+    echo "---- stack ----" >> ${log}/minidump/$summary_filename
+    sed -nE '/^Thread [0-9]+ \(crashed\)$/,/^Thread [0-9]+$/ {/^ *[0-9]+/p}' ${log}/minidump/$parse_filename |\
+        sed 's/^ *//' >> ${log}/minidump/$summary_filename
+    echo "${file#*/}" >> $log/minidump_summary
 done
+
+minidump_cnt=$(cat $log/minidump_summary | wc -l)
+
+echo "--------------------" >> $log/minidump_summary
+echo "Count: $minidump_cnt" >> $log/minidump_summary
+echo "--------------------" >> $log/minidump_summary
+
+[ $minidump_cnt -gt 0 ] && cat ${log}/minidump/*.sum >> $log/minidump_summary
 
