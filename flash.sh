@@ -49,7 +49,13 @@ update_time()
 fastboot_flash_image()
 {
 	# $1 = {userdata,boot,system}
-	imgpath="out/target/product/$DEVICE/$1.img"
+
+	if [ "${DEVICE:0:3}" == "scx" ] && [ "$1" != "boot" ]; then
+		imgpath="out/target/product/$DEVICE/$1_b256k_p4k.img"
+	else
+		imgpath="out/target/product/$DEVICE/$1.img"
+	fi
+
 	out="$(run_fastboot flash "$1" "$imgpath" 2>&1)"
 	rv="$?"
 	echo "$out"
@@ -95,7 +101,7 @@ flash_fastboot()
 		if [ "$DEVICE" == "mako" ] || [ "$DEVICE" == "flo" ]; then
 			VERB="format"
 		fi
-		if [ "$DEVICE" != "helix" ] && [ "$DEVICE" != "sp"* ]; then
+		if [ "$DEVICE" != "helix" ]; then
 			run_fastboot $VERB cache &&
 			run_fastboot $VERB userdata
 			if [ $? -ne 0 ]; then
