@@ -48,7 +48,11 @@ update_time()
 fastboot_flash_image()
 {
 	# $1 = {userdata,boot,system}
-	imgpath="out/target/product/$DEVICE/$1.img"
+	if [ "$1" != "boot" -a "${DEVICE:0:3}" == "scx" ];  then
+		imgpath="out/target/product/$DEVICE/$1_b256k_p4k.img"
+	else
+		imgpath="out/target/product/$DEVICE/$1.img"
+	fi
 	out="$(run_fastboot flash "$1" "$imgpath" 2>&1)"
 	rv="$?"
 	echo "$out"
