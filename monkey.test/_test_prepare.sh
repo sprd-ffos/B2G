@@ -30,8 +30,9 @@ fi
 
 if [ "$MTCFG_TEST_BAN_SETTINGS" == "YES" ]
 then
-    $ADB shell mkdir -p /data/ban-app
-    $ADB shell mv /data/local/webapps/settings.gaiamobile.org /data/ban-app
+    $ADB shell rm -r /data/local/webapps/settings.gaiamobile.org
+    $ADB remount system && sleep 3 && $ADB wait-for-device
+    $ADB shell rm -r /system/b2g/webapps/settings.gaiamobile.org
 fi
 
 if [ "$MTCFG_TEST_REFERENCE_WORKLOAD" == "YES" ]
