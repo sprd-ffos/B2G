@@ -53,6 +53,11 @@ fastboot_flash_image()
 	else
 		imgpath="out/target/product/$DEVICE/$1.img"
 	fi
+
+	if [ ! -e $imgpath ]; then
+		return 0;
+	fi
+
 	out="$(run_fastboot flash "$1" "$imgpath" 2>&1)"
 	rv="$?"
 	echo "$out"
@@ -105,6 +110,8 @@ flash_fastboot()
 				return $?
 			fi
 		fi
+		fastboot_flash_image cache &&
+		fastboot_flash_image prodnv &&
 		fastboot_flash_image userdata &&
 		([ ! -e out/target/product/$DEVICE/boot.img ] ||
 		fastboot_flash_image boot) &&
