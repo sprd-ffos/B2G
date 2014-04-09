@@ -52,6 +52,7 @@ ADB=$(which adb) || ADB=bin/adb
 export ADB
 export BUSYBOX=/data/busybox
 export FIND="$ADB shell $BUSYBOX find"
+export MTCFG_TICK_COLLECT_INFO_B2G=NO
 
 ################################################################################
 #[log.config]

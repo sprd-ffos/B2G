@@ -39,3 +39,8 @@ if [ "$MTCFG_TEST_REFERENCE_WORKLOAD" == "YES" ]
 then
     reference-workload/makeReferenceWorkload.sh
 fi
+
+if [ "$MTCFG_TICK_COLLECT_INFO_B2G" == "YES" ]
+then
+    rm -rf tick_collect_info
+fi

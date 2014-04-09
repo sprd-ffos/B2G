@@ -21,6 +21,11 @@ mkdir $log
 
 cp $MONKEYLOGFILE ${log}/
 
+if [ "$MTCFG_TICK_COLLECT_INFO_B2G" == "YES" ]
+then
+    mv tick_collect_info ${log}/
+fi
+
 #bugreport, genarate bugreport to slog folder
 $ADB shell slogctl snap bugreport 
 
