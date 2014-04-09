@@ -18,3 +18,10 @@ export MOZ_CHROME_MULTILOCALE &&
 export L10NBASEDIR &&
 . build/envsetup.sh &&
 lunch $LUNCH
+
+echo rm -rf gaia/profile
+echo rm -rf gaia/profile.tar.gz
+rm -rf gaia/profile
+rm -rf gaia/profile.tar.gz
+kheader
+
