@@ -4,6 +4,16 @@
 
 . _source_config_check.sh
 
+update_time()
+{
+    TIMEZONE=`date +%Z%:::z|tr +- -+`
+	echo Attempting to set the time on the device
+	$ADB wait-for-device &&
+	$ADB root &&
+	$ADB shell toolbox date `date +%s` &&
+	$ADB shell setprop persist.sys.timezone $TIMEZONE
+}
+
 [ "$MTCFG_FLASH" == "YES" ] || exit 0
 
 trap 'exit 1' ERR
@@ -41,7 +51,7 @@ do
     fi
 done
 
-sudo $FASTBOOT reboot
+sudo $FASTBOOT reboot && update_time
 $ADB wait-for-device
 
 echo We will wait 60s for device run stable. If you want take the device and stop script, you can.
