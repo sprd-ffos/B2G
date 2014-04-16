@@ -21,7 +21,7 @@ fi
 
 log_curpath=$(find $log_path -maxdepth 1 | grep -P '/\d{14}$')
 
-if grep -P "rebooted at \d+" ${log}/$MONKEYLOGFILE > /dev/null 2>&1
+if grep -P "rebooted at \d+" ${log}/monkey.log > /dev/null 2>&1
 then
     log_type="last"
     log_folder=$(find ${log_path}/last_log -maxdepth 1 | grep -P '/\d{14}$')
@@ -33,8 +33,8 @@ fi
 
 #1 - Monkey stop reason and duration:
 #MonkeyLastTime                            : $MonkeyRealLastTime
-start_tag=$(grep -Po "begin at \d+" ${log}/$MONKEYLOGFILE 2>/dev/null)
-end_tag=$(grep -Po "(rebooted|successful|detected) at \d+" ${log}/$MONKEYLOGFILE 2>/dev/null)
+start_tag=$(grep -Po "begin at \d+" ${log}/monkey.log 2>/dev/null)
+end_tag=$(grep -Po "(rebooted|successful|detected) at \d+" ${log}/monkey.log 2>/dev/null)
 if [ -n "$start_tag" ] && [ -n "$end_tag" ]
 then
     start_time=$(echo $start_tag | awk '{print $3}')

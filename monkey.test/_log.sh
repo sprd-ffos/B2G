@@ -19,7 +19,7 @@ rm -rf $log
 rm -f ${log}.tar.bz2
 mkdir $log
 
-cp $MONKEYLOGFILE ${log}/
+cp monkey.log ${log}/
 
 if [ "$MTCFG_TICK_COLLECT_INFO_B2G" == "YES" ]
 then
@@ -38,6 +38,17 @@ mkdir -p ${log}/slog_external
 
 $ADB pull ${internal} ${log}/slog_internal/
 $ADB pull ${external} ${log}/slog_external/
+
+echo -n '[Tombstones timestamps] ' >> monkey.log
+if [ "$log_tag" == "reboot" ]
+then
+    echo "-- last log ---->" >> monkey.log
+    $ADB shell "ls -l ${external}/last_log/*/misc/tombstones/tombstone* 2>/dev/null" >> monkey.log
+else
+    echo "-- current log ---->" >> monkey.log
+    $ADB shell "ls -l ${external}/*/misc/tombstones/tombstone* 2>/dev/null" >> monkey.log
+fi
+echo '<---- [Tombstones timestamps]' >> monkey.log
 
 #minidump
 mkdir -p ${log}/mozilla

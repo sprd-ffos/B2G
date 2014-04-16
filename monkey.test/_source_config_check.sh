@@ -2,7 +2,7 @@
 #If call the script by other script, use 'source <this-file>'
 log() {
     echo $*
-    echo "$*" >> $MONKEYLOGFILE
+    echo "$*" >> monkey.log
 }
 
 if [ "$MTCFG_SOURCE_TAG" != "YES" ]

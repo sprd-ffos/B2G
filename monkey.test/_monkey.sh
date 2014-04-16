@@ -42,8 +42,7 @@ else
     done
 fi
 
-export MONKEYLOGFILE="monkey.log"
-> $MONKEYLOGFILE
+> monkey.log
 
 . $config_file
 . _source_config_check.sh

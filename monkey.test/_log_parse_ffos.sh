@@ -32,7 +32,13 @@ do
     summary_filename=${filename}.sum
     echo ">>>> ${file#*/} <<<<" > ${log}/minidump/$summary_filename
     echo "---- extra ----" >> ${log}/minidump/$summary_filename
-    [ -f "$extra_filename" ] && cat "$extra_filename" >> ${log}/minidump/$summary_filename
+    if [ -f "$extra_filename" ]
+    then
+        cat "$extra_filename" >> ${log}/minidump/$summary_filename
+        startup=$(grep  "StartupTime" "$extra_filename" | awk -F= '{print $2}')
+        crash=$(grep "CrashTime" "$extra_filename" | awk -F= '{print $2}')
+        echo '[MINIDUMP]' $(date --date="@$startup" +"%H:%M:%S" 2>/dev/null) - $(date --date="@$crash" +"%H:%M:%S" 2>/dev/null) : $filename >> monkey.log
+    fi
     echo "---- stack ----" >> ${log}/minidump/$summary_filename
     sed -nE '/^Thread [0-9]+ \(crashed\)$/,/^Thread [0-9]+$/ {/^ *[0-9]+/p}' ${log}/minidump/$parse_filename |\
         sed 's/^ *//' >> ${log}/minidump/$summary_filename
