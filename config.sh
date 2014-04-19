@@ -286,6 +286,13 @@ case "$1" in
         repo_sync $1
         ;;
 
+"sp7715ga_update")
+        echo DEVICE=scx15_sp7715ga >> .tmp-config &&
+        echo LUNCH=scx15_sp7715gaplus-userdebug >> .tmp-config &&
+        repo_sync $1
+        ;;
+
+
 "sp8825ea_gonk4.0")
        echo DEVICE=sp8825ea >> .tmp-config &&
        echo LUNCH=sp8825eabase-eng >> .tmp-config &&
@@ -430,6 +437,7 @@ case "$1" in
 	echo - sp6821a_gonk4.0_monkey ================= Sprdroid4.0, gecko/gaia@FFOS v1.3, gonk@sprdroid4.0 and sprdlinux3.0, 256M ROM, 128RAM
 	echo - sp7715ga_gonk4.4 ======================== Sprdroid4.4, gecko/gaia@FFOS v1.4, gonk@sprdroid4.4 and sprdlinux3.10, 512M ROM, 256RAM, dual SIM cards, FWVGA resolution, userdebug compile option
 #	echo - sp8835eb_gonk4.3 ======================= Sprdroid4.3, gecko/gaia@FFOS v1.3, gonk@sprdroid4.3 and sprdlinux3.4, frameworks@android-4.3_r2.1
+	echo - sp7715ga_update ========================= used to sync with Prime
 	echo - galaxy-s2
 	echo - galaxy-nexus
 	echo - nexus-4
