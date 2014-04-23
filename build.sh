@@ -7,7 +7,7 @@
 # If the hashes differ, we use a per-device script to redo
 # the firmware extraction
 function configure_device() {
-    hash_file="$OUT/firmware.hash"
+    hash_file="vendor/qcom/common/firmware.hash"
 
     # Make sure that our assumption that device codenames are unique
     # across vendors is true
@@ -41,7 +41,7 @@ function configure_device() {
         fi
         if [ "$old_hash" != "$new_hash" ] ; then
             echo Blob setup script has changed, re-running &&
-            sh -c "$script" &&
+            sh -c "export ANDROIDFS_DIR=../../../vendor/qcom/$DEVICE/backup && $script" &&
             mkdir -p "$(dirname "$hash_file")" &&
             echo "$new_hash" > "$hash_file"
         fi
@@ -53,13 +53,17 @@ function configure_device() {
 }
 
 unset CDPATH
+
+if [ -f sprd_patch/auto_patch.sh ] ; then
+    . load-config.sh
+    sprd_patch/auto_patch.sh $DEVICE_NAME > patch_result
+fi
+
 . setup.sh &&
 if [ -f patches/patch.sh ] ; then
     . patches/patch.sh
 fi
-if [ -f sprd_patch/auto_patch.sh ] ; then
-    sprd_patch/auto_patch.sh $DEVICE_NAME > patch_result
-fi &&
+
 configure_device &&
 time nice -n19 make $MAKE_FLAGS $@
 

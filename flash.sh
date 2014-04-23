@@ -41,6 +41,7 @@ update_time()
 	fi
 	echo Attempting to set the time on the device
 	run_adb wait-for-device &&
+	run_adb root &&
 	run_adb shell toolbox date `date +%s` &&
 	run_adb shell setprop persist.sys.timezone $TIMEZONE
 }
@@ -48,14 +49,11 @@ update_time()
 fastboot_flash_image()
 {
 	# $1 = {userdata,boot,system}
-	if [ "$1" != "boot" -a "${DEVICE:0:3}" == "scx" ];  then
+
+	if [ "${DEVICE:0:3}" == "scx" ] && [ "$1" != "boot" ]; then
 		imgpath="out/target/product/$DEVICE/$1_b256k_p4k.img"
 	else
 		imgpath="out/target/product/$DEVICE/$1.img"
-	fi
-
-	if [ ! -e $imgpath ]; then
-		return 0;
 	fi
 
 	out="$(run_fastboot flash "$1" "$imgpath" 2>&1)"
@@ -110,11 +108,13 @@ flash_fastboot()
 				return $?
 			fi
 		fi
-		fastboot_flash_image cache &&
-		fastboot_flash_image prodnv &&
 		fastboot_flash_image userdata &&
 		([ ! -e out/target/product/$DEVICE/boot.img ] ||
 		fastboot_flash_image boot) &&
+		([ ! -e out/target/product/$DEVICE/2ndbl.img ] ||
+		fastboot_flash_image 2ndbl) &&
+		([ ! -e out/target/product/$DEVICE/vmjaluna.img ] ||
+		fastboot_flash_image vmjaluna) &&
 		fastboot_flash_image system &&
 		run_fastboot reboot &&
 		update_time
@@ -291,7 +291,7 @@ case "$DEVICE" in
 	exit $?
 	;;
 
-"otoro"|"unagi"|"keon"|"peak"|"inari"|"sp8810ea"|"sp77"*|"scx15_sp77"*|"sp6821"*|"wasabi")
+"otoro"|"unagi"|"keon"|"peak"|"inari"|"sp"*|"scx"*|"wasabi")
 	flash_fastboot nounlock $PROJECT
 	;;
 

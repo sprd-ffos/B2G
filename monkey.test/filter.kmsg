@@ -1,0 +1,8 @@
+kernel panic - not syncing
+Restarting system
+page allocation failure
+binder_alloc_buf, no vma
+Power down.
+exception
+crash
+abort

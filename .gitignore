@@ -25,6 +25,7 @@ gonk-misc/
 hardware/
 kernel/
 libcore/
+libnativehelper/
 librecovery/
 ndk/
 objdir-gecko*/
@@ -33,5 +34,10 @@ prebuilt/
 prebuilts/
 rilproxy/
 sdk/
+sprd_patch/
 system/
 vendor/
+u-boot/
+orangutan/
+B2G/
+patch_result

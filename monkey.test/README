@@ -1,0 +1,25 @@
+Monkey test script - HOW TO USE?
+
+零、有了问题找谁？
+lianxiang.zhou
+
+一、配置测试
+
+测试的配置在test-config目录下。
+请参考目录test-config/下的template.*文件进行相应的配置。
+
+测试的快捷运行脚本在run-test目录下。
+请参考目录run-test/下的template.rum.sh文件进行相应的配置。
+
+二、运行测试
+
+大部分时候，我们都是运行已经配置好的测试。
+进入B2G/monkey.test目录中，运行
+run-test/<your-test-script>
+
+三、结果分析
+
+测试出现异常后，我们会将生成的log按照配置发送到服务器，并在本地的log_backup目录下做一个备份。
+在服务器会有log分析程序。通过本地脚本运行服务器分析程序，并获得分析结果到本地。
+（脚本完成中……）
+

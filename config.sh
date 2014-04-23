@@ -84,7 +84,7 @@ case "$1" in
 
 "nexus-4")
 	echo DEVICE=mako >> .tmp-config &&
-	repo_sync nexus-4
+	repo_sync $1
 	;;
 
 "optimus-l5")

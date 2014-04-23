@@ -166,7 +166,8 @@ def notify_and_pull_files(outfiles_prefixes,
                           out_dir,
                           optional_outfiles_prefixes=[],
                           fifo_msg=None,
-                          signal=None):
+                          signal=None,
+                          ignore_nuwa=os.getenv("MOZ_IGNORE_NUWA_PROCESS")):
     '''Send a message to the main B2G process (either by sending it a signal or
     by writing to a fifo that it monitors) and pull files created as a result.
 
@@ -204,18 +205,63 @@ def notify_and_pull_files(outfiles_prefixes,
         raise ValueError("Exactly one of the fifo_msg and "
                          "signal kw args must be non-null.")
 
+    unified_outfiles_prefixes = ['unified-' + pfx for pfx in outfiles_prefixes]
+    all_outfiles_prefixes = outfiles_prefixes + optional_outfiles_prefixes \
+                            + unified_outfiles_prefixes
+
     (master_pid, child_pids) = get_remote_b2g_pids()
-    old_files = _list_remote_temp_files(outfiles_prefixes)
+    child_pids = set(child_pids)
+    old_files = _list_remote_temp_files(outfiles_prefixes + unified_outfiles_prefixes)
 
     if signal != None:
         _send_remote_signal(signal, master_pid)
     else:
         _write_to_remote_file('/data/local/debug_info_trigger', fifo_msg)
 
-    all_outfiles_prefixes = outfiles_prefixes + optional_outfiles_prefixes
+    num_expected_responses = 1 + len(child_pids)
+    if ignore_nuwa:
+        num_expected_responses -= 1
+    num_expected_files = len(outfiles_prefixes) * num_expected_responses
+    num_unified_expected = len(unified_outfiles_prefixes)
 
-    num_expected_files = len(outfiles_prefixes) * (1 + len(child_pids))
-    _wait_for_remote_files(outfiles_prefixes, num_expected_files, old_files)
+    max_wait = 60 * 2
+    wait_interval = 1.0
+    for i in range(0, int(max_wait / wait_interval)):
+        new_files = _list_remote_temp_files(outfiles_prefixes) - old_files
+        new_unified_files = _list_remote_temp_files(unified_outfiles_prefixes) - old_files
+        if new_unified_files:
+            files_gotten = len(new_unified_files)
+            files_expected = num_unified_expected
+        else:
+            files_gotten = len(new_files)
+            files_expected = num_expected_files
+        sys.stdout.write('\rGot %d/%d files.' % (files_gotten, files_expected))
+        sys.stdout.flush()
+
+        if files_gotten == files_expected:
+            print('')
+            break
+
+        sleep(wait_interval)
+
+        # Some pids may have gone away before reporting memory. This can happen
+        # normally if the triggering of memory reporting causes some old
+        # children to OOM. (Bug 931198)
+        dead_child_pids = child_pids - set(get_remote_b2g_pids()[1])
+        if len(dead_child_pids):
+            for pid in dead_child_pids:
+                print("\rWarning: Child %u exited during memory reporting" % pid)
+            child_pids -= dead_child_pids
+            num_expected_files -= len(outfiles_prefixes) * len(dead_child_pids)
+
+    if files_gotten < files_expected:
+        print('')
+        print("We've waited %ds but the only relevant files we see are" % max_wait)
+        print('\n'.join(['  ' + f for f in new_files + new_unified_files]))
+        print('We expected %d but see only %d files.  Giving up...' %
+              (files_expected, files_gotten))
+        raise Exception("Unable to pull some files.")
+
     new_files = _pull_remote_files(all_outfiles_prefixes, old_files, out_dir)
     if remove_outfiles_from_device:
         _remove_files_from_device(all_outfiles_prefixes, old_files)
@@ -266,38 +312,6 @@ def _list_remote_temp_files(prefixes):
                         if any(file.startswith(prefix) for prefix in prefixes)}
 
     return found_files
-
-def _wait_for_remote_files(outfiles_prefixes, num_expected_files, old_files):
-    '''Wait for files to appear on the remote device.
-
-    We wait until we see num_expected_files whose names begin with one of the
-    elements of outfiles_prefixes and which aren't in old_files appear in the
-    device's temp directory.  If we don't see these files after a timeout
-    expires, we throw an exception.
-
-    '''
-    wait_interval = .25
-    max_wait = 60 * 2
-
-    for i in range(0, int(max_wait / wait_interval)):
-        new_files = _list_remote_temp_files(outfiles_prefixes) - old_files
-
-        # For some reason, print() doesn't work with the \r hack.
-        sys.stdout.write('\rGot %d/%d files.' %
-                         (len(new_files), num_expected_files))
-        sys.stdout.flush()
-
-        if len(new_files) == num_expected_files:
-            print('')
-            return
-
-        sleep(wait_interval)
-
-    print("We've waited %ds but the only relevant files we see are" % max_wait)
-    print('\n'.join(['  ' + f for f in new_files]))
-    print('We expected %d but see only %d files.  Giving up...' %
-          (num_expected_files, len(new_files)))
-    raise Exception("Unable to pull some files.")
 
 def _pull_remote_files(outfiles_prefixes, old_files, out_dir):
     '''Pull files from the remote device's temp directory into out_dir.
