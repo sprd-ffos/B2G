@@ -68,7 +68,7 @@ if [ -n "$2" ]; then
 fi
 
 echo MAKE_FLAGS=-j$((CORE_COUNT + 2)) > .tmp-config
-echo GECKO_OBJDIR=$PWD/objdir-gecko >> .tmp-config
+echo GECKO_OBJDIR=objdir-gecko >> .tmp-config
 echo DEVICE_NAME=$1 >> .tmp-config
 
 case "$1" in
