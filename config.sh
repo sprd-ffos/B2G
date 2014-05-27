@@ -167,6 +167,12 @@ case "$1" in
         repo_sync $1
         ;;
 
+"sp7730ec_gonk4.4")
+        echo DEVICE=scx35_sp7730ec >> .tmp-config &&
+        echo LUNCH=scx35_sp7730ecplus-userdebug >> .tmp-config &&
+        repo_sync sp7715ga_gonk4.4
+        ;;
+
 "tara")
 	echo DEVICE=sp8810ea >> .tmp-config &&
 	echo LUNCH=sp8810eabase-eng >> .tmp-config &&
@@ -209,6 +215,7 @@ case "$1" in
         echo - sp7715ga_gonk4.4 ======================= Sprdroid4.4, gecko/gaia@FFOS v1.4, gonk@sprdroid4.4 and sprdlinux3.10, 512M ROM, 256RAM, dual SIM cards, FWVGA resolution, userdebug compile option
 	echo - sp7715ga_android4.4 ==================== Android4.4 native, kernel linux3.10
 	echo - sp7715ga_android4.4_full================ Android4.4 full, kernel linux3.10
+	echo - sp7730ec_gonk4.4 ========================  gecko/gaia@FFOS v1.4, gonk@sprdroid4.4 and sprdlinux3.10,
 	echo - galaxy-s2
 	echo - galaxy-nexus
 	echo - nexus-4

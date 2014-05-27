@@ -50,7 +50,7 @@ fastboot_flash_image()
 {
 	# $1 = {userdata,boot,system}
 
-	if [ "${DEVICE:0:3}" == "scx" ] && [ "$1" != "boot" ]; then
+	if [ "${DEVICE:0:5}" == "scx15" ] && [ "$1" != "boot" ]; then
 		imgpath="out/target/product/$DEVICE/$1_b256k_p4k.img"
 	else
 		imgpath="out/target/product/$DEVICE/$1.img"
